@@ -1,10 +1,16 @@
 import axios from "axios";
-export const ISPRODUCTION = process.env.ISPRODUCTION;
-export const REDIRECT_URL = process.env.REDIRECT_URL;
+export const ISPRODUCTION = "false";
+// export const REDIRECT_URL = process.env.REDIRECT_URL;
 
-export const URL = ISPRODUCTION === "true" ? "https://serviceapi.limenka360.com/" : "https://apidev.limenka360.com/";
+export const URL =
+  ISPRODUCTION === "true"
+    ? "https://serviceapi.limenka360.com/"
+    : "https://apidev.limenka360.com/";
 
-export const URLSOCKET = ISPRODUCTION === "true" ? "https://crmt.limenka360.com" : "https://apidev.limenka360.com/";
+export const URLSOCKET =
+  ISPRODUCTION === "true"
+    ? "https://crmt.limenka360.com"
+    : "https://apidev.limenka360.com/";
 
 export const PRODUCTIONMODE = ISPRODUCTION === "true" ? true : false;
 export const URL_SPACE = ISPRODUCTION
@@ -35,7 +41,17 @@ export const api2 = axios.create({
   },
 });
 
-const PHASEIDPRODUCTIONMODE = ISPRODUCTION ? "X0ubhJNnK273s1yfx5WnmBaX" : "qJzenUoCQ3amgoRZihcsHWus";
-const ACTIONIDPRODUCTIONMODE = ISPRODUCTION ? "62hHzqoSCj0452fT1sUAEzba" : "62hHzqoSCj0452fT1sUAEzba";
+const PHASEIDPRODUCTIONMODE = ISPRODUCTION
+  ? "X0ubhJNnK273s1yfx5WnmBaX"
+  : "qJzenUoCQ3amgoRZihcsHWus";
+const ACTIONIDPRODUCTIONMODE = ISPRODUCTION
+  ? "62hHzqoSCj0452fT1sUAEzba"
+  : "62hHzqoSCj0452fT1sUAEzba";
 
-export { api, url_files, url_filesCompanies, PHASEIDPRODUCTIONMODE, ACTIONIDPRODUCTIONMODE };
+export {
+  api,
+  url_files,
+  url_filesCompanies,
+  PHASEIDPRODUCTIONMODE,
+  ACTIONIDPRODUCTIONMODE,
+};

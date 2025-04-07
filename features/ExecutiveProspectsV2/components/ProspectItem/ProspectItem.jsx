@@ -40,8 +40,10 @@ function ProspectItem({ item, index, handleClickProspect }) {
           </div>
           <div className="middle">
             <p className="category">
-              {item?.clientType?.name ? item?.clientType?.name : "Tipo de cliente no definido"} -{" "}
-              {item?.category?.name ? item?.category?.name : "N/A"}
+              {item?.clientType?.name
+                ? item?.clientType?.name
+                : "Tipo de cliente no definido"}{" "}
+              - {item?.category?.name ? item?.category?.name : "N/A"}
             </p>
             <p className="lasttracking">
               {cutString(item?.lastTracking?.observations)} -{" "}
@@ -68,7 +70,7 @@ function ProspectItem({ item, index, handleClickProspect }) {
           <Tooltip
             title={`Enviar Whastapp ${item?.phone}`}
             placement="top"
-            onClick={e => {
+            onClick={(e) => {
               e.stopPropagation();
               window.open(`https://wa.me/${item?.phone}`, "_blank");
             }}

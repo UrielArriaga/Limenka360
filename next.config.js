@@ -15,7 +15,7 @@ const nextConfig = {
     ignoreBuildErrors: true,
   },
   env: {
-    ISPRODUCTION: process.env.ISPRODUCTION,
+    NEXT_PUBLIC_ISPRODUCTION: process.env.NEXT_PUBLIC_ISPRODUCTION,
   },
 };
 
