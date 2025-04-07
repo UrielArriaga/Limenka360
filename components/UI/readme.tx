@@ -1,0 +1,5 @@
+Atoms — The smallest units of UI that cannot be divided any further, which are equal to HTML tags in React applications. Atoms become molecules when combined with other atoms.
+Molecules — Groups of atoms that have a single function, such as search forms. Molecules have to be simple to maintain reusability and the consistency of UI. The idea of molecules is based on the single responsibility principle described below.
+Organisms — Groups of molecules joined together to form more complex parts of UI, such as headers and footers.
+Templates —Groups of organisms stitched together to form pages — so-called wireframes.
+Pages —Specific instances of templates. Placeholder content is replaced with real content a user will see.

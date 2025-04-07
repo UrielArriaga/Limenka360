@@ -1,0 +1,28 @@
+.barButtons {
+  display: grid;
+  grid-template-columns: auto 50px 100px;
+  gap: 10px;
+  margin-bottom: 10px;
+  background-color: #405189;
+  color: #fff;
+  border-radius: 4px;
+  padding: 6px 8px;
+}
+
+@media (max-width: 600px) {
+  /* Ajusta el tamaño del dispositivo según sea necesario */
+  .barButtons {
+    grid-template-columns: auto 100px;
+  }
+}
+
+.barButtonsTitle {
+  display: flex;
+  align-items: center;
+  gap: 5px; /* Espacio entre el icono y el texto */
+}
+
+.barButtonsTitle p {
+  font-weight: 400;
+  margin: 0; /* Elimina márgenes por defecto */
+}

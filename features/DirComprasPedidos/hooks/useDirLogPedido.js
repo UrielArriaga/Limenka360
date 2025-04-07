@@ -1,0 +1,122 @@
+import React, { useEffect, useState } from "react";
+import { api } from "../../../services/api";
+import { OrdersServices } from "../services";
+import { set } from "date-fns";
+import { useSelector } from "react-redux";
+import { userSelector } from "../../../redux/slices/userSlice";
+
+export default function useDirLogPedido(orderSelected) {
+  const ordersService = new OrdersServices();
+  const [flagToRefetch, setFlagToRefetch] = useState(false);
+  const [orderSelectedData, setOrderSelectedData] = useState(null);
+  const { userData, id_user } = useSelector(userSelector);
+  const [totalOrdersShopping, settotalOrdersShopping] = useState(0);
+  const [folioNew,setFolioNew] = useState("");
+
+  const [productsData, setProducts] = useState({
+    results: [],
+    isFetching: false,
+    isError: false,
+    messageError: "",
+  });
+
+  const [isFetchingOrder, setIsFetchingOrder] = useState(false);
+
+  useEffect(() => {
+    let getDataOrder = async () => {
+      try {
+        setIsFetchingOrder(true);
+        const response = await ordersService.getOrder(orderSelected.id);
+        console.log("response.data", response.data?.oportunity);
+
+        setOrderSelectedData(response.data);
+        setIsFetchingOrder(false);
+      } catch (error) {
+        console.log(error);
+        setIsFetchingOrder(false);
+      }
+    };
+
+    if (orderSelected) {
+      getDataOrder();
+    }
+    generateFolioToOrder()
+  }, [orderSelected, flagToRefetch]);
+
+  useEffect(() => {
+    const getProductsOrder = async () => {
+      try {
+        setProducts(prev => ({ ...prev, isFetching: true }));
+
+        const resProducts = (await ordersService.getProductsOrder(orderSelectedData.oportunityId)).data?.results || [];
+
+        setProducts(prev => ({
+          ...prev,
+          results: resProducts.map(item => ordersService.normalizeProductsOportunities(item)),
+          isFetching: false,
+        }));
+      } catch (error) {
+        setProducts(prev => ({ ...prev, isFetching: false, isError: true, messageError: error.message }));
+        console.log(error);
+      }
+    };
+
+    if (orderSelectedData) {
+      getProductsOrder();
+    }
+  }, [orderSelected, orderSelectedData, flagToRefetch]);
+
+  useEffect(() => {
+    console.log("----------------------");
+    const getProductsByOrderCompras = async () => {
+      console.log(orderSelected);
+      try {
+        let params = {
+          where: {
+            orderId: orderSelected?.id,
+          },
+          count: 1,
+          limit: 0,
+        };
+        const response = (await api.get("pickuppurchaseorder", { params })).data;
+        settotalOrdersShopping(response.count || 0);
+        console.log(response);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    if (orderSelected) {
+      getProductsByOrderCompras();
+    }
+  }, [orderSelected, flagToRefetch]);
+
+  const getDataOrder = () => {
+    console.log("ssss----ssss");
+    setFlagToRefetch(!flagToRefetch);
+  };
+
+  const generateFolioToOrder = async() => {
+    try {
+      let response = await ordersService.getPurcharseOrdersByUser(id_user);
+      if(response.status == 200 || response.status == 201){
+        let total = response?.data?.count || 0;
+        let responseTotal = total < 9 ? "0"+(total+1) : total+1;
+        let folio = `${userData?.username}${"OR"}-${responseTotal}`;
+        setFolioNew(folio);
+      }
+    } catch (error) {
+      console.log(error), "error folio";
+    }
+
+  }
+
+  return {
+    orderSelectedData,
+    isFetchingOrder,
+    productsData,
+    totalOrdersShopping,
+    getDataOrder,
+    folioNew
+  };
+}

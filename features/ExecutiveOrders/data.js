@@ -1,0 +1,293 @@
+import { Assignment, AttachFile, Description, LocalGroceryStore, LocalShipping, Receipt } from "@material-ui/icons";
+
+export const filterSkeleton = [
+  {
+    label: "Fecha de Creacion",
+    value: "dates",
+    valuedb: "createdAt",
+    custom: true,
+    customOptions: [
+      {
+        id: "today",
+        name: "Hoy",
+        toChip: "Hoy",
+      },
+      {
+        id: "week",
+        name: "Semanal",
+        toChip: "Semanal",
+      },
+      {
+        id: "month",
+        name: "Mensual",
+        toChip: "Mensual",
+      },
+      {
+        id: "range",
+        name: "Rango de Fechas",
+        toChip: "Rango de Fechas",
+      },
+    ],
+  },
+];
+
+export const initialData = [
+  {
+    name: "CMMMAY246",
+    createdAt: "03 jun 2024",
+    prospectname: "Juan Perez",
+    status: "Aprobado",
+    classname: "tableRow--highlighted",
+  },
+];
+
+export let heads = [
+  {
+    headText: "Fecha",
+    headNormalize: "createdAt",
+    orderby: "-createdAt",
+  },
+  {
+    headText: "Folio",
+    headNormalize: "Folio",
+    orderby: "name",
+  },
+];
+
+export const documentsFiles = [
+  {
+    tipo: "Venta de contado",
+    documentos: [
+      "Comprobante de pago",
+      "Confirmación de pago por el área contable",
+      "Cotización firmada por el cliente",
+      "Formato de pedido",
+      "Solicitud de factura o carta rechazo de factura",
+    ],
+  },
+  {
+    tipo: "Venta contra entrega con pago de anticipo",
+    documentos: [
+      "Comprobante de pago de anticipo",
+      "Confirmación de pago por el área contable",
+      "Cotización firmada por el cliente de que paga a contra entrega",
+      "Formato de pedido",
+      "INE del cliente",
+      "Cédula profesional",
+      "Comprobante de domicilio vigente, no mayor a tres meses",
+      "Autorización de Dirección General para realizar esta venta",
+      "Forma de pago en la que va a liquidar (Transferencia, cheque certificado, efectivo, depósito, en especie, TPV, link de pago mediante Mercado Libre)",
+    ],
+  },
+  {
+    tipo: "Venta contra entrega sin pago de por medio",
+    documentos: [
+      "Cotización firmada por el cliente de que paga a contra entrega",
+      "Formato de pedido",
+      "INE del cliente",
+      "Cédula profesional",
+      "Comprobante de domicilio vigente, no mayor a tres meses",
+      "Autorización de Dirección General para realizar esta venta",
+      "Forma de pago en la que va a liquidar (Transferencia, cheque certificado, efectivo, depósito, en especie, TPV, link de pago, CLIP)",
+    ],
+  },
+  {
+    tipo: "Venta por financiamiento externo",
+    documentos: ["Carta de aceptación de financiamiento", "Carta de aceptación de crédito"],
+  },
+  {
+    tipo: "Venta por Vasa Financial",
+    documentos: [
+      "Solicitud de Crédito",
+      "INE del titular del crédito",
+      "Comprobante de domicilio",
+      "3 estados de cuenta bancarios",
+      "Comprobante de domicilio vigente",
+      "Cédula profesional",
+      "INE del aval",
+      "3 estados de cuenta del aval",
+      "Comprobante de domicilio del aval",
+      "Contrato y pagaré firmados",
+      "Cotización firmada",
+      "Formato de pedido",
+      "Pago de adelanto",
+      "Carta de aceptación de la financiera",
+    ],
+  },
+  {
+    tipo: "Venta por financiamiento interno",
+    documentos: [
+      "Autorización de Dirección General",
+      "INE del titular del crédito",
+      "Comprobante de domicilio",
+      "3 estados de cuenta bancarios",
+      "Comprobante de domicilio vigente",
+      "Cédula profesional",
+      "INE del aval",
+      "3 estados de cuenta del aval",
+      "Comprobante de domicilio del aval",
+      "Contrato y pagaré firmados",
+      "Cotización firmada",
+      "Formato de pedido",
+      "Pago de anticipo del 60%",
+      "Confirmación por parte de contabilidad",
+      "Carta de aceptación de la financiera",
+    ],
+  },
+  {
+    tipo: "Demostraciones",
+    documentos: [
+      "Formato de demostración de equipo",
+      "Cotización",
+      "Pago de viáticos si es fuera de la zona",
+      "Captura de pantalla de cotización de viáticos",
+      "Comprobante de domicilio",
+      "INE del titular",
+      "Cédula profesional",
+      "Autorización de Dirección General para cubrir los viáticos",
+    ],
+  },
+  {
+    tipo: "Demo-venta",
+    documentos: [
+      "Formato de demostración de equipo",
+      "Cotización firmada por el cliente",
+      "Certeza de venta",
+      "Forma de pago por parte del cliente (Transferencia, cheque certificado, efectivo, depósito, en especie, TPV, link de pago, CLIP)",
+      "Solicitud o rechazo de factura",
+      "Pago de viáticos si es fuera de la zona",
+      "Captura de pantalla de cotización de viáticos",
+      "Autorización de Dirección General",
+      "Comprobante de domicilio",
+      "INE del titular",
+      "Cédula profesional",
+    ],
+  },
+];
+
+export const salesTypes = {
+  "Venta de contado": [
+    { id: "gab42dpbQc8LKL6D7sqn3ufX", name: "Comprobante de pago" },
+    { id: "2qisdypH1Y69HW3JsLHPmsff", name: "Confirmación de pago por el área contable" },
+    { id: "MFHHlKIBAQ1g46eM5YeA9l4e", name: "Cotización firmada por el cliente" },
+    { id: "5K2Zr3CaYCENbZmI9CrTtBs4", name: "Formato de pedido" },
+    { id: "3ygdhwUHFSFEEK9a0jXxh8JB", name: "Solicitud de factura o carta rechazo de factura" },
+    { id: "wErcfRHaKXUihI5sl7dOdV9h", name: "Otros archivos" },
+  ],
+  "Venta contra entrega con pago de anticipo": [
+    { id: "vKnfdZ3yVPfTJ6543ZAjk3iW", name: "Comprobante de pago de anticipo" },
+    { id: "2qisdypH1Y69HW3JsLHPmsff", name: "Confirmación de pago por el área contable" },
+    { id: "HL5l788tcgrqcUXroyjOhKMH", name: "Cotización firmada por el cliente de que paga a contra entrega" },
+    { id: "5K2Zr3CaYCENbZmI9CrTtBs4", name: "Formato de pedido" },
+    { id: "u7xbkYaa9gla5ZWTjfQyZWMc", name: "INE del cliente" },
+    { id: "xIcCDMV4UDWBvUxinkI1TqAw", name: "Cédula profesional" },
+    { id: "dsPHpigzhyk61cOJpTm3zK4f", name: "Comprobante de domicilio vigente, no mayor a tres meses" },
+    { id: "GYUTBDvwbOn3l50Tl7sRhmDR", name: "Autorización de Dirección General para realizar esta venta" },
+    { id: "wErcfRHaKXUihI5sl7dOdV9h", name: "Otros archivos" },
+  ],
+  "Venta contra entrega sin pago de por medio": [
+    { id: "HL5l788tcgrqcUXroyjOhKMH", name: "Cotización firmada por el cliente de que paga a contra entrega" },
+    { id: "5K2Zr3CaYCENbZmI9CrTtBs4", name: "Formato de pedido" },
+    { id: "u7xbkYaa9gla5ZWTjfQyZWMc", name: "INE del cliente" },
+    { id: "xIcCDMV4UDWBvUxinkI1TqAw", name: "Cédula profesional" },
+    { id: "dsPHpigzhyk61cOJpTm3zK4f", name: "Comprobante de domicilio vigente, no mayor a tres meses" },
+    { id: "GYUTBDvwbOn3l50Tl7sRhmDR", name: "Autorización de Dirección General para realizar esta venta" },
+    { id: "wErcfRHaKXUihI5sl7dOdV9h", name: "Otros archivos" },
+  ],
+  "Venta por financiamiento externo": [
+    { id: "r2hXicFEpfLkMx4txVGMwHk9", name: "Carta de aceptación de financiamiento" },
+    { id: "rfFDvnnrhqttFd8QuGNOn34U", name: "Carta de aceptación de crédito" },
+    { id: "wErcfRHaKXUihI5sl7dOdV9h", name: "Otros archivos" },
+  ],
+  "Venta por Vasa Financial": [
+    { id: "rfFDvnnrhqttFd8QuGNOn34U", name: "Solicitud de Crédito" },
+    { id: "MqApTQm7IRBmsf8LnznIPrPm", name: "INE del titular del crédito" },
+    { id: "dsPHpigzhyk61cOJpTm3zK4f", name: "Comprobante de domicilio" },
+    { id: "iCXWcdUCfvfOJ5aXCsrqeAIi", name: "3 estados de cuenta bancarios" },
+    { id: "dsPHpigzhyk61cOJpTm3zK4f", name: "Comprobante de domicilio vigente" },
+    { id: "xIcCDMV4UDWBvUxinkI1TqAw", name: "Cédula profesional" },
+    { id: "pGXUdztnCR6Ue4XlHVeYrS92", name: "INE del aval" },
+    { id: "iCXWcdUCfvfOJ5aXCsrqeAIi", name: "3 estados de cuenta del aval" },
+    { id: "dsPHpigzhyk61cOJpTm3zK4f", name: "Comprobante de domicilio del aval" },
+    { id: "zLi8jDfweKeFNLHzllQWqt7V", name: "Contrato y pagaré firmados" },
+    { id: "MFHHlKIBAQ1g46eM5YeA9l4e", name: "Cotización firmada" },
+    { id: "5K2Zr3CaYCENbZmI9CrTtBs4", name: "Formato de pedido" },
+    { id: "vKnfdZ3yVPfTJ6543ZAjk3iW", name: "Pago de adelanto" },
+    { id: "r2hXicFEpfLkMx4txVGMwHk9", name: "Carta de aceptación de la financiera" },
+    { id: "wErcfRHaKXUihI5sl7dOdV9h", name: "Otros archivos" },
+  ],
+  "Venta por financiamiento interno": [
+    { id: "GYUTBDvwbOn3l50Tl7sRhmDR", name: "Autorización de Dirección General para realizar esta venta" },
+    { id: "MqApTQm7IRBmsf8LnznIPrPm", name: "INE del titular del crédito" },
+    { id: "dsPHpigzhyk61cOJpTm3zK4f", name: "Comprobante de domicilio vigente" },
+    { id: "iCXWcdUCfvfOJ5aXCsrqeAIi", name: "3 estados de cuenta bancarios" },
+    { id: "dsPHpigzhyk61cOJpTm3zK4f", name: "Comprobante de domicilio vigente" },
+    { id: "xIcCDMV4UDWBvUxinkI1TqAw", name: "Cédula profesional" },
+    { id: "pGXUdztnCR6Ue4XlHVeYrS92", name: "INE del aval" },
+    { id: "iCXWcdUCfvfOJ5aXCsrqeAIi", name: "3 estados de cuenta del aval" },
+    { id: "dsPHpigzhyk61cOJpTm3zK4f", name: "Comprobante de domicilio del aval" },
+    { id: "zLi8jDfweKeFNLHzllQWqt7V", name: "Contrato y pagaré firmados" },
+    { id: "MFHHlKIBAQ1g46eM5YeA9l4e", name: "Cotización firmada" },
+    { id: "5K2Zr3CaYCENbZmI9CrTtBs4", name: "Formato de pedido" },
+    { id: "vKnfdZ3yVPfTJ6543ZAjk3iW", name: "Pago de anticipo del 60%" },
+    { id: "2qisdypH1Y69HW3JsLHPmsff", name: "Confirmación de pago por el área contable" },
+    { id: "r2hXicFEpfLkMx4txVGMwHk9", name: "Carta de aceptación de la financiera" },
+    { id: "wErcfRHaKXUihI5sl7dOdV9h", name: "Otros archivos" },
+  ],
+  Demostraciones: [
+    { id: "r2hXicFEpfLkMx4txVGMwHk9", name: "Formato de demostración de equipo" },
+    { id: "MFHHlKIBAQ1g46eM5YeA9l4e", name: "Cotización" },
+    { id: "r2hXicFEpfLkMx4txVGMwHk9", name: "Pago de viáticos si es fuera de la zona" },
+    { id: "7ZGLFxpnvFxEx1LHiOZ1IWc9", name: "Captura de pantalla de cotización de viáticos" },
+    { id: "dsPHpigzhyk61cOJpTm3zK4f", name: "Comprobante de domicilio" },
+    { id: "u7xbkYaa9gla5ZWTjfQyZWMc", name: "INE del titular" },
+    { id: "xIcCDMV4UDWBvUxinkI1TqAw", name: "Cédula profesional" },
+    { id: "UxIzhPHbHZOfjyZS6jkNd48k", name: "Autorización de Dirección General para cubrir los viáticos" },
+    { id: "wErcfRHaKXUihI5sl7dOdV9h", name: "Otros archivos" },
+  ],
+  "Demo-venta": [
+    { id: "aAxqY77DbamWtWQ8Am9xbdfr", name: "Formato de demostración de equipo" },
+    { id: "HL5l788tcgrqcUXroyjOhKMH", name: "Cotización firmada por el cliente" },
+    { id: "SbUVg4I28KTP6T54iqDH9Jun", name: "Solicitud o rechazo de factura" },
+    { id: "aAxqY77DbamWtWQ8Am9xbgtf", name: "Pago de viáticos si es fuera de la zona" },
+    { id: "7ZGLFxpnvFxEx1LHiOZ1IWc9", name: "Captura de pantalla de cotización de viáticos" },
+    { id: "GYUTBDvwbOn3l50Tl7sRhmDR", name: "Autorización de Dirección General" },
+    { id: "dsPHpigzhyk61cOJpTm3zK4f", name: "Comprobante de domicilio" },
+    { id: "u7xbkYaa9gla5ZWTjfQyZWMc", name: "INE del titular" },
+    { id: "xIcCDMV4UDWBvUxinkI1TqAw", name: "Cédula profesional" },
+    { id: "wErcfRHaKXUihI5sl7dOdV9h", name: "Otros archivos" },
+  ],
+};
+
+export const tabsNewOrder = [
+  {
+    step: 0,
+    name: "Datos de Pedido",
+    icon: <Assignment />,
+  },
+  {
+    step: 1,
+    name: "Dirección de Envió",
+    icon: <LocalShipping />,
+  },
+  {
+    step: 2,
+    name: "Datos de Facturación",
+    icon: <Receipt />,
+  },
+  {
+    step: 3,
+    name: "Archivos de Pedido",
+    icon: <AttachFile />,
+  },
+  {
+    step: 4,
+    name: "Productos",
+    icon: <LocalGroceryStore />,
+  },
+  {
+    step: 5,
+    name: "Resumen de Pedido",
+    icon: <Description />,
+  },
+];

@@ -1,0 +1,59 @@
+[
+    {
+        "id": "yNEQUpBMXfWivD5PidobLqhs",
+        "name": "alexis",
+        "lastname": "arriaga",
+        "fullname": "alexis arriaga",
+        "email": "alexisarriaga@gmail.com",
+        "phone": "5525688573",
+        "optionalphone": "",
+        "password": "$2a$10$DhuAHzm696r66CarAHTbQ.yzaG8/LypxGRYcyWgPdNTiZNPTet4iK",
+        "isonline": false,
+        "photo": "",
+        "isactive": true,
+        "username": "ALXA",
+        "oportcount": 5,
+        "isverified": true,
+        "title": "ing.",
+        "createdAt": "2022-10-24T16:32:35.959Z",
+        "updatedAt": "2022-12-08T17:31:01.461Z",
+        "roleId": "62d94hH7xnfeqrfYLLDSKAtR",
+        "groupId": "62djqtmbXxhqx70ksMpspJ22",
+        "companyId": "62dz3qnimTqzfPfKpt7JtOtE",
+        "group": {
+            "id": "62djqtmbXxhqx70ksMpspJ22",
+            "name": "medical buy",
+            "bg": "",
+            "comission": null,
+            "audit": false,
+            "primarycolor": "#ff0000",
+            "secondarycolor": "#37ff00",
+            "logo": "O6vVoQBAOfXbPl7aqaVMsc56ufK2Rufb_mbpng",
+            "createdAt": "2022-08-17T21:40:45.805Z",
+            "updatedAt": "2022-10-19T17:26:14.372Z",
+            "companyId": "62dz3qnimTqzfPfKpt7JtOtE"
+        },
+        "amounts": [
+            {
+                "name": "Enero",
+                "order": 0,
+                "amount": "3000"
+            },
+            {
+                "name": "Febrero",
+                "order": 0,
+                "totalProspects": "0"
+            },
+            {
+                "name": "Marzo",
+                "order": 0,
+                "totalProspects": "0"
+            },
+            {
+                "name": "Abril",
+                "order": 0,
+                "totalProspects": "0"
+            },
+        ]
+    }
+]

@@ -1,0 +1,67 @@
+import { ORDERSTATUS } from "../../constants";
+
+export const getColorStatusOrder = status => {
+  switch (status) {
+    case ORDERSTATUS.pedidonuevo:
+      return {
+        bgColor: "rgba(48, 79, 254, 0.7)",
+        color: "#fff",
+      };
+
+    case ORDERSTATUS.revisado:
+      return {
+        bgColor: "rgba(103, 58, 183, 0.7)",
+        color: "#fff",
+      };
+
+    case ORDERSTATUS.surtir:
+      return {
+        bgColor: "rgba(255, 109, 0, 0.7)",
+        color: "#fff",
+      };
+
+    case ORDERSTATUS.surtido:
+      return {
+        bgColor: "#00e676",
+        color: "#fff",
+      };
+
+    case ORDERSTATUS.completado:
+      return {
+        bgColor: "#4CAF50",
+        color: "#fff",
+      };
+
+    case ORDERSTATUS.incompleto:
+      return {
+        bgColor: "#e53935 ",
+        color: "#fff",
+      };
+    case ORDERSTATUS.proceso:
+      return {
+        bgColor: "#d9c622",
+        color: "#fff",
+      };
+
+    case ORDERSTATUS.asignado:
+      return {
+        bgColor: "rgba(48, 79, 254, 0.7)",
+        color: "#fff",
+      };
+    case ORDERSTATUS.Na:
+      return {
+        bgColor: "#cdcdcd",
+        color: "#fff",
+      };
+
+    // case "Aprobado":
+    //   return "#EDF7ED";
+    // case "Rechazado":
+    //   return "red";
+    default:
+      return {
+        bgColor: "#ffff",
+        color: "#000",
+      };
+  }
+};

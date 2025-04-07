@@ -1,0 +1,42 @@
+.table {
+  border-spacing: 0px;
+  border-radius: 5px;
+  overflow: hidden;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.thead {
+  background-color: #405189;
+  padding: 8px;
+}
+
+.th {
+  padding: 5px 5px;
+  text-align: left;
+  color: #fff;
+  font-weight: bold;
+}
+
+.tbody {
+  background-color: #fff;
+}
+
+.tr {
+  transition: background-color 0.3s;
+}
+
+.tr:hover {
+  background-color: #f0f0f0;
+}
+
+.td {
+  padding: 5px;
+  color: #616161;
+  font-weight: bold;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.icon {
+  color: #405189;
+}

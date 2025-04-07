@@ -1,0 +1,126 @@
+/* Estilos para el Drawer */
+.drawerPaper {
+    width: calc(100% - 500px);
+    border-top-left-radius: 10px;
+  }
+  
+  @media (max-width: 600px) {
+    .drawerPaper {
+      width: calc(100% - 70px);
+      border-top-left-radius: 0px;
+      border-left: none;
+    }
+  }
+  
+  /* Contenedor principal del drawer */
+  .drawer {
+    display: flex;
+  }
+  
+  /* Contenido izquierdo */
+  .selection {
+    width: 20%;
+  }
+  
+  /* Contenedor de plantillas */
+  .drawerTemplates {
+    padding: 20px;
+    height: 100vh;
+    overflow-y: scroll;
+  }
+  
+  /* Título de la sección de plantillas */
+  .subtitle {
+    margin-top: 15px;
+  }
+  
+  /* Contenedor de cada plantilla */
+  .template {
+    display: flex;
+  }
+  
+  /* Estilo para cada tarjeta de plantilla */
+  .card {
+    transition: all 0.6s ease;
+    margin: 10px;
+  }
+  
+  /* Estilo cuando se selecciona una tarjeta */
+  .cardSelected {
+    border: 2px solid #103c82;
+  }
+  
+  /* Efectos al pasar el mouse sobre una tarjeta */
+  .card:hover {
+    cursor: pointer;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px,
+      rgba(0, 0, 0, 0.23) 0px 3px 6px;
+  }
+  
+  .card:hover img {
+    box-shadow: rgb(99 99 99 / 20%) 0px 2px 8px 0px;
+  }
+  
+  /* Contenedor de la vista previa */
+  .preview {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+  }
+  
+  /* Contenedor de la vista previa con contenido */
+  .previewContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+  }
+  
+  /* Estilo del encabezado del drawer */
+  .drawertop {
+    padding: 20px;
+    font-weight: bold;
+  }
+  
+  .drawertopTitle {
+    font-size: 21px;
+    font-weight: bold;
+    letter-spacing: 0.03em;
+    color: #103c82;
+  }
+  
+  /* Contenedor para la actualización de email */
+  .updateEmail {
+    background: #ededed;
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: center;
+  }
+  
+  .textMail {
+    margin-right: 11px;
+    font-weight: bold;
+    margin-top: 10px;
+  }
+  
+  /* Estilo para el input de actualización de email */
+  .updateEmail input {
+    background-clip: padding-box;
+    background-color: #fff;
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+    color: #495057;
+    display: block;
+    font-size: 0.8125rem;
+    font-weight: 400;
+    line-height: 1.5;
+    padding: 0.47rem 0.75rem;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    min-height: 38px;
+  }
+  

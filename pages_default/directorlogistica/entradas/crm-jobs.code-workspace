@@ -1,0 +1,12 @@
+{
+	"folders": [
+		{
+			"name": "crm-jobs",
+			"path": "../../.."
+		}
+	],
+	"settings": {
+		"workbench.colorCustomizations": {},
+		"peacock.color": "#1857a4"
+	}
+}
