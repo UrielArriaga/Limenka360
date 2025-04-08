@@ -1,25 +1,33 @@
-import { Tooltip } from "@material-ui/core";
-import { CalendarToday, Edit, WhatsApp } from "@material-ui/icons";
+import {
+  CalendarToday,
+  CheckCircle,
+  Edit,
+  Email,
+  History,
+  Phone,
+  Schedule,
+  WhatsApp,
+} from "@material-ui/icons";
 import React, { useState } from "react";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
-
+import { motion } from "framer-motion";
 const initialData = {
   columns: {
     // Columns is a object
     column1: {
       id: "column1",
       title: "Prospecto nuevo",
-      taskIds: ["task1", "task2"],
+      taskIds: ["task1"],
     },
     column2: {
       id: "column2",
       title: "Contactado",
-      taskIds: ["task3"],
+      taskIds: [],
     },
     column3: {
       id: "column3",
       title: "No Contactado",
-      taskIds: ["task3"],
+      taskIds: [],
     },
     column4: {
       id: "column4",
@@ -29,104 +37,51 @@ const initialData = {
   },
   tasks: {
     task1: {
-      id: "ioynubwNrd07TMyG2zsNk3Rs",
-      name: "adan",
-      fullname: "adan ",
-      email: "adan.23@gmail.com",
-      createdAt: "2023-06-08T15:41:39.397Z",
-      categoryId: "2JKxfDFZ52v7udBgYM77ZbyD",
-      clientTypeId: "Jdwfj45JM1gaV9UxrvcLt7Tm",
+      id: "wLfG8UIE0PPBmc4gJD3bourt",
+      concept: "UDIAM-133",
+      amount: 50849.76,
+      estimatedclossing: "2024-09-12T06:00:01.000Z",
+      createdAt: "2024-09-04T16:17:47.665Z",
+      phaseId: "62dAw9Xu3c6RraXx2xXMKetH",
+      prospectId: "by89HK4nR7bHp6JSwlG612qb",
       lastTracking: {
-        id: "JynMR8QyrGCa8wAJLTMXu45e",
+        id: "TLz4eglzdeA5IUTKsEA8cF2u",
         url: "",
-        type: 1,
-        reason: "Seguimiento automático",
-        status: 1,
-        orderId: null,
-        phaseId: "62dAw9Xu3c6RraXx2xXMKetH",
+        reason: "Seguimiento Automatico",
+        status: 5,
+        orderId: "wBeFvpWMnu0N5wchF7VoijMm",
+        phaseId: "qJzenUoCQ3amgoRZihcsHWus",
         actionId: "62hHzqoSCj0452fT1sUAEzba",
         certainty: null,
-        createdAt: "2025-03-05T19:46:38.281Z",
-        updatedAt: "2025-03-05T19:46:38.281Z",
-        prospectId: "ioynubwNrd07TMyG2zsNk3Rs",
-        createdbyId: "YNQHRt32OCbt0shXa0yOa51t",
-        observations: "La fase ha sido cambiada. Fase anterior: contactado",
-        oportunityId: null,
-        purchaseorderId: null,
+        createdAt: "2024-09-04T16:20:56.082Z",
+        updatedAt: "2024-09-04T16:20:56.082Z",
+        prospectId: "by89HK4nR7bHp6JSwlG612qb",
+        createdbyId: "RHraMOYQfACPNq8T1Bcqq6dA",
+        observations: "El Pedido UDIAMSEP2420 fue Aprobado.",
+        oportunityId: "wLfG8UIE0PPBmc4gJD3bourt",
       },
-      lastTrackingcreatedAt: "2025-03-05T19:46:38.281Z",
-      category: {
-        id: "2JKxfDFZ52v7udBgYM77ZbyD",
-        name: "SIN CATEGORIA",
-        system: true,
-        createdAt: "2023-05-19T18:18:16.545Z",
-        updatedAt: "2023-05-19T18:18:16.545Z",
-        companyId: "62dz3qnimTqzfPfKpt7JtOtE",
+      lastTrackingcreatedAt: "2024-09-04T16:20:56.082Z",
+      nextpendingat: null,
+      certainty: 60,
+      prospect: {
+        ejecutiveId: "YNQHRt32OCbt0shXa0yOa51t",
+        categoryId: null,
+        fullname: "dr starbucks ",
+        email: "drstarbucks@gmail.com",
+        createdAt: "2024-08-06T16:42:37.013Z",
+        clientTypeId: "62dSBtINiDWsqcUN8oQXSh82",
+        category: null,
+        clienttype: {
+          id: "62dSBtINiDWsqcUN8oQXSh82",
+          name: "Consultorio",
+        },
       },
-    },
-    task2: {
-      id: "xqIeb2Z8u1tEQPwueniMgsvZ",
-      name: "test",
-      fullname: "test test",
-      email: "andres_vasa2@gmail.com",
-      createdAt: "2025-01-20T19:20:40.755Z",
-      categoryId: null,
-      clientTypeId: "62dZ7raLRS7R3NhVjfPkSqJn",
-      lastTracking: {
-        id: "RqratoxaVGEvQp5Ph89QkDjJ",
-        url: "",
-        type: 1,
-        reason: "Seguimiento automático",
-        status: 1,
-        orderId: null,
-        phaseId: "62dAw9Xu3c6RraXx2xXMKetH",
-        actionId: "62hHzqoSCj0452fT1sUAEzba",
-        certainty: null,
-        createdAt: "2025-04-04T20:07:35.377Z",
-        updatedAt: "2025-04-04T20:07:35.377Z",
-        prospectId: "xqIeb2Z8u1tEQPwueniMgsvZ",
-        createdbyId: "YNQHRt32OCbt0shXa0yOa51t",
-        observations: "La fase ha sido cambiada. Fase anterior: No contactado",
-        oportunityId: null,
-        purchaseorderId: null,
-      },
-      lastTrackingcreatedAt: "2025-04-04T20:07:35.377Z",
-      category: null,
-    },
-    task3: {
-      id: "f7lzbEoDIsKqTOzapnOJRzwl",
-      name: "mc d",
-      fullname: "mc d ",
-      email: "uriel123@gmail.com",
-      createdAt: "2024-08-23T15:33:50.209Z",
-      categoryId: null,
-      clientTypeId: "Jdwfj45JM1gaV9UxrvcLt7Tm",
-      lastTracking: {
-        id: "ilNpzKfSkXawYRXRJqf6YJj1",
-        url: "",
-        type: 1,
-        reason: "Seguimiento automático",
-        status: 1,
-        orderId: null,
-        phaseId: "62dqqR1IIAB3T4SiVuZZSxQl",
-        actionId: "62hHzqoSCj0452fT1sUAEzba",
-        certainty: null,
-        createdAt: "2025-03-05T20:09:06.265Z",
-        updatedAt: "2025-03-05T20:09:06.265Z",
-        prospectId: "f7lzbEoDIsKqTOzapnOJRzwl",
-        createdbyId: "YNQHRt32OCbt0shXa0yOa51t",
-        observations: "La fase ha sido cambiada. Fase anterior: contactado",
-        oportunityId: null,
-        purchaseorderId: null,
-      },
-      lastTrackingcreatedAt: "2025-03-05T20:09:06.265Z",
-      category: null,
     },
   },
   columnOrder: ["column1", "column2", "column3", "column4"],
 };
 
-export default function ExecutivesProspectsV1() {
+export default function ExecutiveOportunitiesV1() {
   const [data, setData] = useState(initialData);
   const [prospectSelected, setProspectSelected] = useState(null);
   const [openPreview, setopenPreview] = useState(false);
@@ -243,7 +198,9 @@ export default function ExecutivesProspectsV1() {
 
   const onClickProspect = (item) => {
     setProspectSelected(item);
-    setOpenNewOportunity1(!openNewOportunity);
+    setopenPreview(!openPreview);
+
+    // setOpenNewOportunity1(!openNewOportunity);
     // setProspectSelected(item);
     // toogleModalPreview();
   };
@@ -367,7 +324,7 @@ function Column({ column, tasks, index, actions }) {
           style={{
             ...provided.draggableProps.style,
             margin: "0 8px",
-            width: 300,
+            width: 360,
           }}
         >
           <div
@@ -410,7 +367,7 @@ function Column({ column, tasks, index, actions }) {
   );
 }
 
-function Task({ task, index, actions }) {
+function Task({ task: prospect, index, actions }) {
   const cutString = (str = "", len = 40) => {
     if (str.length > len) {
       return str.substring(0, len) + "...";
@@ -419,34 +376,57 @@ function Task({ task, index, actions }) {
   };
 
   return (
-    <Draggable draggableId={task.id} index={index}>
+    <Draggable draggableId={prospect.id} index={index}>
       {(provided) => (
         <ItemProspect
-          onClick={() => actions.onClickProspect(task)}
+          onClick={() => actions.onClickProspect(prospect)}
           ref={provided.innerRef}
           {...provided.draggableProps}
           {...provided.dragHandleProps}
         >
           <div className="prospect-data">
             <div className="prospect-data__top">
-              <p className="fullname">{task.fullname}</p>
+              <h3 className="fullname">{prospect?.prospect.fullname}</h3>
+              <span
+                className="probability-badge"
+                certainty={prospect.certainty}
+              >
+                {prospect.certainty}% certeza
+              </span>
             </div>
 
             <div className="prospect-data__center">
-              <p className="client-type">Tipo de cliente : Doctor</p>
-
-              <p className="last-tracking">
-                {cutString(task?.lastTracking?.observations)} -{" "}
-                <span>{dayjs(task?.lastTrackingcreatedAt).fromNow()}</span>
-              </p>
-            </div>
-
-            <div className="prospect-data__bottom">
-              <div className="createdAt">
-                <CalendarToday />
-                <p>{dayjs(task?.createdAt).format("DD/MM/YYYY")}</p>
+              <div className="product-info">
+                <span className="product-label">Producto:</span>
+                <span className="product-value">{prospect.product}</span>
+              </div>
+              <div className="amount-info">
+                <span className="amount-label">Monto:</span>
+                <span className="amount-value">
+                  ${prospect.amount.toLocaleString()}
+                </span>
+              </div>
+              <div className="last-tracking">
+                Últ. seguimiento:{" "}
+                <span>
+                  {new Date(
+                    prospect.lastTracking.createdAt
+                  ).toLocaleDateString()}
+                </span>
               </div>
             </div>
+
+            {/* <div className="prospect-data__bottom">
+              <div className="createdAt">
+                <Schedule fontSize="small" />
+                {new Date(prospect.createdAt).toLocaleDateString()}
+              </div>
+              <div className="contact-methods">
+                <WhatsApp className="contact-icon whatsapp" />
+                <Phone className="contact-icon phone" />
+                <Email className="contact-icon email" />
+              </div>
+            </div> */}
           </div>
 
           <div className="prospect-actions">
@@ -461,24 +441,14 @@ function Task({ task, index, actions }) {
               <WhatsApp className="whats iconaction" />
             </Tooltip>
 
-            <Tooltip title="Editar" placement="top">
-              <Edit className="whats iconaction" />
+            <Tooltip title="Ver historial" arrow>
+              <History className="iconaction history" />
             </Tooltip>
-
-            <Tooltip
-              title="LIMIBOT"
-              placement="top"
-              onClick={(e) => {
-                e.stopPropagation();
-                actions.toogleLimiBotChat(task);
-              }}
-            >
-              {/* <Edit className="whats iconaction" /> */}
-
-              <img
-                style={{ width: 20, height: 20 }}
-                src="/LOGOLIMENKA360_NAVBAR_COLOR_small.png"
-              />
+            <Tooltip title="Agendar seguimiento" arrow>
+              <Schedule className="iconaction schedule" />
+            </Tooltip>
+            <Tooltip title="Marcar como cerrada" arrow>
+              <CheckCircle className="iconaction close-deal" />
             </Tooltip>
           </div>
         </ItemProspect>
@@ -494,6 +464,7 @@ import FilterProspects from "./components/FilterProspects";
 import dayjs from "dayjs";
 import LimiBotChatIA from "./components/LimiBotChatIA";
 import NewOportunity from "./components/NewOportunity";
+import { Tooltip } from "@material-ui/core";
 
 const DropContextStyled = styled.div`
   display: flex;
@@ -503,12 +474,15 @@ const DropContextStyled = styled.div`
 
 const ItemProspect = styled.div`
   position: relative;
-  border-radius: 6px;
-  padding: 10px;
+  border-radius: 8px;
+  padding: 15px;
   background-color: #fff;
-  min-height: 10px;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
   display: flex;
+  justify-content: space-between;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  border-left: 4px solid #39b8df;
+  transition: all 0.3s ease;
 
   .prospect-data {
     display: flex;
@@ -516,33 +490,68 @@ const ItemProspect = styled.div`
     justify-content: space-between;
     width: 100%;
     height: 100%;
+    gap: 12px;
 
     &__top {
       display: flex;
       justify-content: space-between;
-      align-items: center;
+      align-items: flex-start;
 
       .fullname {
         font-size: 16px;
         font-weight: 600;
-        color: #39b8df;
-        text-transform: capitalize;
+        color: #2a2f3a;
+        margin: 0;
+      }
+
+      .probability-badge {
+        font-size: 12px;
+        font-weight: 600;
+        padding: 4px 8px;
+        border-radius: 12px;
+        background-color: ${(props) => {
+          const certainty = props.certainty;
+          if (certainty >= 75) return "#4caf5050";
+          if (certainty >= 50) return "#ff980050";
+          return "#f4433650";
+        }};
+        color: ${(props) => {
+          const certainty = props.certainty;
+          if (certainty >= 75) return "#2e7d32";
+          if (certainty >= 50) return "#ff6d00";
+          return "#d32f2f";
+        }};
       }
     }
 
     &__center {
       display: flex;
       flex-direction: column;
-      gap: 2px;
+      gap: 6px;
 
-      .client-type {
-        font-size: 12px;
-        /* color: #bdbdbd; */
+      .product-info,
+      .amount-info {
+        display: flex;
+        gap: 8px;
+        font-size: 13px;
+
+        .product-label,
+        .amount-label {
+          color: #757575;
+          font-weight: 500;
+        }
+
+        .product-value,
+        .amount-value {
+          color: #2a2f3a;
+          font-weight: 600;
+        }
       }
 
       .last-tracking {
         font-size: 12px;
-        /* color: #bdbdbd; */
+        color: #757575;
+        margin-top: 4px;
 
         span {
           font-weight: 600;
@@ -553,21 +562,40 @@ const ItemProspect = styled.div`
 
     &__bottom {
       display: flex;
+      justify-content: space-between;
       align-items: center;
-      gap: 5px;
       font-size: 12px;
-      /* color: #bdbdbd; */
+      color: #9e9e9e;
 
       .createdAt {
         display: flex;
         align-items: center;
-        gap: 5px;
-        font-size: 12px;
-        /* color: #bdbdbd; */
+        gap: 4px;
+        font-size: 11px;
 
         svg {
-          font-size: 16px;
-          /* color: #bdbdbd; */
+          font-size: 14px;
+        }
+      }
+
+      .contact-methods {
+        display: flex;
+        gap: 8px;
+
+        .contact-icon {
+          font-size: 18px;
+          cursor: pointer;
+          transition: all 0.2s ease;
+
+          &.whatsapp:hover {
+            color: #25d366;
+          }
+          &.phone:hover {
+            color: #39b8df;
+          }
+          &.email:hover {
+            color: #d32f2f;
+          }
         }
       }
     }
@@ -575,29 +603,78 @@ const ItemProspect = styled.div`
 
   .prospect-actions {
     display: flex;
-    align-items: center;
     flex-direction: column;
-    gap: 10px;
-    /* margin-top: 8px; */
+    justify-content: center;
+    gap: 12px;
+    padding-left: 15px;
+    border-left: 1px solid #eee;
+    margin-left: 15px;
 
     .iconaction {
-      color: #bdbdbd;
-      font-size: 18px;
+      color: #9e9e9e;
+      font-size: 20px;
       cursor: pointer;
+      transition: all 0.2s ease;
 
-      &:hover {
+      &.history:hover {
+        color: #7b1fa2;
+      }
+      &.schedule:hover {
         color: #39b8df;
       }
-    }
-
-    .whats {
-      &:hover {
-        color: #25d366;
-        cursor: pointer;
+      &.close-deal:hover {
+        color: #4caf50;
       }
     }
   }
 `;
+
+// const Tooltip = ({ title, children, className }) => (
+//   <TooltipWrapper className={className}>
+//     {children}
+//     <TooltipText className="tooltip-text">{title}</TooltipText>
+//   </TooltipWrapper>
+// );
+
+// const TooltipWrapper = styled.div`
+//   position: relative;
+//   display: inline-block;
+
+//   &:hover .tooltip-text {
+//     visibility: visible;
+//     opacity: 1;
+//   }
+// `;
+
+// const TooltipText = styled.span`
+//   visibility: hidden;
+//   width: max-content;
+//   background-color: #2a2f3a;
+//   color: #fff;
+//   text-align: center;
+//   border-radius: 4px;
+//   padding: 4px 8px;
+//   position: absolute;
+//   z-index: 1;
+//   bottom: 125%;
+//   left: 50%;
+//   transform: translateX(-50%);
+//   opacity: 0;
+//   transition: opacity 0.3s;
+//   font-size: 12px;
+//   font-weight: normal;
+
+//   &::after {
+//     content: "";
+//     position: absolute;
+//     top: 100%;
+//     left: 50%;
+//     margin-left: -5px;
+//     border-width: 5px;
+//     border-style: solid;
+//     border-color: #2a2f3a transparent transparent transparent;
+//   }
+// `;
 
 // * DragDropContext
 /* 

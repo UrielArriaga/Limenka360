@@ -9,6 +9,7 @@ import {
   Settings,
   AccountCircle,
 } from "@material-ui/icons";
+import GoalsSection from "./NavBarGoals";
 
 export const NavbarLayout = ({ children }) => {
   return (
@@ -58,6 +59,46 @@ export const NavbarLayout = ({ children }) => {
           </div>
         </div>
       </Navbar>
+      {/* <GoalsSection
+        goals={[
+          {
+            id: 1,
+            title: "Ventas Mensuales",
+            current: 15000,
+            target: 25000,
+            chartData: [
+              { name: "Sem 1", value: 5000 },
+              { name: "Sem 2", value: 8000 },
+              { name: "Sem 3", value: 12000 },
+              { name: "Sem 4", value: 15000 },
+            ],
+          },
+          {
+            id: 2,
+            title: "Nuevos Clientes",
+            current: 15,
+            target: 20,
+            chartData: [
+              { name: "Sem 1", value: 3 },
+              { name: "Sem 2", value: 7 },
+              { name: "Sem 3", value: 12 },
+              { name: "Sem 4", value: 15 },
+            ],
+          },
+          {
+            id: 3,
+            title: "Llamadas Realizadas",
+            current: 100,
+            target: 150,
+            chartData: [
+              { name: "Dia 1", value: 20 },
+              { name: "Dia 3", value: 40 },
+              { name: "Dia 5", value: 70 },
+              { name: "Dia 7", value: 100 },
+            ],
+          },
+        ]}
+      /> */}
 
       <MainContent>{children}</MainContent>
     </NavbarWrapper>

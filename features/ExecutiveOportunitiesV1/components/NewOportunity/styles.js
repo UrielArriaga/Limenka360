@@ -1,7 +1,7 @@
 import { Drawer } from "@material-ui/core";
 import styled from "styled-components";
 
-export const ModalPreviewStyled = styled(Drawer)`
+export const NewOportunityStyled = styled(Drawer)`
   p {
     margin: 0;
   }
@@ -58,7 +58,7 @@ export const ModalPreviewStyled = styled(Drawer)`
       font-weight: 600;
       color: #282455;
       text-transform: capitalize;
-      letter-spacing: 5px;
+      /* letter-spacing: 5px; */
       span {
         color: #407aff;
       }
