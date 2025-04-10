@@ -1,15 +1,15 @@
 import axios from "axios";
-export const ISPRODUCTION = "false";
+export const ISPRODUCTION = "true";
 // export const REDIRECT_URL = process.env.REDIRECT_URL;
 
 export const URL =
   ISPRODUCTION === "true"
-    ? "https://serviceapi.limenka360.com/"
+    ? "https://crm-jobs-backend.onrender.com"
     : "http://localhost:5000/";
 
 export const URLSOCKET =
   ISPRODUCTION === "true"
-    ? "https://crmt.limenka360.com"
+    ? "https://crm-jobs-backend.onrender.com"
     : "https://apidev.limenka360.com/";
 
 export const PRODUCTIONMODE = ISPRODUCTION === "true" ? true : false;
@@ -17,10 +17,10 @@ export const URL_SPACE = ISPRODUCTION
   ? "https://limenka.sfo3.digitaloceanspaces.com/"
   : "https://crm-desarrollo.sfo3.digitaloceanspaces.com/";
 const url_files = ISPRODUCTION
-  ? "https://limenka.sfo3.digitaloceanspaces.com/"
+  ? "https://crm-desarrollo.sfo3.digitaloceanspaces.com/"
   : "https://crm-desarrollo.sfo3.digitaloceanspaces.com/";
 const url_filesCompanies = ISPRODUCTION
-  ? "https://limenka.sfo3.digitaloceanspaces.com/"
+  ? "https://crm-desarrollo.sfo3.digitaloceanspaces.com/"
   : "https://crm-desarrollo.sfo3.digitaloceanspaces.com/";
 
 const api = axios.create({
