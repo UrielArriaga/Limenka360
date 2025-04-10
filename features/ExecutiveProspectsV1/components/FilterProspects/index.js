@@ -1,7 +1,15 @@
-import { Add, ArrowDropDown } from "@material-ui/icons";
+import {
+  Add,
+  ArrowDropDown,
+  Dashboard,
+  TableChart,
+  ViewCarousel,
+  ViewList,
+} from "@material-ui/icons";
 import React, { useState, useRef, useEffect } from "react";
 import styled from "styled-components";
 import { motion, AnimatePresence } from "framer-motion";
+import { IconButton } from "@material-ui/core";
 
 export default function FilterProspects() {
   const [showOptions, setShowOptions] = useState(false);
@@ -48,12 +56,34 @@ export default function FilterProspects() {
       </div>
 
       <div className="viewtype">
+        <IconButton
+          style={{
+            borderRadius: 0,
+            background: "rgba(0, 123, 255, 0.04)",
+            color: "#007bff",
+          }}
+        >
+          <ViewCarousel />
+        </IconButton>
+
+        <IconButton
+          style={{
+            borderRadius: 0,
+          }}
+        >
+          <ViewList />
+        </IconButton>
+      </div>
+
+      {/* <div className="viewtype">
         <button
           className="dropdownBtn"
           onClick={() => setShowViewOptions(!showViewOptions)}
         >
           {viewType} <ArrowDropDown />
         </button>
+
+
 
         <AnimatePresence>
           {showViewOptions && (
@@ -79,7 +109,7 @@ export default function FilterProspects() {
             </motion.div>
           )}
         </AnimatePresence>
-      </div>
+      </div> */}
 
       <div className="orderby">
         <button

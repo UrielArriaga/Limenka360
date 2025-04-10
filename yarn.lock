@@ -1117,6 +1117,11 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
+"@opentelemetry/api@^0.19.0":
+  version "0.19.0"
+  resolved "https://registry.yarnpkg.com/@opentelemetry/api/-/api-0.19.0.tgz#d2997338c106ad8b00d4c9105fcbcadf1dac4ed5"
+  integrity sha512-v+6ZPQZMKKRVCwLMdjfkrUhBNIQMPrbyMo2R07LdLpCKmq3KlEeyua2LsI19WgTWIj9R9QgqfD8EcUgyxUiw+A==
+
 "@popperjs/core@^2.11.6", "@popperjs/core@^2.11.8":
   version "2.11.8"
   resolved "https://registry.yarnpkg.com/@popperjs/core/-/core-2.11.8.tgz#6b79032e760a0899cd4204710beede972a3a185f"

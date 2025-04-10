@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import { motion } from "framer-motion";
 import {
@@ -8,10 +8,23 @@ import {
   ShoppingCart,
   Settings,
   AccountCircle,
+  Flag,
 } from "@material-ui/icons";
+
+import { useRouter } from "next/router";
 import GoalsSection from "./NavBarGoals";
+import NavBarGoal from "./NavBarGoal";
 
 export const NavbarLayout = ({ children }) => {
+  const router = useRouter();
+
+  const [showGoal, setShowGoal] = useState(false);
+  const { pathname } = router;
+  const { version } = router.query;
+  const isDashboard = pathname.includes("dashboards");
+  const isProspects = pathname.includes("prospectos");
+  const isOpportunities = pathname.includes("oportunidades");
+
   return (
     <NavbarWrapper>
       <Navbar
@@ -28,15 +41,52 @@ export const NavbarLayout = ({ children }) => {
           />
         </div>
         <div className="center">
-          <div className="nav-item">
+          <div
+            className="nav-item"
+            onClick={() =>
+              router.push({
+                pathname: `/ejecutivo`,
+                query: { version },
+              })
+            }
+          >
+            <Dashboard />
+            <span>Inicio</span>
+          </div>
+
+          <div
+            className="nav-item"
+            onClick={() =>
+              router.push({
+                pathname: `/ejecutivo/dashboards/${version}`,
+                query: { version },
+              })
+            }
+          >
             <Dashboard />
             <span>Dashboard</span>
           </div>
-          <div className="nav-item">
+          <div
+            className="nav-item"
+            onClick={() =>
+              router.push({
+                pathname: `/ejecutivo/prospectos/${version}`,
+                query: { version },
+              })
+            }
+          >
             <People />
             <span>Prospectos</span>
           </div>
-          <div className="nav-item">
+          <div
+            className="nav-item"
+            onClick={() =>
+              router.push({
+                pathname: `/ejecutivo/oportunidades/${version}`,
+                query: { version },
+              })
+            }
+          >
             <Assignment />
             <span>Oportunidades</span>
           </div>
@@ -47,6 +97,11 @@ export const NavbarLayout = ({ children }) => {
           <div className="nav-item">
             <Settings />
             <span>Herramientas</span>
+          </div>
+
+          <div className="nav-item" onClick={() => setShowGoal(!showGoal)}>
+            <Flag />
+            <span>Mis metas</span>
           </div>
         </div>
         <div className="right">
@@ -59,6 +114,8 @@ export const NavbarLayout = ({ children }) => {
           </div>
         </div>
       </Navbar>
+
+      {showGoal && <NavBarGoal />}
       {/* <GoalsSection
         goals={[
           {
