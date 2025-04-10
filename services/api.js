@@ -5,7 +5,7 @@ export const ISPRODUCTION = "false";
 export const URL =
   ISPRODUCTION === "true"
     ? "https://serviceapi.limenka360.com/"
-    : "https://apidev.limenka360.com/";
+    : "http://localhost:5000/";
 
 export const URLSOCKET =
   ISPRODUCTION === "true"
