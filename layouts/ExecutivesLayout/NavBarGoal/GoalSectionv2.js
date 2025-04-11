@@ -8,7 +8,7 @@ import {
   AssignmentTurnedIn,
 } from "@material-ui/icons";
 
-const GoalsSection = () => {
+const GoalsSectionv2 = () => {
   const goals = [
     {
       id: 1,
@@ -85,7 +85,7 @@ const GoalsSection = () => {
   );
 };
 
-export default GoalsSection;
+export default GoalsSectionv2;
 
 // Estilos
 const GoalsContainer = styled.div`

@@ -225,7 +225,7 @@ const FilterProspectsStyled = styled.div`
 function ListDropdown() {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
-  const [selected, setSelected] = useState("All Deals");
+  const [selected, setSelected] = useState("Todas las oportunidades");
   const dropdownRef = useRef();
 
   const defaultLists = ["Solution Open Deals", "My All Deals"];

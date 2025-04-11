@@ -86,14 +86,29 @@ export default function Item({ task: prospect, index, actions }) {
               <Schedule className="iconaction schedule" />
             </Tooltip>
             <Tooltip
-              title="Marcar como cerrada"
+              title="Consultar con LimiBot"
               arrow
               onClick={(e) => {
                 e.stopPropagation();
                 actions.toogleLimiBotChat(prospect);
               }}
             >
-              <img src="/LOGOLIMENKA360_NAVBAR_COLOR_small.png" alt="check" />
+              <div className="lottie">
+                <Lottie
+                  // onClick={toggleChat}
+                  animationData={animation}
+                  loop={true}
+                  style={{
+                    width: "25px",
+                    height: "25px",
+                    right: "0",
+                    bottom: "0",
+                    // position: "absolute",
+                    // zIndex: 1000,
+                  }}
+                />
+              </div>
+              {/* <img src="/LOGOLIMENKA360_NAVBAR_COLOR_small.png" alt="check" /> */}
             </Tooltip>
           </div>
         </ItemProspect>
@@ -101,6 +116,24 @@ export default function Item({ task: prospect, index, actions }) {
     </Draggable>
   );
 }
+
+import Lottie from "lottie-react";
+
+import animation from "../../../../assets/Limi/animationbubletwo.json";
+// <Lottie
+//         onClick={toggleChat}
+//         className="lottie"
+//         animationData={animation}
+//         loop={true}
+//         style={{
+//           width: "100px",
+//           height: "100px",
+//           position: "absolute",
+//           bottom: "0",
+//           right: "0",
+//           zIndex: 1000,
+//         }}
+//       />
 
 const ItemProspect = styled.div`
   position: relative;
@@ -266,6 +299,14 @@ const ItemProspect = styled.div`
       &:hover {
         transform: scale(1.1);
       }
+    }
+  }
+
+  .lottie {
+    &:hover {
+      cursor: pointer;
+      transform: scale(1.5);
+      transition: transform 0.3s ease;
     }
   }
 `;

@@ -9,7 +9,7 @@ import {
   AssignmentTurnedIn,
 } from "@material-ui/icons";
 
-const GoalsSection = () => {
+const GoalsSectionv1 = ({ setShowGoal }) => {
   const goals = [
     {
       id: 1,
@@ -48,6 +48,12 @@ const GoalsSection = () => {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
     >
+      <GoalHeader>
+        <h2>Mis Metas</h2>
+
+        <button onClick={() => setShowGoal(false)}>Cerrar</button>
+      </GoalHeader>
+
       <GoalsGrid>
         {goals.map((goal) => {
           const progress = Math.min(
@@ -97,7 +103,7 @@ const GoalsSection = () => {
   );
 };
 
-export default GoalsSection;
+export default GoalsSectionv1;
 
 // Estilos
 const GoalsContainer = styled.div`
@@ -133,12 +139,33 @@ const GoalCard = styled(motion.div)`
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   }
 `;
-
 const GoalHeader = styled.div`
   display: flex;
+  justify-content: space-between;
   align-items: center;
   gap: 10px;
   margin-bottom: 15px;
+
+  h2 {
+    font-size: 18px;
+
+    font-weight: 600;
+    color: #fff;
+    margin: 0;
+  }
+
+  button {
+    background: none;
+    border: none;
+    color: #ff1744;
+    font-size: 14px;
+    cursor: pointer;
+    transition: color 0.3s ease;
+
+    &:hover {
+      color: #d50000;
+    }
+  }
 `;
 
 const GoalIcon = styled.div`

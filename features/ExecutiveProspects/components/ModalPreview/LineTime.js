@@ -1,23 +1,17 @@
-import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import Timeline from "@material-ui/lab/Timeline";
-import TimelineItem from "@material-ui/lab/TimelineItem";
-import TimelineSeparator from "@material-ui/lab/TimelineSeparator";
-import TimelineConnector from "@material-ui/lab/TimelineConnector";
-import TimelineContent from "@material-ui/lab/TimelineContent";
-import TimelineOppositeContent from "@material-ui/lab/TimelineOppositeContent";
-import TimelineDot from "@material-ui/lab/TimelineDot";
-import FastfoodIcon from "@material-ui/icons/Fastfood";
-import LaptopMacIcon from "@material-ui/icons/LaptopMac";
-import HotelIcon from "@material-ui/icons/Hotel";
-import RepeatIcon from "@material-ui/icons/Repeat";
-import Paper from "@material-ui/core/Paper";
-import Typography from "@material-ui/core/Typography";
+import {
+  Assignment,
+  Call,
+  Email,
+  Schedule,
+  WatchLater,
+  WhatsApp,
+} from "@material-ui/icons";
 import dayjs from "dayjs";
+import React from "react";
 import styled from "styled-components";
-import { LinearProgress } from "@material-ui/core";
-import { Assignment, Call, Email, RingVolume, Schedule, WatchLater, WhatsApp } from "@material-ui/icons";
-const useStyles = makeStyles(theme => ({
+
+const useStyles = makeStyles((theme) => ({
   paper: {
     padding: "6px 16px",
   },
@@ -72,7 +66,7 @@ const iconsActions = {
 export default function LineTime({ trackings = [], fetching }) {
   const classes = useStyles();
 
-  const formatDate = date => dayjs(date).format("MMMM D, YYYY");
+  const formatDate = (date) => dayjs(date).format("MMMM D, YYYY");
   return (
     <TimeLinePrewiewStyled>
       <div className="dividerchip">

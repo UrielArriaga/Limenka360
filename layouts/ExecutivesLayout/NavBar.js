@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import styled from "styled-components";
 import { motion } from "framer-motion";
 import {
@@ -9,22 +9,76 @@ import {
   Settings,
   AccountCircle,
   Flag,
+  KeyboardArrowDown,
+  KeyboardArrowUp,
 } from "@material-ui/icons";
 
 import { useRouter } from "next/router";
 import GoalsSection from "./NavBarGoals";
 import NavBarGoal from "./NavBarGoal";
 import { device } from "../../styles/global.styles";
+import { useSelector } from "react-redux";
+import { userSelector } from "../../redux/slices/userSlice";
+import ChatBotWidget from "../../componentx/LimiBot";
 
 export const NavbarLayout = ({ children }) => {
   const router = useRouter();
-
+  const { userData } = useSelector(userSelector);
   const [showGoal, setShowGoal] = useState(false);
+  const [showGoalsSubmenu, setShowGoalsSubmenu] = useState(false);
   const { pathname } = router;
-  const { version } = router.query;
-  const isDashboard = pathname.includes("dashboards");
-  const isProspects = pathname.includes("prospectos");
-  const isOpportunities = pathname.includes("oportunidades");
+  const { version = "v1" } = router.query;
+  const goalsRef = useRef(null);
+
+  // Estado para la meta seleccionada
+  const [selectedGoal, setSelectedGoal] = useState(null);
+
+  // Cerrar el submenú al hacer click fuera
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (goalsRef.current && !goalsRef.current.contains(event.target)) {
+        setShowGoalsSubmenu(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  const goals = [
+    {
+      id: 1,
+      title: "VISTA 1",
+      version: 1,
+    },
+    {
+      id: 2,
+      title: "VISTA 2",
+      version: 2,
+    },
+    {
+      id: 3,
+      title: "VISTA 3",
+      version: 3,
+    },
+    {
+      id: 3,
+      title: "VISTA 4",
+      version: 4,
+    },
+  ];
+
+  const handleGoalSelect = (goal) => {
+    setSelectedGoal(goal);
+    setShowGoal(true);
+    setShowGoalsSubmenu(false);
+  };
+
+  const toggleGoalsSubmenu = () => {
+    setShowGoalsSubmenu(!showGoalsSubmenu);
+  };
 
   return (
     <NavbarWrapper>
@@ -100,65 +154,62 @@ export const NavbarLayout = ({ children }) => {
             <span>Herramientas</span>
           </div>
 
-          <div className="nav-item" onClick={() => setShowGoal(!showGoal)}>
-            <Flag />
-            <span>Mis metas</span>
+          <div className="nav-item goals-item" ref={goalsRef}>
+            <div className="goals-main" onClick={toggleGoalsSubmenu}>
+              <Flag />
+              <span>Mis metas</span>
+              {showGoalsSubmenu ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
+            </div>
+
+            {showGoalsSubmenu && (
+              <GoalsSubmenu>
+                {goals.map((goal) => (
+                  <div
+                    key={goal.id}
+                    className="submenu-item"
+                    onClick={() => handleGoalSelect(goal)}
+                  >
+                    {goal.title}
+                  </div>
+                ))}
+                <div
+                  className="submenu-item all-goals"
+                  onClick={() => {
+                    setSelectedGoal(null);
+                    setShowGoal(true);
+                    setShowGoalsSubmenu(false);
+                  }}
+                >
+                  Ver todas las metas
+                </div>
+              </GoalsSubmenu>
+            )}
           </div>
         </div>
         <div className="right">
           <div className="user">
             <AccountCircle className="icon" />
             <div className="info">
-              <p>Nombre Apellido</p>
-              <p className="role">Gerente</p>
+              <p>{userData?.fullname}</p>
+              <p className="role">
+                {userData?.roleId}-{userData?.groupName}
+              </p>
             </div>
           </div>
         </div>
       </Navbar>
 
-      {showGoal && <NavBarGoal />}
-      {/* <GoalsSection
-        goals={[
-          {
-            id: 1,
-            title: "Ventas Mensuales",
-            current: 15000,
-            target: 25000,
-            chartData: [
-              { name: "Sem 1", value: 5000 },
-              { name: "Sem 2", value: 8000 },
-              { name: "Sem 3", value: 12000 },
-              { name: "Sem 4", value: 15000 },
-            ],
-          },
-          {
-            id: 2,
-            title: "Nuevos Clientes",
-            current: 15,
-            target: 20,
-            chartData: [
-              { name: "Sem 1", value: 3 },
-              { name: "Sem 2", value: 7 },
-              { name: "Sem 3", value: 12 },
-              { name: "Sem 4", value: 15 },
-            ],
-          },
-          {
-            id: 3,
-            title: "Llamadas Realizadas",
-            current: 100,
-            target: 150,
-            chartData: [
-              { name: "Dia 1", value: 20 },
-              { name: "Dia 3", value: 40 },
-              { name: "Dia 5", value: 70 },
-              { name: "Dia 7", value: 100 },
-            ],
-          },
-        ]}
-      /> */}
+      {showGoal && (
+        <NavBarGoal
+          setShowGoal={setShowGoal}
+          goalSelected={selectedGoal}
+          goals={selectedGoal ? [selectedGoal] : goals}
+        />
+      )}
 
       <MainContent>{children}</MainContent>
+
+      <ChatBotWidget />
     </NavbarWrapper>
   );
 };
@@ -167,6 +218,7 @@ const NavbarWrapper = styled.div`
   height: 100vh;
   display: flex;
   flex-direction: column;
+  position: relative;
 `;
 
 const Navbar = styled.div`
@@ -178,6 +230,8 @@ const Navbar = styled.div`
   align-items: center;
   justify-content: space-between;
   box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.2);
+  position: relative;
+  z-index: 100;
 
   .logo {
     height: 40px;
@@ -188,7 +242,7 @@ const Navbar = styled.div`
     gap: 10px;
 
     @media ${device.lg} {
-      gap: 30;
+      gap: 30px;
     }
 
     .nav-item {
@@ -200,6 +254,7 @@ const Navbar = styled.div`
       padding: 6px 12px;
       border-radius: 6px;
       transition: 0.3s ease;
+      position: relative;
 
       @media ${device.lg} {
         gap: 10px;
@@ -219,6 +274,21 @@ const Navbar = styled.div`
 
         @media ${device.lg} {
           font-size: 14px;
+        }
+      }
+
+      &.goals-item {
+        flex-direction: column;
+        align-items: stretch;
+
+        .goals-main {
+          display: flex;
+          align-items: center;
+          gap: 2px;
+
+          @media ${device.lg} {
+            gap: 10px;
+          }
         }
       }
     }
@@ -250,6 +320,39 @@ const Navbar = styled.div`
           color: #9aa5b1;
         }
       }
+    }
+  }
+`;
+
+const GoalsSubmenu = styled.div`
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: #2c3038;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  width: 200px;
+  z-index: 1000;
+  overflow: hidden;
+  margin-top: 5px;
+
+  .submenu-item {
+    padding: 10px 15px;
+    color: #b0bec5;
+    cursor: pointer;
+    font-size: 13px;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: #3a3f48;
+      color: #39b8df;
+    }
+
+    &.all-goals {
+      border-top: 1px solid #3a3f48;
+      background: rgba(57, 184, 223, 0.1);
+      color: #39b8df;
+      font-weight: 500;
     }
   }
 `;

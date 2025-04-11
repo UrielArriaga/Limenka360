@@ -8,6 +8,7 @@ import LimiBotChatIA from "./components/LimiBotChatIA";
 import NewOportunity from "./components/NewOportunity";
 import useMain from "./hooks/useMain";
 import { ExecutiveProspectsStyled } from "./styled";
+import ProspectCalendar from "./components/CalendarOportunities";
 
 export default function ExecutiveOportunitiesV1() {
   const { data, onDragEnd } = useMain();
@@ -35,6 +36,13 @@ export default function ExecutiveOportunitiesV1() {
   return (
     <ExecutiveProspectsStyled>
       <FilterProspects />
+
+      <ProspectCalendar
+        actions={{
+          onClickProspect,
+          toogleLimiBotChat,
+        }}
+      />
       <DragDropContext onDragEnd={onDragEnd}>
         <DropContextStyled>
           <Kanban

@@ -14,11 +14,75 @@ export default function ChatIA({ prospectSelected }) {
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
 
+  function prepareDataForAI(rawData) {
+    // Extraer solo los campos relevantes para el análisis
+    const relevantData = {
+      opportunity: {
+        amount: rawData.amount,
+        certainty: rawData.certainty,
+        estimatedClosing: rawData.estimatedclossing,
+        phase: rawData.phase.name,
+        observations: rawData.observations || rawData.generalobservations,
+      },
+      prospect: {
+        name: rawData.prospect.fullname,
+        clientType: rawData.prospect.clienttype?.name,
+        status: rawData.prospect.status,
+        totalSales: rawData.prospect.totalsales,
+      },
+      executive: {
+        name: rawData.prospect.ejecutive.fullname,
+        commissionRate: rawData.prospect.ejecutive.comission,
+      },
+      lastTracking: {
+        reason: rawData.lastTracking?.reason,
+        observations: rawData.lastTracking?.observations,
+      },
+    };
+
+    // Eliminar campos vacíos o nulos
+    return JSON.parse(
+      JSON.stringify(relevantData, (key, value) => {
+        return value === null || value === "" ? undefined : value;
+      })
+    );
+  }
+
+  function extractProspectEssentials(fullProspectData) {
+    const { prospect, opportunity, phase, lastTracking } = fullProspectData;
+
+    console.log(fullProspectData);
+
+    return {
+      // Datos básicos
+      name: prospect?.fullname || "Nombre no disponible",
+      contact: {
+        email: prospect?.email,
+        phone: prospect?.phone || prospect?.optionalphone,
+      },
+
+      // Información de oportunidad
+      opportunityValue: opportunity?.amount
+        ? `$${opportunity.amount.toLocaleString()}`
+        : "No especificado",
+      certainty: fullProspectData?.certainty
+        ? `${fullProspectData.certainty}%`
+        : null,
+      estimatedClosing: fullProspectData?.estimatedclossing || "No definida",
+
+      // Contexto comercial
+      clientType: prospect?.clienttype?.name || "Tipo de cliente no definido",
+      lastInteraction: lastTracking?.createdAt
+        ? new Date(lastTracking.createdAt).toLocaleDateString()
+        : "Sin registro",
+    };
+  }
+
   const fakeAIResponse = async (userMessage) => {
     try {
       let resp = await api.post("test", {
         message: userMessage,
-        prospectData: prospectSelected,
+        prospectData: extractProspectEssentials(prospectSelected),
       });
       return resp.data.message;
     } catch (error) {

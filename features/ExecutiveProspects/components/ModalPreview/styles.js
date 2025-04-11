@@ -44,13 +44,48 @@ export const ModalPreviewStyled = styled(Drawer)`
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    margin-bottom: 20px;
+    /* margin-bottom: 20px; */
 
     h1 {
       font-size: 1.5rem;
       font-weight: 600;
       color: #282455;
       text-transform: capitalize;
+    }
+  }
+
+  .headertabs {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 10px 0;
+    /* border-bottom: 1px solid #d9d9d9; */
+    /* background-color: #fff; */
+    /* background-color: red; */
+
+    .MuiTabs-flexContainer {
+      /* background-color: red; */
+      /* margin-bottom: 20px; */
+      /* margin-left: 20px; */
+      /* background-color: #fff; */
+      /* border-radius: 8px; */
+      /* padding: 10px; */
+      /* box-shadow: rgb(100 100 111 / 20%) 3px 4px 12px 0px; */
+    }
+
+    .MuiTabs-scroller {
+      padding: 0;
+    }
+
+    .MuiTabs-flexContainer {
+      /* padding: 20px; */
+    }
+
+    .MuiTab-root {
+      padding: 6px 12px; /* si quieres modificar el padding del tab individual */
+      min-width: unset;
+      margin-right: 20px;
     }
   }
 
