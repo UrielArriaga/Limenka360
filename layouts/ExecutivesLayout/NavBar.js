@@ -14,6 +14,7 @@ import {
 import { useRouter } from "next/router";
 import GoalsSection from "./NavBarGoals";
 import NavBarGoal from "./NavBarGoal";
+import { device } from "../../styles/global.styles";
 
 export const NavbarLayout = ({ children }) => {
   const router = useRouter();
@@ -184,17 +185,25 @@ const Navbar = styled.div`
 
   .center {
     display: flex;
-    gap: 30px;
+    gap: 10px;
+
+    @media ${device.lg} {
+      gap: 30;
+    }
 
     .nav-item {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 2px;
       color: #b0bec5;
       cursor: pointer;
       padding: 6px 12px;
       border-radius: 6px;
       transition: 0.3s ease;
+
+      @media ${device.lg} {
+        gap: 10px;
+      }
 
       &:hover {
         background-color: #2c3038;
@@ -206,7 +215,11 @@ const Navbar = styled.div`
       }
 
       span {
-        font-size: 14px;
+        font-size: 12px;
+
+        @media ${device.lg} {
+          font-size: 14px;
+        }
       }
     }
   }

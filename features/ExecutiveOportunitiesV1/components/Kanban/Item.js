@@ -85,8 +85,15 @@ export default function Item({ task: prospect, index, actions }) {
             <Tooltip title="Agendar seguimiento" arrow>
               <Schedule className="iconaction schedule" />
             </Tooltip>
-            <Tooltip title="Marcar como cerrada" arrow>
-              <CheckCircle className="iconaction close-deal" />
+            <Tooltip
+              title="Marcar como cerrada"
+              arrow
+              onClick={(e) => {
+                e.stopPropagation();
+                actions.toogleLimiBotChat(prospect);
+              }}
+            >
+              <img src="/LOGOLIMENKA360_NAVBAR_COLOR_small.png" alt="check" />
             </Tooltip>
           </div>
         </ItemProspect>
@@ -247,6 +254,17 @@ const ItemProspect = styled.div`
       }
       &.close-deal:hover {
         color: #4caf50;
+      }
+    }
+
+    img {
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+
+      &:hover {
+        transform: scale(1.1);
       }
     }
   }
