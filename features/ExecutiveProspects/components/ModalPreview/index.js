@@ -67,6 +67,8 @@ export default function ModalPreview({
             >
               <Tab label="Resumen" />
               <Tab label="Productos" />
+              <Tab label="Cotizacion PDF" />
+              <Tab label="Documentos" />
             </Tabs>
           </div>
 

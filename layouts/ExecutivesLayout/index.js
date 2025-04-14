@@ -4,6 +4,7 @@ import { SideBarWithNav } from "./SideBarWithNav";
 import { SidebarLayout } from "./SideBar";
 import { NavbarLayout } from "./NavBar";
 import { TestLayout } from "./Test";
+import Layoutversiontwo from "./Layoutversiontwo";
 
 export default function ExecutivesLayout({ type, children }) {
   switch (type) {
@@ -18,6 +19,9 @@ export default function ExecutivesLayout({ type, children }) {
 
     case "test":
       return <TestLayout>{children}</TestLayout>;
+
+    case "versiontwo":
+      return <Layoutversiontwo>{children}</Layoutversiontwo>;
     default:
       break;
   }

@@ -16,10 +16,20 @@ const DropContextStyled = styled.div`
 
   .kanban {
   }
+
+  .convertarea {
+    /* position: absolute; */
+    top: 10%;
+    right: 0;
+    width: 10%;
+    z-index: 10;
+    height: 100vh;
+  }
 `;
 
 export default function ExecutivesProspectsV1() {
-  const { data, showDragAreaOportunity, onDragEnd, onDragStart } = useMain();
+  const { data, showDragAreaOportunity, onDragEnd, onDragStart, modalActions } =
+    useMain();
   const [prospectSelected, setProspectSelected] = useState(null);
   const [openPreview, setopenPreview] = useState(false);
   const [openLimiBotChat, setOpenLimiBotChat] = useState(false);
@@ -28,7 +38,16 @@ export default function ExecutivesProspectsV1() {
 
   const onClickProspect = (item) => {
     setProspectSelected(item);
-    setOpenNewOportunity1(!openNewOportunity);
+    modalActions.handleToggleModal("preview");
+  };
+
+  const onClickNewOportunity = () => {
+    modalActions.handleToggleModal("newOportunity");
+  };
+
+  const onClickOpenPreview = (item) => {
+    setProspectSelected(item);
+    modalActions.handleToggleModal("preview");
   };
 
   const toogleModalPreview = () => {
@@ -60,9 +79,11 @@ export default function ExecutivesProspectsV1() {
     console.log("Eliminar fila:", row);
   };
 
+  const [viewType, setViewType] = useState("kanban");
+
   return (
     <ExecutiveProspectsStyled>
-      <FilterProspects />
+      <FilterProspects viewType={viewType} setViewType={setViewType} />
 
       {/* <TableProspects
         data={datos}
@@ -80,10 +101,26 @@ export default function ExecutivesProspectsV1() {
               actions={{
                 onClickProspect,
                 toogleLimiBotChat,
+                onClickNewOportunity,
               }}
             />
           </div>
-          {showDragAreaOportunity && <ConvertArea />}
+          {/* 
+          <Droppable droppableId="convert-zone" type="item">
+            {(provided, snapshot) => (
+              <div
+                ref={provided.innerRef}
+                {...provided.droppableProps}
+                style={{ height: 200, background: "lightblue", marginLeft: 20 }}
+              >
+                Drop here
+                {provided.placeholder}
+              </div>
+            )}
+          </Droppable> */}
+          {/* <div className="convertarea">
+            {showDragAreaOportunity && <ConvertArea />}
+          </div> */}
         </DropContextStyled>
       </DragDropContext>
 
@@ -91,8 +128,8 @@ export default function ExecutivesProspectsV1() {
         trackings={[]}
         pendingsData={[]}
         prospectSelected={prospectSelected}
-        open={openPreview}
-        toggleModal={toogleModalPreview}
+        open={modalActions.modalViews.preview}
+        toggleModal={() => modalActions.handleToggleModal("preview")}
       />
 
       <LimiBotChatIA
@@ -104,10 +141,8 @@ export default function ExecutivesProspectsV1() {
       />
 
       <NewOportunity
-        open={openNewOportunity}
-        toggleModal={() => {
-          setOpenNewOportunity1(!openNewOportunity);
-        }}
+        open={modalActions.modalViews.newOportunity}
+        toggleModal={() => modalActions.handleToggleModal("newOportunity")}
       />
     </ExecutiveProspectsStyled>
   );
@@ -115,7 +150,7 @@ export default function ExecutivesProspectsV1() {
 
 function ConvertArea() {
   return (
-    <Droppable droppableId="convert-zone" type="convert-zone">
+    <Droppable droppableId="convert-zone" type="item">
       {(provided, snapshot) => (
         <div
           ref={provided.innerRef}

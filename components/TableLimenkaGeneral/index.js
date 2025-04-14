@@ -33,7 +33,7 @@ export default function TableLimenkaGeneral({
   const { heads } = useTableGeneral(headsParam, customHeads);
   // const [selectedRows, setSelectedRows] = useState([]);
 
-  const isColumnMain = column => column === mainColumn && "tableHead--main";
+  const isColumnMain = (column) => column === mainColumn && "tableHead--main";
 
   return (
     <TableWrapper
@@ -47,15 +47,21 @@ export default function TableLimenkaGeneral({
         <div className="tableHeadSelectedRows">
           {isSelectable && (
             <p className="tableHeadSelectedRows__text">
-              {selectedRows.length > 1 ? "Seleccionados" : "Seleccionado"} ({selectedRows.length})
+              {selectedRows.length > 1 ? "Seleccionados" : "Seleccionado"} (
+              {selectedRows.length})
             </p>
           )}
 
           {actionsSelected.length > 0 && (
-            <div style={{ marginLeft: 20, display: "flex", alignItems: "center" }}>
+            <div
+              style={{ marginLeft: 20, display: "flex", alignItems: "center" }}
+            >
               {actionsSelected.map((action, index) => {
                 return (
-                  <Button onClick={() => action.action(selectedRows)} className="btnactonselected">
+                  <Button
+                    onClick={() => action.action(selectedRows)}
+                    className="btnactonselected"
+                  >
                     {action.name}
                   </Button>
                   // <IconButton onClick={() => action.action(selectedRows)}>{action.icon}</IconButton>
@@ -90,7 +96,7 @@ export default function TableLimenkaGeneral({
                 <input
                   type="checkbox"
                   style={{ marginLeft: 4 }}
-                  onChange={e => {
+                  onChange={(e) => {
                     if (e.target.checked) {
                       setSelectedRows(data);
                     } else {
@@ -109,24 +115,36 @@ export default function TableLimenkaGeneral({
                   ${orderBy && head?.orderby !== null && "tableHead--clickable"}
                   `}
                   onClick={() => {
-                    orderBy && head?.orderby != null && paginationData.handlePage(1);
+                    orderBy &&
+                      head?.orderby != null &&
+                      paginationData.handlePage(1);
                     if (head?.orderby != null)
                       setOrderBy &&
-                        setOrderBy(prev => (prev === head.orderby ? `${head.orderby.slice(1)}` : `${head.orderby}`));
+                        setOrderBy((prev) =>
+                          prev === head.orderby
+                            ? `${head.orderby.slice(1)}`
+                            : `${head.orderby}`
+                        );
                   }}
                   // style={{ width: head?.width ? head.width : styles.widthColumn }}
                 >
                   <div style={{ display: "flex" }}>
                     {head.headText}
-                    {orderBy && (orderBy === head.orderby || orderBy === head.orderby?.slice(1)) && (
-                      <div
-                        style={{
-                          marginLeft: 5,
-                        }}
-                      >
-                        {orderBy.includes("-") ? <span>↓</span> : <span>↑</span>}
-                      </div>
-                    )}
+                    {orderBy &&
+                      (orderBy === head.orderby ||
+                        orderBy === head.orderby?.slice(1)) && (
+                        <div
+                          style={{
+                            marginLeft: 5,
+                          }}
+                        >
+                          {orderBy.includes("-") ? (
+                            <span>↓</span>
+                          ) : (
+                            <span>↑</span>
+                          )}
+                        </div>
+                      )}
                   </div>
                 </th>
               );
@@ -136,7 +154,13 @@ export default function TableLimenkaGeneral({
           </tr>
         </thead>
 
-        {isLoading && <TableBodyLoader rowsLoader={rowsLoader} heads={heads} isSelectable={isSelectable} />}
+        {isLoading && (
+          <TableBodyLoader
+            rowsLoader={rowsLoader}
+            heads={heads}
+            isSelectable={isSelectable}
+          />
+        )}
 
         {!isLoading && (
           <tbody>
@@ -149,20 +173,29 @@ export default function TableLimenkaGeneral({
                 onClick={() => onRowClick && onRowClick(row)}
               >
                 {isSelectable && (
-                  <td className="tableData tableDataSelect" onClick={e => e.stopPropagation()}>
+                  <td
+                    className="tableData tableDataSelect"
+                    onClick={(e) => e.stopPropagation()}
+                  >
                     <div className="tableDataContainer">
                       <input
                         type="checkbox"
-                        checked={selectedRows.some((ce, index) => ce.id === row.id)}
-                        onChange={e => {
+                        checked={selectedRows.some(
+                          (ce, index) => ce.id === row.id
+                        )}
+                        onChange={(e) => {
                           e.stopPropagation();
                           if (e.target.checked) {
                             setSelectedRows([...selectedRows, row]);
                           } else {
-                            setSelectedRows(selectedRows.filter((ce, index) => ce.id !== row.id));
+                            setSelectedRows(
+                              selectedRows.filter(
+                                (ce, index) => ce.id !== row.id
+                              )
+                            );
                           }
                         }}
-                        onClick={event => {
+                        onClick={(event) => {
                           event.stopPropagation();
                         }}
                         // onChange={event => setSelectedRows([...selectedRows, row.id])}
@@ -173,7 +206,11 @@ export default function TableLimenkaGeneral({
                 )}
 
                 {heads?.map((headData, index) => {
-                  if (customColumns && (customColumns[headData.headText] || customColumns[headData.headNormalize])) {
+                  if (
+                    customColumns &&
+                    (customColumns[headData.headText] ||
+                      customColumns[headData.headNormalize])
+                  ) {
                     return (
                       <td className="tableData" key={index}>
                         <div className="tableDataContainer">
@@ -184,25 +221,35 @@ export default function TableLimenkaGeneral({
                                 index % 2 === 0,
                                 index === 0
                               )
-                            : customColumns[headData.headText].component(row, headData, index % 2 === 0, index === 0)}
+                            : customColumns[headData.headText].component(
+                                row,
+                                headData,
+                                index % 2 === 0,
+                                index === 0
+                              )}
                         </div>
                       </td>
                     );
                   }
 
                   if (
-                    (mainColumn === headData.headText || mainColumn === headData.headNormalize) &&
+                    (mainColumn === headData.headText ||
+                      mainColumn === headData.headNormalize) &&
                     (onRowMainColumnClick || onMouseEnter)
                   ) {
                     return (
                       <td
                         key={index}
                         className="tableDataId"
-                        onClick={() => onRowMainColumnClick && onRowMainColumnClick(row)}
+                        onClick={() =>
+                          onRowMainColumnClick && onRowMainColumnClick(row)
+                        }
                         onMouseEnter={() => onMouseEnter && onMouseEnter(row)}
                       >
                         <div className="tableDataContainer">
-                          {typeof headsParam[0] === "object" ? row[headData.headNormalize] : row[headData.headText]}
+                          {typeof headsParam[0] === "object"
+                            ? row[headData.headNormalize]
+                            : row[headData.headText]}
                         </div>
                       </td>
                     );
@@ -210,14 +257,27 @@ export default function TableLimenkaGeneral({
 
                   return (
                     <td className="tableData" key={index}>
-                      <div className={`tableDataContainer ${headData.iconComponent && "tableDataContainer--flex"}`}>
+                      <div
+                        className={`tableDataContainer ${
+                          headData.iconComponent && "tableDataContainer--flex"
+                        }`}
+                      >
                         {headData.iconComponent && (
-                          <div style={{ marginRight: "10px", color: styles.headerColor }}>{headData.iconComponent}</div>
+                          <div
+                            style={{
+                              marginRight: "10px",
+                              color: styles.headerColor,
+                            }}
+                          >
+                            {headData.iconComponent}
+                          </div>
                         )}
 
                         {/* if (customHeads || typeof headsParam[0] === "object") return setHeads(headsParam); */}
 
-                        {typeof headsParam[0] === "object" ? row[headData.headNormalize] : row[headData.headText]}
+                        {typeof headsParam[0] === "object"
+                          ? row[headData.headNormalize]
+                          : row[headData.headText]}
                         {/* {row[headData.headText]} */}
                       </div>
                     </td>
@@ -260,7 +320,8 @@ const useTableGeneral = (headsParam, customHeads) => {
   const [heads, setHeads] = useState([]);
 
   useEffect(() => {
-    if (customHeads || typeof headsParam[0] === "object") return setHeads(headsParam);
+    if (customHeads || typeof headsParam[0] === "object")
+      return setHeads(headsParam);
     let normalizedHeads = normalizeHeads(headsParam, "id");
     setHeads(normalizedHeads);
   }, [headsParam]);

@@ -9,9 +9,14 @@ import NewOportunity from "./components/NewOportunity";
 import useMain from "./hooks/useMain";
 import { ExecutiveProspectsStyled } from "./styled";
 import ProspectCalendar from "./components/CalendarOportunities";
+import TableOportunities from "./components/TableOportunities";
 
 export default function ExecutiveOportunitiesV1() {
-  const { data, onDragEnd } = useMain();
+  const [viewType, setViewType] = useState("kanban");
+
+  const { data, oportunitiesData, onDragEnd, modalActions } = useMain({
+    viewType,
+  });
 
   const [prospectSelected, setProspectSelected] = useState(null);
   const [openPreview, setopenPreview] = useState(false);
@@ -21,7 +26,7 @@ export default function ExecutiveOportunitiesV1() {
 
   const onClickProspect = (item) => {
     setProspectSelected(item);
-    setopenPreview(!openPreview);
+    modalActions.handleToggleModal("preview");
   };
 
   const toogleModalPreview = () => {
@@ -35,34 +40,83 @@ export default function ExecutiveOportunitiesV1() {
 
   return (
     <ExecutiveProspectsStyled>
-      <FilterProspects />
+      <FilterProspects viewType={viewType} setViewType={setViewType} />
 
-      <ProspectCalendar
-        actions={{
-          onClickProspect,
-          toogleLimiBotChat,
-        }}
-      />
-      <DragDropContext onDragEnd={onDragEnd}>
-        <DropContextStyled>
-          <Kanban
-            data={data}
-            actions={{
-              onClickProspect,
-              toogleLimiBotChat,
-            }}
-          />
+      {viewType === "calendar" && (
+        <ProspectCalendar
+          actions={{
+            onClickProspect,
+            toogleLimiBotChat,
+          }}
+        />
+      )}
 
-          {/* <ConvertArea /> */}
-        </DropContextStyled>
-      </DragDropContext>
+      {viewType === "table" && (
+        <TableOportunities
+          onRowClick={(e) => {
+            setProspectSelected(e);
+            modalActions.handleToggleModal("preview");
+          }}
+          heads={[
+            {
+              headText: "Folio",
+              headNormalize: "folio",
+              orderby: null,
+            },
+            {
+              headText: "Correo",
+              headNormalize: "email",
+              orderby: null,
+            },
+
+            {
+              headText: "Monto",
+              headNormalize: "monto",
+              orderby: null,
+            },
+            {
+              headText: "Nombre",
+              headNormalize: "fullname",
+              orderby: null,
+            },
+            {
+              headText: "Fecha de vencimiento",
+              headNormalize: "vencimiento",
+              orderby: "asc",
+            },
+
+            {
+              headText: "Siguiente contacto",
+              headNormalize: "vencimiento",
+              orderby: "asc",
+            },
+          ]}
+          data={oportunitiesData.results}
+        />
+      )}
+
+      {viewType === "kanban" && (
+        <DragDropContext onDragEnd={onDragEnd}>
+          <DropContextStyled>
+            <Kanban
+              data={data}
+              actions={{
+                onClickProspect,
+                toogleLimiBotChat,
+              }}
+            />
+
+            {/* <ConvertArea /> */}
+          </DropContextStyled>
+        </DragDropContext>
+      )}
 
       <ModalPreview
         trackings={[]}
         pendingsData={[]}
         prospectSelected={prospectSelected}
-        open={openPreview}
-        toggleModal={toogleModalPreview}
+        open={modalActions.modalViews.preview}
+        toggleModal={() => modalActions.handleToggleModal("preview")}
       />
 
       <LimiBotChatIA

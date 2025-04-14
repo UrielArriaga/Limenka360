@@ -1,7 +1,38 @@
 import React, { useEffect, useState } from "react";
 import { api } from "../../../services/api";
+import dayjs from "dayjs";
 
 class OportunitiesService {
+  async getOportunities({}) {
+    const params = {
+      order: "-createdAt",
+      attributes: {
+        prospect: [
+          "id",
+          "email",
+          "phone",
+          "viewed",
+          "totalTrackings",
+          "nextpendingat",
+          "fullname",
+          "ejecutiveId",
+        ],
+        productsoportunities: ["newprice"],
+        "productsoportunities.product": ["name"],
+        "productsoportunities.product.category": ["name"],
+      },
+      count: 1,
+      where: {},
+      include: "prospect,prospect.clienttype",
+      keys: "id,amount,certainty,concept,estimatedclossing,quoteurl,observations,nextpendingat",
+      join: "prospect,prospect.clienttyp",
+    };
+
+    return await api.get("playground/oportunities", {
+      params,
+    });
+  }
+
   async getOportunitiesByPhase({}) {
     let params = {
       limit: 5,
@@ -13,14 +44,55 @@ class OportunitiesService {
       params,
     });
   }
+
+  async getOportunitiesByPendings({}) {
+    let params = {
+      limit: 5,
+      order: "-createdAt",
+      where: {},
+      include:
+        "pendingstype,oportunity,oportunity.prospect,oportunity.prospect.entity",
+      join: "pendingstype,oportunity,oportunity.prospect,oportunity.prospect.entity",
+      attributes: [
+        {
+          "oportunity.prospect": ["name", "fullname"],
+          "oportunity.prospect.entity": ["name"],
+          oportunity: ["id", "quantity", "amount"],
+          pendingstype: ["name"],
+        },
+      ],
+      keys: "date_from,date_to,priority,status",
+    };
+    return await api.get("playground/pendingsasoportunities", {
+      params,
+    });
+  }
 }
 
-export default function useMain() {
+export default function useMain({ viewType = "kanban" }) {
   const service = new OportunitiesService();
+  const [modalViews, setModalViews] = useState({
+    preview: false,
+    limiBotChat: false,
+    newOportunity: false,
+  });
+
+  const handleToggleModal = (modalName) => {
+    setModalViews((prev) => ({
+      ...prev,
+      [modalName]: !prev[modalName],
+    }));
+  };
 
   const [data, setData] = useState({
     columns: {},
     columnOrder: [],
+    isFetching: false,
+  });
+
+  const [oportunitiesData, setOportunitiesData] = useState({
+    results: [],
+    count: 0,
     isFetching: false,
   });
 
@@ -46,8 +118,49 @@ export default function useMain() {
       }
     };
 
-    fetchData();
-  }, []);
+    const fetchDataByPendings = async () => {
+      setData((prev) => ({ ...prev, isFetching: true }));
+      try {
+        const response = await service.getOportunitiesByPendings({});
+
+        set;
+        console.log("Oportunity Data:", response.data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    const fetchOportunities = async () => {
+      try {
+        const reponse = await service.getOportunities({});
+        setOportunitiesData((prev) => ({
+          ...prev,
+          results: reponse.data?.results?.map((item, index) => {
+            return {
+              fullname: item?.prospect?.fullname,
+              email: item?.prospect?.email,
+              folio: item?.concept,
+              monto: item?.amount,
+              vencimiento: dayjs(item?.estimatedclossing).format("YYYY-MM-DD"),
+              ultimocontacto: item?.lasttracking,
+              siguientecontato: item?.nextpendingat,
+            };
+          }),
+          count: reponse.count,
+          isFetching: false,
+        }));
+      } catch (error) {}
+    };
+
+    console.log(viewType);
+    if (viewType === "table") {
+      fetchOportunities();
+    }
+
+    if (viewType === "kanban") {
+      fetchData();
+    }
+  }, [viewType]);
 
   const onDragEnd = (result) => {
     const { destination, source, draggableId, type } = result;
@@ -132,6 +245,11 @@ export default function useMain() {
 
   return {
     data,
+    oportunitiesData,
     onDragEnd,
+    modalActions: {
+      modalViews,
+      handleToggleModal,
+    },
   };
 }

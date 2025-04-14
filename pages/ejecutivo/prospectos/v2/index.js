@@ -1,5 +1,11 @@
 import React from "react";
+import ExecutiveProspectsVersion2 from "../../../../features/ExecutiveProspectsVersion2";
+import ExecutivesLayout from "../../../../layouts/ExecutivesLayout";
 
 export default function Prospectos() {
-  return <div>Prospectos</div>;
+  return (
+    <ExecutivesLayout type={"versiontwo"}>
+      <ExecutiveProspectsVersion2 />
+    </ExecutivesLayout>
+  );
 }
