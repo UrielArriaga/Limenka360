@@ -1,0 +1,41 @@
+{
+  "manifest_version": 3,
+  "name": "WhatsApp Etiquetador Simple",
+  "version": "1.0",
+  "description": "Filtra y etiqueta números en WhatsApp Web.",
+  "permissions": [
+    "storage",
+    "activeTab",
+    "scripting"
+  ],
+  "host_permissions": [
+    "https://example.com/*"
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "drawer.html",
+        "drawer.css",
+        "drawer.js"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": "logowhite.png"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://example.com/*"
+      ],
+      "js": [
+        "content.js"
+      ],
+      "run_at": "document_end"
+    }
+  ]
+}
