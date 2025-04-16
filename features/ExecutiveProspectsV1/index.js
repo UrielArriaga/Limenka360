@@ -18,7 +18,6 @@ const DropContextStyled = styled.div`
   }
 
   .convertarea {
-    /* position: absolute; */
     top: 10%;
     right: 0;
     width: 10%;
@@ -36,9 +35,45 @@ export default function ExecutivesProspectsV1() {
   const [openNewOportunity, setOpenNewOportunity1] = useState(false);
   const [showArea, setShowArea] = useState(false);
 
+  let whatsappWindow = null;
+
   const onClickProspect = (item) => {
-    setProspectSelected(item);
-    modalActions.handleToggleModal("preview");
+    // const url = `https://web.whatsapp.com/send?phone=52${"5525688573"}&text=${encodeURIComponent(
+    //   "hola"
+    // )}`;
+
+    // if (sessionStorage.getItem("whatsappOpen") === "true") {
+    //   alert("Ya tienes una ventana de WhatsApp abierta.");
+    //   return;
+    // }
+
+    // const newWindow = window.open(url, "_blank");
+
+    // if (newWindow) {
+    //   sessionStorage.setItem("whatsappOpen", "true");
+
+    //   newWindow.onbeforeunload = () => {
+    //     sessionStorage.removeItem("whatsappOpen");
+    //   };
+    // }
+
+    const url = `https://web.whatsapp.com/send?phone=52${"5525688573"}&text=${encodeURIComponent(
+      "hola"
+    )}`;
+    // Verificar si ya hay una ventana abierta y no está cerrada
+    if (whatsappWindow && !whatsappWindow.closed) {
+      // Intentar actualizar la URL y enfocar
+      try {
+        whatsappWindow.location.href = url;
+        whatsappWindow.focus();
+      } catch (e) {
+        // Si falla (por políticas de seguridad), abrir una nueva
+        whatsappWindow = window.open(url, "whatsapp_web");
+      }
+    } else {
+      // Si no hay ventana abierta, crear una nueva
+      whatsappWindow = whatsappWindow = window.open(url, "whatsapp_web");
+    }
   };
 
   const onClickNewOportunity = () => {

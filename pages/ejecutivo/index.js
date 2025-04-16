@@ -28,14 +28,20 @@ const VERSIONTWO = [
   {
     name: "DASHBOARD",
     img: "https://crm-desarrollo.sfo3.digitaloceanspaces.com/limenka360/dashboarv1.jpg",
+    route: "/ejecutivo/dashboards/v2",
+    version: "v2",
   },
   {
     name: "PROSPECTOS",
     img: "https://crm-desarrollo.sfo3.digitaloceanspaces.com/limenka360/prospectosv1.jpg",
+    route: "/ejecutivo/prospectos/v2",
+    version: "v2",
   },
   {
     name: "OPORTUNIDADES",
     img: "https://crm-desarrollo.sfo3.digitaloceanspaces.com/limenka360/oportunidadesv1.jpg",
+    route: "/ejecutivo/oportunidades/v2",
+    version: "v2",
   },
 ];
 
@@ -75,8 +81,16 @@ export default function VersionesDemo() {
 
         <h4 className="title">Segunda Version</h4>
         <Grid>
-          {VERSIONONE.map((demo, i) => (
-            <Card key={i}>
+          {VERSIONTWO.map((demo, i) => (
+            <Card
+              key={i}
+              onClick={() =>
+                router.push({
+                  pathname: demo.route,
+                  query: { version: demo.version },
+                })
+              }
+            >
               <img src={demo.img} alt={demo.name} />
               <h3>{demo.name}</h3>
             </Card>

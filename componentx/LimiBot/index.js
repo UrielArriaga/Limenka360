@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import styled from "styled-components";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   Send,
   Close,
@@ -9,12 +10,11 @@ import {
 } from "@material-ui/icons";
 import { IconButton, TextField } from "@material-ui/core";
 import Lottie from "lottie-react";
-
-import animation from "../../assets/Limi/animationbubletwo.json";
+import animation from "../../assets/Limi/bot.json";
 
 const ChatBot = ({
   apiUrl,
-  initialMessage = "¡Hola! Soy tu asistente virtual. ¿En qué puedo ayudarte hoy?",
+  initialMessage = "¡Hola! Soy limiBot tu asistente de ia. ¿En qué puedo ayudarte hoy?",
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
@@ -27,7 +27,7 @@ const ChatBot = ({
 
   const toggleChat = () => {
     setIsOpen(!isOpen);
-    setIsMinimized(false);
+    if (!isOpen) setIsMinimized(false);
   };
 
   const toggleMinimize = () => {
@@ -37,14 +37,12 @@ const ChatBot = ({
   const handleSendMessage = async () => {
     if (!inputValue.trim()) return;
 
-    // Agregar mensaje del usuario
     const userMessage = { text: inputValue, sender: "user" };
     setMessages((prev) => [...prev, userMessage]);
     setInputValue("");
     setIsLoading(true);
 
     try {
-      // Simular llamada a la API de IA (reemplazar con tu implementación real)
       const response = await fetch(apiUrl, {
         method: "POST",
         headers: {
@@ -54,8 +52,6 @@ const ChatBot = ({
       });
 
       const data = await response.json();
-
-      // Agregar respuesta del bot
       setMessages((prev) => [...prev, { text: data.reply, sender: "bot" }]);
     } catch (error) {
       console.error("Error al conectar con la IA:", error);
@@ -78,137 +74,193 @@ const ChatBot = ({
     }
   };
 
-  // Auto-scroll al final de los mensajes
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
+  // Variantes de animación
+  const chatWindowVariants = {
+    open: {
+      height: 500,
+      opacity: 1,
+      transition: {
+        type: "spring",
+        damping: 25,
+        stiffness: 300,
+      },
+    },
+    minimized: {
+      height: 60,
+      opacity: 1,
+      transition: {
+        type: "spring",
+        damping: 25,
+        stiffness: 300,
+      },
+    },
+    closed: {
+      height: 0,
+      opacity: 0,
+      transition: {
+        duration: 0.3,
+        ease: "easeInOut",
+      },
+    },
+  };
+
+  const lottieVariants = {
+    visible: {
+      scale: 1,
+      opacity: 1,
+      transition: {
+        type: "spring",
+        stiffness: 200,
+        damping: 10,
+      },
+    },
+    hidden: {
+      scale: 0.5,
+      opacity: 0,
+      transition: {
+        duration: 0.2,
+      },
+    },
+    hover: {
+      scale: 1.2,
+      transition: {
+        type: "spring",
+        stiffness: 400,
+        damping: 10,
+      },
+    },
+  };
+
   return (
     <ChatContainer>
-      {isOpen && (
-        <ChatWindow isMinimized={isMinimized}>
-          <ChatHeader>
-            <h3>Asistente Virtual</h3>
-            <div>
-              <IconButton size="small" onClick={toggleMinimize}>
-                {isMinimized ? <ExpandMore /> : <ExpandLess />}
-              </IconButton>
-              <IconButton size="small" onClick={toggleChat}>
-                <Close />
-              </IconButton>
-            </div>
-          </ChatHeader>
+      <AnimatePresence>
+        {isOpen ? (
+          <ChatWindow
+            key="chat-window"
+            variants={chatWindowVariants}
+            initial="closed"
+            animate={isMinimized ? "minimized" : "open"}
+            exit="closed"
+          >
+            <ChatHeader>
+              <h3>LimiBot</h3>
+              <div>
+                <IconButton size="small" onClick={toggleMinimize}>
+                  {isMinimized ? <ExpandMore /> : <ExpandLess />}
+                </IconButton>
+                <IconButton size="small" onClick={toggleChat}>
+                  <Close />
+                </IconButton>
+              </div>
+            </ChatHeader>
 
-          {!isMinimized && (
-            <>
-              <ChatMessages>
-                {messages.map((message, index) => (
-                  <Message key={index} sender={message.sender}>
-                    {message.text}
-                  </Message>
-                ))}
-                {isLoading && (
-                  <Message sender="bot">
-                    <TypingIndicator>Escribiendo...</TypingIndicator>
-                  </Message>
-                )}
-                <div ref={messagesEndRef} />
-              </ChatMessages>
+            {!isMinimized && (
+              <>
+                <ChatMessages>
+                  {messages.map((message, index) => (
+                    <Message
+                      key={index}
+                      sender={message.sender}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      {message.text}
+                    </Message>
+                  ))}
+                  {isLoading && (
+                    <Message sender="bot">
+                      <TypingIndicator>Escribiendo...</TypingIndicator>
+                    </Message>
+                  )}
+                  <div ref={messagesEndRef} />
+                </ChatMessages>
 
-              <ChatInput>
-                <TextField
-                  fullWidth
-                  variant="outlined"
-                  size="small"
-                  placeholder="Escribe tu mensaje..."
-                  value={inputValue}
-                  onChange={(e) => setInputValue(e.target.value)}
-                  onKeyPress={handleKeyPress}
-                  disabled={isLoading}
-                />
-                <SendButton
-                  onClick={handleSendMessage}
-                  disabled={isLoading || !inputValue.trim()}
+                <ChatInput
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.1 }}
                 >
-                  <Send />
-                </SendButton>
-              </ChatInput>
-            </>
-          )}
-        </ChatWindow>
-      )}
-
-      {!isOpen && (
-        <Lottie
-          onClick={toggleChat}
-          className="lottie"
-          animationData={animation}
-          loop={true}
-          style={{
-            width: "100px",
-            height: "100px",
-            position: "absolute",
-            bottom: "0",
-            right: "0",
-            zIndex: 1000,
-          }}
-        />
-      )}
+                  <TextField
+                    fullWidth
+                    variant="outlined"
+                    size="small"
+                    placeholder="Escribe tu mensaje..."
+                    value={inputValue}
+                    onChange={(e) => setInputValue(e.target.value)}
+                    onKeyPress={handleKeyPress}
+                    disabled={isLoading}
+                  />
+                  <SendButton
+                    onClick={handleSendMessage}
+                    disabled={isLoading || !inputValue.trim()}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <Send />
+                  </SendButton>
+                </ChatInput>
+              </>
+            )}
+          </ChatWindow>
+        ) : (
+          <motion.div
+            key="lottie-button"
+            variants={lottieVariants}
+            initial="hidden"
+            animate="visible"
+            exit="hidden"
+            whileHover="hover"
+            onClick={toggleChat}
+            style={{
+              position: "absolute",
+              bottom: 0,
+              right: 0,
+              zIndex: 1000,
+              cursor: "pointer",
+            }}
+          >
+            <Lottie
+              className="lottie"
+              animationData={animation}
+              loop={true}
+              style={{
+                width: "200px",
+                height: "200px",
+              }}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
     </ChatContainer>
   );
 };
 
-// Estilos
+// Estilos actualizados para trabajar con Framer Motion
 const ChatContainer = styled.div`
   position: fixed;
   bottom: 20px;
   right: 20px;
   z-index: 1000;
-
-  .lottie {
-    &:hover {
-      cursor: pointer;
-      transform: scale(1.5);
-      transition: transform 0.3s ease;
-    }
-  }
-`;
-
-const ChatButton = styled.button`
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  background-color: ${({ isOpen }) => (isOpen ? "#ff3d00" : "#3f51b5")};
-  color: white;
-  border: none;
-  cursor: pointer;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.3s ease;
-
-  &:hover {
-    transform: scale(1.1);
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
-  }
-
-  svg {
-    font-size: 24px;
-  }
+  flex-direction: column-reverse;
+  align-items: flex-end;
 `;
 
-const ChatWindow = styled.div`
-  width: 350px;
-  height: ${({ isMinimized }) => (isMinimized ? "60px" : "500px")};
+const ChatWindow = styled(motion.div)`
+  width: 450px;
   background-color: white;
   border-radius: 12px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  transition: height 0.3s ease;
   margin-bottom: 15px;
+  will-change: transform, height;
 `;
 
 const ChatHeader = styled.div`
@@ -218,13 +270,11 @@ const ChatHeader = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-
   h3 {
     margin: 0;
     font-size: 16px;
     font-weight: 500;
   }
-
   button {
     color: white;
     padding: 4px;
@@ -238,14 +288,13 @@ const ChatMessages = styled.div`
   background-color: #f5f5f5;
 `;
 
-const Message = styled.div`
+const Message = styled(motion.div)`
   max-width: 80%;
   margin-bottom: 12px;
   padding: 10px 14px;
   border-radius: 18px;
   word-wrap: break-word;
   line-height: 1.4;
-
   ${({ sender }) =>
     sender === "user"
       ? `
@@ -272,7 +321,6 @@ const TypingIndicator = styled.div`
     overflow: hidden;
     vertical-align: bottom;
   }
-
   @keyframes typing {
     0% {
       content: ".";
@@ -286,7 +334,7 @@ const TypingIndicator = styled.div`
   }
 `;
 
-const ChatInput = styled.div`
+const ChatInput = styled(motion.div)`
   display: flex;
   padding: 12px;
   background-color: white;
@@ -295,7 +343,7 @@ const ChatInput = styled.div`
   gap: 8px;
 `;
 
-const SendButton = styled.button`
+const SendButton = styled(motion.button)`
   background: none;
   border: none;
   color: #3f51b5;
@@ -303,11 +351,9 @@ const SendButton = styled.button`
   padding: 8px;
   border-radius: 50%;
   transition: background-color 0.2s;
-
   &:hover {
     background-color: rgba(63, 81, 181, 0.1);
   }
-
   &:disabled {
     color: #b0bec5;
     cursor: not-allowed;
