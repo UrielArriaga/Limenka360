@@ -11,6 +11,7 @@ import {
   Flag,
   KeyboardArrowDown,
   KeyboardArrowUp,
+  CalendarToday,
 } from "@material-ui/icons";
 
 import { useRouter } from "next/router";
@@ -121,6 +122,20 @@ export const NavbarLayout = ({ children }) => {
             <Dashboard />
             <span>Dashboard</span>
           </div>
+
+          <div
+            className="nav-item"
+            onClick={() =>
+              router.push({
+                pathname: `/ejecutivo/calendario`,
+                query: { version },
+              })
+            }
+          >
+            <CalendarToday />
+            <span>Calendario</span>
+          </div>
+
           <div
             className="nav-item"
             onClick={() =>

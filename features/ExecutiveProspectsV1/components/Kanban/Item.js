@@ -80,8 +80,8 @@ export default function Item({ task: prospect, index, actions }) {
               onClick={(e) => {
                 console.log("adssa");
                 actions.onClickNewOportunity(prospect);
-                return;
                 e.stopPropagation();
+                return;
               }}
             >
               <AttachMoney className="iconaction history" />

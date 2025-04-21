@@ -38,6 +38,10 @@ export default function ExecutivesProspectsV1() {
   let whatsappWindow = null;
 
   const onClickProspect = (item) => {
+    setProspectSelected(item);
+    modalActions.handleToggleModal("preview");
+
+    return;
     // const url = `https://web.whatsapp.com/send?phone=52${"5525688573"}&text=${encodeURIComponent(
     //   "hola"
     // )}`;

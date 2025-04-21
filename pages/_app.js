@@ -18,6 +18,7 @@ import { MuiPickersUtilsProvider } from "@material-ui/pickers";
 import MomentUtils from "@date-io/moment";
 import { CommonFiltersProvider } from "../context/commonFiltersContext";
 import "regenerator-runtime/runtime";
+import { PendingsProvider } from "../features/CalendarPendings/context/contextPendings";
 
 function MyApp({ Component, pageProps }) {
   const progress = new ProgressBar({
@@ -43,25 +44,27 @@ function MyApp({ Component, pageProps }) {
     <Provider store={store}>
       <MuiPickersUtilsProvider locale={"es-mx"} utils={MomentUtils}>
         <CommonFiltersProvider>
-          <SocketProvider>
-            <Wrapper>
-              <motion.div
-                initial="initial"
-                animate="animate"
-                variants={{
-                  initial: {
-                    opacity: 0,
-                  },
-                  animate: {
-                    opacity: 1,
-                  },
-                }}
-              >
-                <Component {...pageProps} />
-              </motion.div>
-              <ToastContainer />
-            </Wrapper>
-          </SocketProvider>
+          <PendingsProvider>
+            <SocketProvider>
+              <Wrapper>
+                <motion.div
+                  initial="initial"
+                  animate="animate"
+                  variants={{
+                    initial: {
+                      opacity: 0,
+                    },
+                    animate: {
+                      opacity: 1,
+                    },
+                  }}
+                >
+                  <Component {...pageProps} />
+                </motion.div>
+                <ToastContainer />
+              </Wrapper>
+            </SocketProvider>
+          </PendingsProvider>
         </CommonFiltersProvider>
       </MuiPickersUtilsProvider>
     </Provider>

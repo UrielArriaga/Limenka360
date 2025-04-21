@@ -16,6 +16,7 @@ import NewProspects from "./components/NewProspects";
 import useCalendarData from "./hooks/useCalendarData";
 import useProspectsData from "./hooks/useProspectsData";
 import useOportunitiesData from "./hooks/useOportunitiesData";
+import NewCalendarPendings from "../CalendarPendings/CalendarPendings";
 
 export default function ExecutivesDashboard() {
   const funnelData = useFunnelData();
@@ -46,6 +47,10 @@ export default function ExecutivesDashboard() {
           <ExecutiveGoalsProgress data={goalsData} />
         </Grid>
       </Grid>
+
+      {/* <Grid item md={12}>
+        <NewCalendarPendings />
+      </Grid> */}
 
       {/* <CalendarPendings calendarData={calendarData} /> */}
       {/* <SummaryCards />

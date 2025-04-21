@@ -42,7 +42,7 @@ export default function ExecutiveOportunitiesV2() {
   return (
     <ExecutiveProspectsStyled>
       <FilterProspects viewType={viewType} setViewType={setViewType} />
-      <AdvancedFilter />
+      {/* <AdvancedFilter /> */}
       {viewType === "calendar" && (
         <ProspectCalendar
           actions={{

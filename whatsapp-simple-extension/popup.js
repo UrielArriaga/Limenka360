@@ -7,12 +7,48 @@ document.addEventListener("DOMContentLoaded", () => {
   const loggedInView = document.getElementById("loggedInView");
   const listado = document.getElementById("listado");
 
-  // Verificar si el usuario ya está logueado
-  chrome.storage.local.get(["userCredentials", "whatsappTagged"], (result) => {
-    if (result.userCredentials) {
-      showLoggedInView(result.whatsappTagged || []);
+  let userData = null;
+
+  async function fetchUserData(result) {
+    const requestOptions = {
+      method: "POST",
+      body: JSON.stringify({ email, password }),
+      redirect: "follow",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Authorization: result?.userCredentials?.token || "",
+      },
+    };
+
+    const response = await fetch(
+      "http://localhost:5000/auth/me",
+      requestOptions
+    );
+
+    const respAuth = await response.json();
+
+    userData = respAuth.user;
+    console.log(respAuth);
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || "Error en la autenticación");
     }
-  });
+  }
+
+  // Verificar si el usuario ya está logueado
+  chrome.storage.local.get(
+    ["userCredentials", "whatsappTagged"],
+    async (result) => {
+      if (result.userCredentials) {
+        await fetchUserData(result);
+        showLoggedInView(result.whatsappTagged || []);
+      }
+
+      console.log(result);
+    }
+  );
 
   // Manejador de login
   loginBtn.addEventListener("click", async () => {
@@ -89,7 +125,7 @@ document.addEventListener("DOMContentLoaded", () => {
     loggedInView.style.display = "block";
 
     if (tags.length === 0) {
-      listado.innerHTML = "<li>No hay números etiquetados aún.</li>";
+      listado.innerHTML = `<li>${userData?.email}</li>`;
     } else {
       listado.innerHTML = "";
       tags.forEach(({ number, label }) => {
@@ -102,8 +138,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Escuchar cambios en los números etiquetados
   chrome.storage.onChanged.addListener((changes, namespace) => {
-    if (changes.loggedInView) {
-      showLoggedInView(changes.whatsappTagged.newValue || []);
-    }
+    console.log("Changes detected:", changes);
+
+    // if (changes.loggedInView) {
+    //   showLoggedInView(changes.whatsappTagged.newValue || []);
+    // }
   });
 });

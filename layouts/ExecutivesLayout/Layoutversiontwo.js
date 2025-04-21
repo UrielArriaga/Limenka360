@@ -13,6 +13,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Add,
+  CalendarViewDayOutlined,
 } from "@material-ui/icons";
 import { useRouter } from "next/router";
 import { useSelector } from "react-redux";
@@ -100,6 +101,17 @@ const Layoutversiontwo = ({ children }) => {
           >
             <Dashboard />
             {!isSidebarCollapsed && <span>Dashboard</span>}
+          </NavItem>
+
+          <NavItem
+            onClick={() =>
+              router.push(`/ejecutivo/calendario/${router.query.version}`)
+            }
+            tooltip="Calendario"
+            collapsed={isSidebarCollapsed}
+          >
+            <CalendarViewDayOutlined />
+            {!isSidebarCollapsed && <span>Calendario</span>}
           </NavItem>
 
           <NavItem
