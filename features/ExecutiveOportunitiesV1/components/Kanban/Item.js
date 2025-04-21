@@ -117,8 +117,11 @@ export default function Item({ task: prospect, index, actions }) {
   );
 }
 
-import Lottie from "lottie-react";
+import dynamic from "next/dynamic";
 
+const Lottie = dynamic(() => import("lottie-react"), {
+  ssr: false, // This line is important for Lottie since it often relies on browser APIs
+});
 import animation from "../../../../assets/Limi/animationbubletwo.json";
 // <Lottie
 //         onClick={toggleChat}

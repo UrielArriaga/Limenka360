@@ -9,7 +9,13 @@ import {
   ExpandLess,
 } from "@material-ui/icons";
 import { IconButton, TextField } from "@material-ui/core";
-import Lottie from "lottie-react";
+
+import dynamic from "next/dynamic";
+
+const Lottie = dynamic(() => import("lottie-react"), {
+  ssr: false, // This line is important for Lottie since it often relies on browser APIs
+});
+
 import animation from "../../assets/Limi/bot.json";
 
 const ChatBot = ({
