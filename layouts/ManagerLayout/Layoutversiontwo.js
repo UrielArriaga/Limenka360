@@ -17,12 +17,15 @@ import {
 } from "@material-ui/icons";
 import { useRouter } from "next/router";
 import { useSelector } from "react-redux";
-import { userSelector } from "../../redux/slices/userSlice";
+import { clearState, userSelector } from "../../redux/slices/userSlice";
 import ChatBotWidget from "../../componentx/LimiBot";
 import LimenkaCalendar from "../../componentx/LimenkaCalendar";
+import { useDispatch } from "react-redux";
 
 const Layoutversiontwo = ({ children }) => {
   const router = useRouter();
+  const dispatch = useDispatch();
+
   const { userData } = useSelector(userSelector);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [showGoalsSubmenu, setShowGoalsSubmenu] = useState(false);
@@ -66,6 +69,22 @@ const Layoutversiontwo = ({ children }) => {
             <span>{userData?.fullname}</span>
           </div>
         </div>
+
+        <p
+          onClick={() => {
+            dispatch(clearState());
+          }}
+          style={{
+            color: "#b0bec5",
+            cursor: "pointer",
+            padding: "6px 12px",
+            borderRadius: "6px",
+            transition: "0.3s ease",
+            textAlign: "center",
+          }}
+        >
+          Cerrar sesion
+        </p>
       </TopNav>
 
       {/* Collapsable Sidebar */}

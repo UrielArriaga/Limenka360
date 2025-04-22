@@ -19,12 +19,15 @@ import GoalsSection from "./NavBarGoals";
 import NavBarGoal from "./NavBarGoal";
 import { device } from "../../styles/global.styles";
 import { useSelector } from "react-redux";
-import { userSelector } from "../../redux/slices/userSlice";
+import { clearState, userSelector } from "../../redux/slices/userSlice";
 import ChatBotWidget from "../../componentx/LimiBot";
 import LimenkaCalendar from "../../componentx/LimenkaCalendar";
+import { useDispatch } from "react-redux";
 
 export const NavbarLayout = ({ children }) => {
   const router = useRouter();
+  const dispatch = useDispatch();
+
   const { userData } = useSelector(userSelector);
   const [showGoal, setShowGoal] = useState(false);
   const [showGoalsSubmenu, setShowGoalsSubmenu] = useState(false);
@@ -212,6 +215,22 @@ export const NavbarLayout = ({ children }) => {
               </p>
             </div>
           </div>
+
+          <p
+            onClick={() => {
+              dispatch(clearState());
+            }}
+            style={{
+              color: "#b0bec5",
+              cursor: "pointer",
+              padding: "6px 12px",
+              borderRadius: "6px",
+              transition: "0.3s ease",
+              textAlign: "center",
+            }}
+          >
+            Cerrar sesion
+          </p>
         </div>
       </Navbar>
 

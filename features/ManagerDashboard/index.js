@@ -17,6 +17,8 @@ import useCalendarData from "./hooks/useCalendarData";
 import useProspectsData from "./hooks/useProspectsData";
 import useOportunitiesData from "./hooks/useOportunitiesData";
 import NewCalendarPendings from "../CalendarPendings/CalendarPendings";
+import TableExecutives from "./components/TableExecutives";
+import SuggestionsCloseout from "./components/SuggestionsCloseout";
 
 export default function ManagerDashboard() {
   const funnelData = useFunnelData();
@@ -32,6 +34,15 @@ export default function ManagerDashboard() {
       <WelcomeDatePicker />
 
       <Grid container spacing={0}>
+        <Grid item md={4} className="grid-item grid-item-funnel">
+          <TableExecutives />
+
+          <SuggestionsCloseout />
+        </Grid>
+        <Grid item md={4} className="grid-item grid-item-funnel">
+          <MetricsAmounts />
+          <SummaryCards />
+        </Grid>
         <Grid item md={4} className="grid-item grid-item-list">
           <LastPendings pendingsData={pendingsData} />
 
@@ -39,19 +50,10 @@ export default function ManagerDashboard() {
 
           <NewProspects />
         </Grid>
-        <Grid item md={4} className="grid-item grid-item-funnel">
-          <SummaryCards />
-          <MetricsAmounts />
-        </Grid>
-        <Grid item md={4} className="grid-item grid-item-goals">
-          <ExecutiveGoalsProgress data={goalsData} />
-        </Grid>
       </Grid>
-
       {/* <Grid item md={12}>
         <NewCalendarPendings />
       </Grid> */}
-
       {/* <CalendarPendings calendarData={calendarData} /> */}
       {/* <SummaryCards />
       <CalendarPendings /> */}
