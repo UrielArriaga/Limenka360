@@ -44,7 +44,7 @@ export const ButtonPoint = styled.button`
   width: 10px;
   height: 10px;
   border: none;
-  background-color: ${props => props.color};
+  background-color: ${(props) => props.color};
   border-radius: 50%;
 `;
 
@@ -56,7 +56,7 @@ export const Schedule = styled.div`
 
 export const ScheduleTitle = styled.h3`
   text-transform: uppercase;
-  color: ${props => (props.color ? props.color : "#228be6")};
+  color: ${(props) => (props.color ? props.color : "#228be6")};
 `;
 
 export const Category = styled.div`
@@ -95,7 +95,7 @@ export const Color = styled.div`
   margin-top: 3px;
   width: 9px;
   height: 9px;
-  background-color: ${props => props.color};
+  background-color: ${(props) => props.color};
   border-radius: 50%;
 `;
 

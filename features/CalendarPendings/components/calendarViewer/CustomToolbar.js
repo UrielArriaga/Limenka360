@@ -68,13 +68,17 @@ const LabelDate = styled.h3`
   text-transform: uppercase;
 `;
 
-const CustomToolbar = toolbar => {
+const CustomToolbar = (toolbar) => {
   return (
     <ToolBar>
       <ContainerBtn>
         <ButtonLeft onClick={() => toolbar.onNavigate("PREV")}>&lt;</ButtonLeft>
-        <ButtonToday onClick={() => toolbar.onNavigate("TODAY")}>Hoy</ButtonToday>
-        <ButtonRigth onClick={() => toolbar.onNavigate("NEXT")}>&gt;</ButtonRigth>
+        <ButtonToday onClick={() => toolbar.onNavigate("TODAY")}>
+          Hoy
+        </ButtonToday>
+        <ButtonRigth onClick={() => toolbar.onNavigate("NEXT")}>
+          &gt;
+        </ButtonRigth>
       </ContainerBtn>
       <LabelDate>{toolbar.label}</LabelDate>
       <ContainerBtn>

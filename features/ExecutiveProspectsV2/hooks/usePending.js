@@ -15,7 +15,7 @@ export default function usePending() {
 
   async function fetchPendings(prospectId) {
     try {
-      setpendingsData(prev => {
+      setpendingsData((prev) => {
         return {
           ...prev,
           isFetching: true,
@@ -27,7 +27,7 @@ export default function usePending() {
         },
         order: "date_from",
       };
-      let data = await prospectsApi.getPendings(params).data;
+      let data = (await prospectsApi.getPendings(params)).data;
 
       console.log(results);
       setpendingsData({
@@ -37,7 +37,7 @@ export default function usePending() {
       });
     } catch (error) {
       console.log(error);
-      setpendingsData(prev => {
+      setpendingsData((prev) => {
         return {
           ...prev,
           isFetching: false,
@@ -47,5 +47,5 @@ export default function usePending() {
       });
     }
   }
-  return {};
+  return { pendingsData };
 }

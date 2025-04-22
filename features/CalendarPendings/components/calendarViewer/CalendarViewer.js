@@ -53,6 +53,8 @@ function CalendarViewer() {
       borderRadius: "5px",
       padding: "2px 8px",
       zIndex: "999",
+      textTransform: "capitalize",
+      fontSize: "0.8rem",
       borderLeft: `3px solid ${event.isdone ? "#868e96" : event?.color?.color}`,
     },
   });

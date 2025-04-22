@@ -19,6 +19,7 @@ import { useRouter } from "next/router";
 import { useSelector } from "react-redux";
 import { userSelector } from "../../redux/slices/userSlice";
 import ChatBotWidget from "../../componentx/LimiBot";
+import LimenkaCalendar from "../../componentx/LimenkaCalendar";
 
 const Layoutversiontwo = ({ children }) => {
   const router = useRouter();
@@ -179,6 +180,7 @@ const Layoutversiontwo = ({ children }) => {
       </MainContent>
 
       <ChatBotWidget />
+      <LimenkaCalendar />
     </NavbarWrapper>
   );
 };

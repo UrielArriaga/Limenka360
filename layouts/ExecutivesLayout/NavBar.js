@@ -21,6 +21,7 @@ import { device } from "../../styles/global.styles";
 import { useSelector } from "react-redux";
 import { userSelector } from "../../redux/slices/userSlice";
 import ChatBotWidget from "../../componentx/LimiBot";
+import LimenkaCalendar from "../../componentx/LimenkaCalendar";
 
 export const NavbarLayout = ({ children }) => {
   const router = useRouter();
@@ -225,6 +226,8 @@ export const NavbarLayout = ({ children }) => {
       <MainContent>{children}</MainContent>
 
       <ChatBotWidget />
+
+      <LimenkaCalendar />
     </NavbarWrapper>
   );
 };

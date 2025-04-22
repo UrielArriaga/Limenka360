@@ -36,33 +36,51 @@ function Pendings() {
   const [pending, setPending] = useState(null);
 
   const formatDateCalendar = format(new Date(date), "yyyy-MM-dd");
-  const formatDateMoreCalendar = format(addDays(new Date(date), 1), "yyyy-MM-dd");
+  const formatDateMoreCalendar = format(
+    addDays(new Date(date), 1),
+    "yyyy-MM-dd"
+  );
   const currentDate = format(new Date(), "yyyy-MM-dd");
   const isCurrentDate = currentDate === formatDateCalendar;
 
   // Get events of the current day
-  const curEvents = events.filter(event => {
-    if (!(event.start instanceof Date) || isNaN(event.start.getTime())) return false;
-    if (!(event.end instanceof Date) || isNaN(event.end.getTime())) return false;
+  const curEvents = events.filter((event) => {
+    if (!(event.start instanceof Date) || isNaN(event.start.getTime()))
+      return false;
+    if (!(event.end instanceof Date) || isNaN(event.end.getTime()))
+      return false;
 
     const eventStartDate = format(new Date(event.start), "yyyy-MM-dd");
     const eventEndDate = format(new Date(event.end), "yyyy-MM-dd");
 
-    return isDateInRange({ startDate: eventStartDate, endDate: eventEndDate, dateToVerify: formatDateCalendar });
+    return isDateInRange({
+      startDate: eventStartDate,
+      endDate: eventEndDate,
+      dateToVerify: formatDateCalendar,
+    });
   });
 
   // Get events of de date + 1 day
-  const tomorrowEvents = events.filter(event => {
-    if (!(event.start instanceof Date) || isNaN(event.start.getTime())) return false;
-    if (!(event.end instanceof Date) || isNaN(event.end.getTime())) return false;
+  const tomorrowEvents = events.filter((event) => {
+    if (!(event.start instanceof Date) || isNaN(event.start.getTime()))
+      return false;
+    if (!(event.end instanceof Date) || isNaN(event.end.getTime()))
+      return false;
 
-    const eventStartDate = format(addDays(new Date(event.start), -1), "yyyy-MM-dd");
+    const eventStartDate = format(
+      addDays(new Date(event.start), -1),
+      "yyyy-MM-dd"
+    );
     const eventEndDate = format(addDays(new Date(event.end), -1), "yyyy-MM-dd");
 
-    return isDateInRange({ startDate: eventStartDate, endDate: eventEndDate, dateToVerify: formatDateCalendar });
+    return isDateInRange({
+      startDate: eventStartDate,
+      endDate: eventEndDate,
+      dateToVerify: formatDateCalendar,
+    });
   });
 
-  const handleGetPending = async id => {
+  const handleGetPending = async (id) => {
     setIsLoading(true);
     try {
       const data = await getPending(id);
@@ -79,18 +97,26 @@ function Pendings() {
   return (
     <ActivitiesSyled>
       <Header>
-        <BtnFilter onClick={() => setIsOpenFilters(open => !open)}>
+        <BtnFilter onClick={() => setIsOpenFilters((open) => !open)}>
           {isOpenFilters ? <CloseIcon /> : <FilterListIcon />}
         </BtnFilter>
 
         <Filters isOpen={isOpenFilters} />
       </Header>
-      <div>{pending ? <Pending onClose={() => setPending(null)} pending={pending} /> : <CalendarInput />}</div>
+      <div>
+        {pending ? (
+          <Pending onClose={() => setPending(null)} pending={pending} />
+        ) : (
+          <CalendarInput />
+        )}
+      </div>
       <Schedule>
-        <ScheduleTitle>{isCurrentDate ? "HOY" : formatDateCalendar}</ScheduleTitle>
+        <ScheduleTitle>
+          {isCurrentDate ? "HOY" : formatDateCalendar}
+        </ScheduleTitle>
         {filters.byPerform && <Category>ACTIVIDADES PROSPECTO</Category>}
         <Events>
-          {curEvents.map(ev => {
+          {curEvents.map((ev) => {
             const hours = getTimeRange(ev.start, ev.end, ev.resourceId);
 
             return (
@@ -100,7 +126,10 @@ function Pendings() {
                   <Time>{hours}</Time>
                   <Description>{ev.title}</Description>
                 </EventDetails>
-                <BtnEddit onClick={() => handleGetPending(ev.id)} disabled={ev?.id === pending?.id}>
+                <BtnEddit
+                  onClick={() => handleGetPending(ev.id)}
+                  disabled={ev?.id === pending?.id}
+                >
                   {ev.isdone ? <VisibilityIcon /> : <CreateIcon />}
                 </BtnEddit>
               </Event>
@@ -110,9 +139,11 @@ function Pendings() {
         </Events>
       </Schedule>
       <Schedule>
-        <ScheduleTitle color="#fff">{isCurrentDate ? "Mañana" : formatDateMoreCalendar}</ScheduleTitle>
+        <ScheduleTitle color="#fff">
+          {isCurrentDate ? "Mañana" : formatDateMoreCalendar}
+        </ScheduleTitle>
         <Events>
-          {tomorrowEvents.map(ev => {
+          {tomorrowEvents.map((ev) => {
             const hours = getTimeRange(ev.start, ev.end, ev.resourceId);
 
             return (
@@ -122,7 +153,10 @@ function Pendings() {
                   <Time>{hours}</Time>
                   <Description>{ev.title}</Description>
                 </EventDetails>
-                <BtnEddit onClick={() => handleGetPending(ev.id)} disabled={ev?.id === pending?.id}>
+                <BtnEddit
+                  onClick={() => handleGetPending(ev.id)}
+                  disabled={ev?.id === pending?.id}
+                >
                   {ev.isdone ? <VisibilityIcon /> : <CreateIcon />}
                 </BtnEddit>
               </Event>

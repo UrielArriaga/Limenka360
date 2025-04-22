@@ -18,13 +18,15 @@ import ArrowStepsComponent from "../ArrowPhases";
 import SendWhatsapp from "./SendWhatsapp";
 import ProductsOportunities from "./ProductsOportunities";
 import ProductsOportunitiesTable from "./ProductsOportunitiesTable";
+import useTrackings from "../../../ExecutiveProspectsV2/hooks/useTrackings";
+import usePending from "../../../ExecutiveProspectsV2/hooks/usePending";
 
 export default function ModalPreview({
   open,
   toggleModal,
   prospectSelected,
-  trackings,
-  pendingsData,
+  // trackings,
+  // pendingsData,
 }) {
   const [showAction, setShowAction] = useState(null);
   const [tabValue, setTabValue] = useState(0);
@@ -32,6 +34,12 @@ export default function ModalPreview({
   const handleOnCancel = () => {
     setShowAction(null);
   };
+
+  const { trackingData } = useTrackings(prospectSelected);
+
+  const { pendingsData } = usePending(prospectSelected?.id);
+
+  let trackings = trackingData.results || [];
 
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
@@ -93,7 +101,10 @@ export default function ModalPreview({
                 {showAction === null && (
                   <>
                     <AddTracking />
-                    <LineTime trackings={trackings} />
+                    <LineTime
+                      trackings={trackings}
+                      fetching={trackingData.isFetching}
+                    />
                   </>
                 )}
               </Grid>

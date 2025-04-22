@@ -37,9 +37,11 @@ export default function Item({ task: prospect, index, actions }) {
                 className="probability-badge"
                 certainty={prospect?.certainty}
               >
-                {prospect?.certainty}% certeza
+                {prospect?.clienttype?.name || "N/A"}
               </span>
             </div>
+
+            {/* <pre>{JSON.stringify(prospect, null, 2)}</pre> */}
 
             <div className="prospect-data__center">
               {/* <div className="product-info">                
@@ -147,7 +149,8 @@ const ItemProspect = styled.div`
         font-weight: 600;
         padding: 4px 8px;
         border-radius: 12px;
-        background-color: ${(props) => {
+        background-color: rgb(124, 221, 224, 0.4);
+        /* background-color: ${(props) => {
           const certainty = props.certainty;
           if (certainty >= 75) return "#4caf5050";
           if (certainty >= 50) return "#ff980050";
@@ -158,7 +161,7 @@ const ItemProspect = styled.div`
           if (certainty >= 75) return "#2e7d32";
           if (certainty >= 50) return "#ff6d00";
           return "#d32f2f";
-        }};
+        }}; */
       }
     }
 

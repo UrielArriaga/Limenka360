@@ -2,8 +2,8 @@ import styled from "styled-components";
 import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
 import { Calendar } from "react-big-calendar";
 
-// import "react-big-calendar/lib/css/react-big-calendar.css";
-// import "react-big-calendar/lib/addons/dragAndDrop/styles.css";
+import "react-big-calendar/lib/css/react-big-calendar.css";
+import "react-big-calendar/lib/addons/dragAndDrop/styles.css";
 
 const DnDCalendar = withDragAndDrop(Calendar);
 
