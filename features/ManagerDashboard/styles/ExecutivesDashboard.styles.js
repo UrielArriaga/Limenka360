@@ -12,10 +12,11 @@ export const ExecutivesDashboardStyled = styled.div`
   }
 
   .grid-item-list {
-    align-items: flex-start;
-    justify-content: flex-start;
+    /* align-items: flex-start; */
+
     display: flex;
     flex-direction: column;
+    align-items: flex-end;
     gap: 40px;
   }
   .grid-item-funnel {

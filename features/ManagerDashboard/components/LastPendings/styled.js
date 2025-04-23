@@ -2,12 +2,11 @@ import styled from "styled-components";
 
 export const LastPendingsStyled = styled.div`
   width: 90%;
-  box-shadow: rgba(9, 30, 66, 0.25) 0px 4px 8px -2px, rgba(9, 30, 66, 0.08) 0px 0px 0px 1px;
+  box-shadow: rgba(9, 30, 66, 0.25) 0px 4px 8px -2px,
+    rgba(9, 30, 66, 0.08) 0px 0px 0px 1px;
   padding: 10px;
 
-
-  h4{
-    
+  h4 {
     margin-bottom: 10px;
   }
   .item-pending {
@@ -20,7 +19,7 @@ export const LastPendingsStyled = styled.div`
   }
 
   .item-pending-0 {
-    background-color: #39B8DF;
+    background-color: #39b8df;
     color: #fff;
   }
 

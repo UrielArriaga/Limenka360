@@ -1,7 +1,15 @@
 import React from "react";
 import { MetricsAmountsStyled } from "./styled";
 
-import { LineChart, Line, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from "recharts";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
 
 export default function MetricsAmounts() {
   const data = [
@@ -33,7 +41,9 @@ export default function MetricsAmounts() {
             }}
           >
             <h4>{item.title}</h4>
-            <p style={{ fontSize: "24px", fontWeight: "bold" }}>${item.value.toLocaleString()}</p>
+            <p style={{ fontSize: "24px", fontWeight: "bold" }}>
+              ${item.value.toLocaleString()}
+            </p>
           </div>
         ))}
       </div>
