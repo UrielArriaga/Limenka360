@@ -8,10 +8,19 @@ const eventos = [
     titulo: "Llamada con cliente",
     tipo: "llamada",
     inicio: "2025-04-22T08:30:00",
+    fin: "2025-04-22T08:50:00",
+    prioridad: 3,
+    type: 3,
+  },
+  {
+    titulo: "Llamada con cliente",
+    tipo: "llamada",
+    inicio: "2025-04-22T08:50:00",
     fin: "2025-04-22T09:00:00",
     prioridad: 3,
     type: 3,
   },
+
   {
     titulo: "Videollamada demo",
     tipo: "videollamada",
