@@ -1,19 +1,30 @@
-import {
-  AddAlert,
-  AttachMoney,
-  CheckCircle,
-  History,
-  Schedule,
-  WhatsApp,
-} from "@material-ui/icons";
-import React from "react";
+import { AddAlert, AttachMoney, Schedule, WhatsApp } from "@material-ui/icons";
+import React, { useState } from "react";
 
 import { Tooltip } from "@material-ui/core";
 import styled from "styled-components";
+import { Menu, MenuItem } from "@material-ui/core";
 
 import { Draggable } from "react-beautiful-dnd";
 
 export default function Item({ task: prospect, index, actions }) {
+  const [anchorEl, setAnchorEl] = useState(null);
+
+  const handleOpenMenu = (event) => {
+    event.stopPropagation();
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleCloseMenu = () => {
+    setAnchorEl(null);
+  };
+
+  const handlePendingOption = (option) => {
+    console.log("Agregar pendiente:", option);
+    handleCloseMenu();
+    // Puedes hacer acciones específicas aquí según la opción seleccionada
+  };
+
   const cutString = (str = "", len = 40) => {
     if (str.length > len) {
       return str.substring(0, len) + "...";
@@ -25,13 +36,15 @@ export default function Item({ task: prospect, index, actions }) {
     <Draggable draggableId={prospect.id} index={index}>
       {(provided) => (
         <ItemProspect
-          onClick={() => actions.onClickProspect(prospect)}
           ref={provided.innerRef}
           {...provided.draggableProps}
           {...provided.dragHandleProps}
         >
           <div className="prospect-data">
-            <div className="prospect-data__top">
+            <div
+              className="prospect-data__top"
+              onClick={() => actions.onClickProspect(prospect)}
+            >
               <h3 className="fullname">{prospect?.fullname}</h3>
               <span
                 className="probability-badge"
@@ -41,11 +54,7 @@ export default function Item({ task: prospect, index, actions }) {
               </span>
             </div>
 
-            {/* <pre>{JSON.stringify(prospect, null, 2)}</pre> */}
-
             <div className="prospect-data__center">
-              {/* <div className="product-info">                
-              </div> */}
               <div className="amount-info">
                 <span className="amount-label">Producto de interes:</span>
                 <span className="amount-value">
@@ -61,18 +70,6 @@ export default function Item({ task: prospect, index, actions }) {
                 </span>
               </div>
             </div>
-
-            {/* <div className="prospect-data__bottom">
-                <div className="createdAt">
-                  <Schedule fontSize="small" />
-                  {new Date(prospect.createdAt).toLocaleDateString()}
-                </div>
-                <div className="contact-methods">
-                  <WhatsApp className="contact-icon whatsapp" />
-                  <Phone className="contact-icon phone" />
-                  <Email className="contact-icon email" />
-                </div>
-              </div> */}
           </div>
 
           <div className="prospect-actions">
@@ -102,15 +99,121 @@ export default function Item({ task: prospect, index, actions }) {
             <Tooltip title="Agendar seguimiento" arrow>
               <Schedule className="iconaction schedule" />
             </Tooltip>
-            <Tooltip title="Agregar pendiente" arrow>
-              <AddAlert className="iconaction close-deal" />
-            </Tooltip>
+            <div
+              className="no-open-modal"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleOpenMenu(e);
+              }}
+            >
+              <Tooltip title="Agregar pendiente" arrow>
+                <AddAlert className="iconaction close-deal" />
+              </Tooltip>
+            </div>
+            <CustomMenu
+              anchorEl={anchorEl}
+              open={Boolean(anchorEl)}
+              onClose={handleCloseMenu}
+              getContentAnchorEl={null}
+              anchorOrigin={{
+                vertical: "bottom",
+                horizontal: "right",
+              }}
+              transformOrigin={{
+                vertical: "top",
+                horizontal: "left",
+              }}
+            >
+              <MenuItemStyled onClick={() => handlePendingOption("2h")}>
+                Dentro de 2 horas
+              </MenuItemStyled>
+              <CustomMenuItem
+                icon={Schedule}
+                label="Dentro de 2 días a la hora específica"
+                onClick={() => handlePendingOption("2d")}
+              />
+              <MenuItem onClick={() => handlePendingOption("2d")}>
+                Dentro de 2 días a la hora específica
+              </MenuItem>
+            </CustomMenu>
           </div>
         </ItemProspect>
       )}
     </Draggable>
   );
 }
+
+const CustomMenu = styled(Menu)`
+  .MuiPaper-root {
+    /* border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 8px 0;
+    min-width: 200px; */
+  }
+
+  .MuiMenuItem-root {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #2a2f3a;
+    padding: 8px 16px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background-color: #f0f0f0;
+      cursor: pointer;
+    }
+
+    &:active {
+      background-color: #e0e0e0;
+    }
+
+    &:focus {
+      background-color: #e0e0e0;
+    }
+
+    svg {
+      font-size: 20px;
+      color: #757575;
+    }
+  }
+`;
+
+const CustomMenuItem = ({ icon: Icon, label, onClick }) => (
+  <MenuItemStyled onClick={onClick}>
+    {Icon && <Icon />}
+    {label}
+  </MenuItemStyled>
+);
+
+const MenuItemStyled = styled(MenuItem)`
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: #e0e0e0;
+  }
+
+  &:active {
+    background-color: #d6d6d6;
+  }
+
+  svg {
+    font-size: 20px;
+    color: #757575;
+  }
+`;
 
 const ItemProspect = styled.div`
   position: relative;
@@ -137,6 +240,9 @@ const ItemProspect = styled.div`
       justify-content: space-between;
       align-items: flex-start;
 
+      &:hover {
+        cursor: pointer;
+      }
       .fullname {
         font-size: 16px;
         font-weight: 600;
@@ -150,18 +256,6 @@ const ItemProspect = styled.div`
         padding: 4px 8px;
         border-radius: 12px;
         background-color: rgb(124, 221, 224, 0.4);
-        /* background-color: ${(props) => {
-          const certainty = props.certainty;
-          if (certainty >= 75) return "#4caf5050";
-          if (certainty >= 50) return "#ff980050";
-          return "#f4433650";
-        }};
-        color: ${(props) => {
-          const certainty = props.certainty;
-          if (certainty >= 75) return "#2e7d32";
-          if (certainty >= 50) return "#ff6d00";
-          return "#d32f2f";
-        }}; */
       }
     }
 

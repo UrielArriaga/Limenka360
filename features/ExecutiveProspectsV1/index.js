@@ -9,6 +9,7 @@ import NewOportunity from "./components/NewOportunity";
 import useMain from "./hooks/useMain";
 import { ExecutiveProspectsStyled } from "./styled";
 import TableProspects from "./components/TableProspects";
+import ModalMovePhase from "./components/ModalMovePhase";
 
 const DropContextStyled = styled.div`
   display: flex;
@@ -145,6 +146,8 @@ export default function ExecutivesProspectsV1() {
         open={modalActions.modalViews.newOportunity}
         toggleModal={() => modalActions.handleToggleModal("newOportunity")}
       />
+
+      {/* <ModalMovePhase open={true} /> */}
     </ExecutiveProspectsStyled>
   );
 }
