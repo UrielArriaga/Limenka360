@@ -1,14 +1,22 @@
 import { AddAlert, AttachMoney, Schedule, WhatsApp } from "@material-ui/icons";
 import React, { useState } from "react";
-
-import { Tooltip } from "@material-ui/core";
+import Select from "react-select";
+import { Popover, Tooltip } from "@material-ui/core";
 import styled from "styled-components";
 import { Menu, MenuItem } from "@material-ui/core";
 
 import { Draggable } from "react-beautiful-dnd";
+import useGlobalCommons from "../../../../hooks/useGlobalCommons";
+import { useSelector } from "react-redux";
+import { commonSelector } from "../../../../redux/slices/commonSlice";
+import dayjs from "dayjs";
 
 export default function Item({ task: prospect, index, actions }) {
+  const { getCatalogBy } = useGlobalCommons();
+  const common = useSelector(commonSelector);
   const [anchorEl, setAnchorEl] = useState(null);
+  const [openScheduleModal, setOpenScheduleModal] = useState(false);
+  const [scheduleAnchorEl, setScheduleAnchorEl] = useState(null);
 
   const handleOpenMenu = (event) => {
     event.stopPropagation();
@@ -30,6 +38,12 @@ export default function Item({ task: prospect, index, actions }) {
       return str.substring(0, len) + "...";
     }
     return str;
+  };
+
+  const handleOpenScheduleModal = (event) => {
+    event.stopPropagation();
+    setScheduleAnchorEl(event.currentTarget);
+    setOpenScheduleModal(true);
   };
 
   return (
@@ -69,6 +83,10 @@ export default function Item({ task: prospect, index, actions }) {
                   ).toLocaleDateString()}
                 </span>
               </div>
+              <div className="last-tracking">
+                Siguiente pendiente
+                <span> {dayjs(dayjs().add(1, "day")).fromNow()}</span>
+              </div>
             </div>
           </div>
 
@@ -96,9 +114,18 @@ export default function Item({ task: prospect, index, actions }) {
               <WhatsApp className="whats iconaction" />
             </Tooltip>
 
-            <Tooltip title="Agendar seguimiento" arrow>
-              <Schedule className="iconaction schedule" />
-            </Tooltip>
+            <div
+              className="no-open-modal"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleOpenScheduleModal(e);
+              }}
+            >
+              <Tooltip title="Agendar seguimiento" arrow>
+                <Schedule className="iconaction schedule" />
+              </Tooltip>
+            </div>
+
             <div
               className="no-open-modal"
               onClick={(e) => {
@@ -124,7 +151,24 @@ export default function Item({ task: prospect, index, actions }) {
                 horizontal: "left",
               }}
             >
-              <MenuItemStyled onClick={() => handlePendingOption("2h")}>
+              <CustomMenuItem
+                icon={Schedule}
+                label="Recordar cotización (en 24 horas)"
+                onClick={() => handlePendingOption("2d")}
+              />
+              <CustomMenuItem
+                icon={Schedule}
+                label="Seguimiento de negociación en (3 dias)"
+                onClick={() => handlePendingOption("2d")}
+              />
+
+              <CustomMenuItem
+                icon={Schedule}
+                label="Perzonalizado"
+                onClick={() => handlePendingOption("2d")}
+              />
+
+              {/* <MenuItemStyled onClick={() => handlePendingOption("2h")}>
                 Dentro de 2 horas
               </MenuItemStyled>
               <CustomMenuItem
@@ -134,14 +178,178 @@ export default function Item({ task: prospect, index, actions }) {
               />
               <MenuItem onClick={() => handlePendingOption("2d")}>
                 Dentro de 2 días a la hora específica
-              </MenuItem>
+              </MenuItem> */}
             </CustomMenu>
           </div>
+          <Popover
+            open={openScheduleModal}
+            anchorEl={scheduleAnchorEl}
+            onClose={() => {
+              setOpenScheduleModal(false);
+            }}
+            anchorOrigin={{
+              vertical: "bottom",
+              horizontal: "right",
+            }}
+            transformOrigin={{
+              vertical: "top",
+              horizontal: "left",
+            }}
+          >
+            <ScheduleModal>
+              <div className="title">
+                <h3>Agendar seguimiento</h3>
+              </div>
+
+              <div className="inputs">
+                {/* <div className="input-field">
+                  <label>Titulo</label>
+                  <input type="text" />
+                </div> */}
+
+                <div className="input-field">
+                  <label>Accion</label>
+                  <Select
+                    onMenuOpen={() => getCatalogBy("actions")}
+                    placeholder="Selecciona una opción"
+                    options={common.actions?.results}
+                    getOptionLabel={(option) => option.name}
+                    getOptionValue={(option) => option.id}
+                    menuPosition="fixed"
+                  />
+                </div>
+                <div className="input-field">
+                  <label>Descripción</label>
+                  <textarea
+                    rows={4}
+                    placeholder="Descripción del seguimiento"
+                  />
+                </div>
+              </div>
+
+              <div className="actions">
+                <button
+                  className="cancel"
+                  onClick={() => {
+                    setOpenScheduleModal(false);
+                  }}
+                >
+                  Cancelar
+                </button>
+                <button
+                  className="save"
+                  onClick={() => {
+                    setOpenScheduleModal(false);
+                  }}
+                >
+                  Guardar
+                </button>
+              </div>
+              {/* <TextField
+                label="Descripción del seguimiento"
+                multiline
+                rows={2}
+                value={scheduleText}
+                onChange={(e) => setScheduleText(e.target.value)}
+                fullWidth
+                variant="outlined"
+                margin="normal"
+              />
+              <ModalActions>
+                <Button onClick={handleCloseScheduleModal}>Cancelar</Button>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={handleSaveSchedule}
+                >
+                  Guardar
+                </Button>
+              </ModalActions> */}
+            </ScheduleModal>
+          </Popover>
         </ItemProspect>
       )}
     </Draggable>
   );
 }
+const ScheduleModal = styled.div`
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 500px;
+  border-radius: 10px;
+
+  h3 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: #2a2f3a;
+  }
+
+  .inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    .input-field {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+
+      label {
+        font-size: 12px;
+        color: #757575;
+      }
+
+      input,
+      textarea {
+        border-radius: 8px;
+        padding: 8px;
+        border: 1px solid #eee;
+        font-size: 14px;
+        color: #2a2f3a;
+
+        &:focus {
+          outline: none;
+          border-color: #39b8df;
+        }
+      }
+    }
+  }
+
+  .actions {
+    display: flex;
+    /* justify-content: space-between; */
+    justify-content: flex-end;
+    gap: 8px;
+
+    button {
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+
+      &.cancel {
+        background-color: #f44336;
+        &:hover {
+          background-color: #d32f2f;
+        }
+      }
+
+      &.save {
+        background-color: #39b8df;
+        &:hover {
+          background-color: #0288d1;
+        }
+      }
+    }
+  }
+`;
 
 const CustomMenu = styled(Menu)`
   .MuiPaper-root {

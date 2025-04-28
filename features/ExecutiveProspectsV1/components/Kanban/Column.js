@@ -1,7 +1,7 @@
 import React from "react";
 import { Draggable, Droppable } from "react-beautiful-dnd";
-import styled from "styled-components";
 import Item from "./Item";
+import styled from "styled-components";
 export default function Column({ column, tasks, index, actions }) {
   return (
     <Draggable draggableId={column.id} index={index}>
@@ -13,7 +13,6 @@ export default function Column({ column, tasks, index, actions }) {
             ...provided.draggableProps.style,
             margin: "0 8px",
             width: 360,
-            // border: "1px solid red",
           }}
         >
           <div
@@ -22,11 +21,13 @@ export default function Column({ column, tasks, index, actions }) {
               marginBottom: 10,
             }}
           >
-            <h3 style={{ textTransform: "capitalize" }}>{column.title}</h3>
+            <h3 style={{ textTransform: "capitalize" }}>
+              {column.title} ({column.total})
+            </h3>
           </div>
           <Droppable droppableId={column.id} type="item">
             {(provided) => (
-              <div
+              <ColumStyled
                 ref={provided.innerRef}
                 {...provided.droppableProps}
                 style={{
@@ -34,6 +35,8 @@ export default function Column({ column, tasks, index, actions }) {
                   padding: 8,
                   minHeight: 80,
                   borderRadius: 4,
+                  overflowX: "scroll",
+                  height: 700,
                 }}
               >
                 {tasks.map((task, index) => (
@@ -45,7 +48,7 @@ export default function Column({ column, tasks, index, actions }) {
                   />
                 ))}
                 {provided.placeholder}
-              </div>
+              </ColumStyled>
             )}
           </Droppable>
         </div>
@@ -53,3 +56,19 @@ export default function Column({ column, tasks, index, actions }) {
     </Draggable>
   );
 }
+
+const ColumStyled = styled.div`
+  ::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background-color: #b3b5bd;
+    border-radius: 4px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+  }
+  ::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+`;
