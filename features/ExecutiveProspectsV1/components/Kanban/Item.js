@@ -16,7 +16,10 @@ export default function Item({ task: prospect, index, actions }) {
   const common = useSelector(commonSelector);
   const [anchorEl, setAnchorEl] = useState(null);
   const [openScheduleModal, setOpenScheduleModal] = useState(false);
+  const [openSendWhatsapp, setOpenSendWhatsapp] = useState(false);
+
   const [scheduleAnchorEl, setScheduleAnchorEl] = useState(null);
+  const [whatsappAnchorEl, setWhatsappAnchorEl] = useState(null);
 
   const handleOpenMenu = (event) => {
     event.stopPropagation();
@@ -44,6 +47,12 @@ export default function Item({ task: prospect, index, actions }) {
     event.stopPropagation();
     setScheduleAnchorEl(event.currentTarget);
     setOpenScheduleModal(true);
+  };
+
+  const handleOpenWhatsappModal = (event) => {
+    event.stopPropagation();
+    setWhatsappAnchorEl(event.currentTarget);
+    setOpenSendWhatsapp(true);
   };
 
   return (
@@ -108,6 +117,7 @@ export default function Item({ task: prospect, index, actions }) {
               title={`Enviar Whastapp `}
               placement="top"
               onClick={(e) => {
+                handleOpenWhatsappModal(e);
                 e.stopPropagation();
               }}
             >
@@ -202,11 +212,6 @@ export default function Item({ task: prospect, index, actions }) {
               </div>
 
               <div className="inputs">
-                {/* <div className="input-field">
-                  <label>Titulo</label>
-                  <input type="text" />
-                </div> */}
-
                 <div className="input-field">
                   <label>Accion</label>
                   <Select
@@ -267,12 +272,170 @@ export default function Item({ task: prospect, index, actions }) {
               </ModalActions> */}
             </ScheduleModal>
           </Popover>
+
+          <Popover
+            open={openSendWhatsapp}
+            anchorEl={whatsappAnchorEl}
+            onClose={() => {
+              setOpenSendWhatsapp(false);
+            }}
+            anchorOrigin={{
+              vertical: "bottom",
+              horizontal: "right",
+            }}
+            transformOrigin={{
+              vertical: "top",
+              horizontal: "left",
+            }}
+          >
+            <WhatsappModal>
+              <div className="title">
+                <h3>Seguimiento / WhatsApp</h3>
+              </div>
+
+              <div className="inputs">
+                <div className="input-field">
+                  <label>Plantilla</label>
+                  <Select
+                    onMenuOpen={() => getCatalogBy("templateswp")}
+                    placeholder="Selecciona una opción"
+                    options={common.templateswp?.results}
+                    getOptionLabel={(option) => option.description}
+                    getOptionValue={(option) => option.id}
+                    menuPosition="fixed"
+                  />
+                </div>
+                <div className="input-field">
+                  <label>Mensaje</label>
+                  <textarea rows={4} placeholder="Mensaje de WhatsApp" />
+                </div>
+              </div>
+
+              <div className="actions">
+                <button
+                  className="cancel"
+                  onClick={() => {
+                    setOpenScheduleModal(false);
+                  }}
+                >
+                  Cancelar
+                </button>
+                <button
+                  className="save"
+                  onClick={() => {
+                    setOpenScheduleModal(false);
+                  }}
+                >
+                  Guardar
+                </button>
+              </div>
+              {/* <TextField
+                label="Descripción del seguimiento"
+                multiline
+                rows={2}
+                value={scheduleText}
+                onChange={(e) => setScheduleText(e.target.value)}
+                fullWidth
+                variant="outlined"
+                margin="normal"
+              />
+              <ModalActions>
+                <Button onClick={handleCloseScheduleModal}>Cancelar</Button>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={handleSaveSchedule}
+                >
+                  Guardar
+                </Button>
+              </ModalActions> */}
+            </WhatsappModal>
+          </Popover>
         </ItemProspect>
       )}
     </Draggable>
   );
 }
 const ScheduleModal = styled.div`
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 500px;
+  border-radius: 10px;
+
+  h3 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: #2a2f3a;
+  }
+
+  .inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    .input-field {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+
+      label {
+        font-size: 12px;
+        color: #757575;
+      }
+
+      input,
+      textarea {
+        border-radius: 8px;
+        padding: 8px;
+        border: 1px solid #eee;
+        font-size: 14px;
+        color: #2a2f3a;
+
+        &:focus {
+          outline: none;
+          border-color: #39b8df;
+        }
+      }
+    }
+  }
+
+  .actions {
+    display: flex;
+    /* justify-content: space-between; */
+    justify-content: flex-end;
+    gap: 8px;
+
+    button {
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+
+      &.cancel {
+        background-color: #f44336;
+        &:hover {
+          background-color: #d32f2f;
+        }
+      }
+
+      &.save {
+        background-color: #39b8df;
+        &:hover {
+          background-color: #0288d1;
+        }
+      }
+    }
+  }
+`;
+
+const WhatsappModal = styled.div`
   padding: 10px;
   display: flex;
   flex-direction: column;

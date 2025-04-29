@@ -24,6 +24,8 @@ class OportunitiesService {
 
 export default function useMain() {
   const service = new OportunitiesService();
+  const [flagToRefetch, setFlagToRefetch] = useState(false);
+
   const [modalViews, setModalViews] = useState({
     preview: false,
     limiBotChat: false,
@@ -68,7 +70,9 @@ export default function useMain() {
     };
 
     fetchData();
-  }, []);
+  }, [flagToRefetch]);
+
+  const handleRefetch = () => setFlagToRefetch((prev) => !prev);
 
   const onDragEnd = (result) => {
     const { destination, source, draggableId, type } = result;
@@ -170,6 +174,7 @@ export default function useMain() {
     showDragAreaOportunity,
     onDragEnd,
     onDragStart,
+    handleRefetch,
     modalActions: {
       modalViews,
       handleToggleModal,

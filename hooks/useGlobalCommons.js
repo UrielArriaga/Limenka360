@@ -44,7 +44,7 @@ import {
   getDeliveryTimes,
   getTypesEntries,
   getOrderReturn,
-  getReasonWarranties
+  getReasonWarranties,
 } from "../redux/slices/commonSlice";
 import { createNewTracking } from "../redux/slices/trackingSlice";
 
@@ -92,7 +92,7 @@ export default function useGlobalCommons() {
     deliverytimes,
     typesentries,
     typereturns,
-    reasonwarranties
+    reasonwarranties,
   } = useSelector(commonSelector);
   const dispatch = useDispatch();
 
@@ -109,15 +109,30 @@ export default function useGlobalCommons() {
       },
       origins: { results: origins.results, action: getOriginsCommon },
       phases: { results: phases.results, action: getPhasesCommon },
-      clientTypes: { results: clientTypes.results, action: getClientTypesCommon },
-      specialties: { results: specialties.results, action: getSpecialtiesCommon },
+      clientTypes: {
+        results: clientTypes.results,
+        action: getClientTypesCommon,
+      },
+      specialties: {
+        results: specialties.results,
+        action: getSpecialtiesCommon,
+      },
       channels: { results: channels.results, action: getChannelsCommon },
-      clientsCompanies: { results: clientsCompanies.results, action: getClientsCompany },
+      clientsCompanies: {
+        results: clientsCompanies.results,
+        action: getClientsCompany,
+      },
       executives: { results: users.results, action: getUsersCommon },
       users: { results: users.results, action: getUsersCommon },
       paymentways: { results: paymentway.results, action: getpaymentways },
-      paymentmethods: { results: paymentmethod.results, action: getpaymentmethods },
-      paymentperiods: { results: paymentperiods.results, action: getpaymentperiods },
+      paymentmethods: {
+        results: paymentmethod.results,
+        action: getpaymentmethods,
+      },
+      paymentperiods: {
+        results: paymentperiods.results,
+        action: getpaymentperiods,
+      },
       taxregimes: { results: taxregime.results, action: gettaxregimens },
       groups: { results: groups.results, action: getGroupsCommon },
       paymentsacount: {
@@ -190,14 +205,26 @@ export default function useGlobalCommons() {
       },
       statusOrders: { results: statusOrders.results, action: getStatuspoo },
       drivers: { results: drivers.results, action: getDrivers },
-      transportunits: { results: transportunits.results, action: getTransportunits },
-      orderrejected: { results: orderrejected.results, action: getOrderRejectedReasons },
+      transportunits: {
+        results: transportunits.results,
+        action: getTransportunits,
+      },
+      orderrejected: {
+        results: orderrejected.results,
+        action: getOrderRejectedReasons,
+      },
 
-      deliverytimes: { results: deliverytimes.results, action: getDeliveryTimes },
+      deliverytimes: {
+        results: deliverytimes.results,
+        action: getDeliveryTimes,
+      },
       typesentries: { results: typesentries.results, action: getTypesEntries },
       typereturns: { results: typereturns.results, action: getOrderReturn },
 
-      reasonwarranties: { results: reasonwarranties.results, action:getReasonWarranties },
+      reasonwarranties: {
+        results: reasonwarranties.results,
+        action: getReasonWarranties,
+      },
     };
 
     const currentCatalog = catalogOptions[typeCatalog];
@@ -245,6 +272,14 @@ export default function useGlobalCommons() {
           order: "reason",
         };
       }
+
+      if (typeCatalog === "templateswp") {
+        params = {
+          all: 1,
+          order: "description",
+        };
+      }
+
       if (typeCatalog === "providers") {
         params = {
           all: 1,
@@ -263,7 +298,8 @@ export default function useGlobalCommons() {
         params = {
           all: 1,
         };
-      }      if (typeCatalog === "taxinformations") {
+      }
+      if (typeCatalog === "taxinformations") {
         params = {};
       }
 
@@ -275,7 +311,7 @@ export default function useGlobalCommons() {
     }
   }
 
-  const addTracking = data => {
+  const addTracking = (data) => {
     dispatch(
       createNewTracking({
         data,

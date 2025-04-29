@@ -1,392 +1,382 @@
-import React, { useState } from "react";
-import styled from "styled-components";
-import {
-  Search as SearchIcon,
-  FilterList as FilterIcon,
-  ArrowUpward as ArrowUpIcon,
-  ArrowDownward as ArrowDownIcon,
-  Edit as EditIcon,
-  Delete as DeleteIcon,
-  MoreVert as MoreIcon,
-} from "@material-ui/icons";
+import { Pagination } from "@material-ui/lab";
+import React, { useEffect, useState } from "react";
+import { Button } from "@material-ui/core";
+import MenuActions from "./Menu";
+import { Table, TableWrapper } from "./styles";
+import TableBodyLoader from "./TableBodyLoader";
+import { normalizeHeads } from "./utils";
 
-// Estilos con Styled Components
-const TableContainer = styled.div`
-  width: 100%;
-  overflow-x: auto;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
-  background: white;
-`;
+export default function TableProspects({
+  data = [],
+  isSelectable = false,
+  actions = false,
+  heads: headsParam = [],
+  isLoading = false,
+  customHeads,
+  mainColumn,
+  customColumns,
+  typeActions = "default",
+  typeTable = "default",
+  styles = {},
+  onRowClick = null,
+  onRowMainColumnClick = null,
+  onMouseEnter = null,
+  paginationData,
+  orderBy = null,
+  setOrderBy = null,
+  rowsLoader = 20,
+  selectedRows = [],
+  setSelectedRows = () => {},
+  actionsSelected = [],
+}) {
+  const { heads } = useTableGeneral(headsParam, customHeads);
+  // const [selectedRows, setSelectedRows] = useState([]);
 
-const StyledTable = styled.table`
-  width: 100%;
-  border-collapse: collapse;
-  font-family: "Roboto", sans-serif;
-`;
-
-const TableHeader = styled.thead`
-  background-color: #f5f5f5;
-`;
-
-const TableHeaderCell = styled.th`
-  padding: 16px;
-  text-align: left;
-  font-weight: 500;
-  color: #333;
-  position: relative;
-  cursor: pointer;
-  user-select: none;
-
-  &:hover {
-    background-color: #eee;
-  }
-
-  &.active {
-    color: #1976d2;
-  }
-`;
-
-const TableRow = styled.tr`
-  border-bottom: 1px solid #e0e0e0;
-
-  &:hover {
-    background-color: #f9f9f9;
-  }
-
-  &:last-child {
-    border-bottom: none;
-  }
-`;
-
-const TableCell = styled.td`
-  padding: 16px;
-  color: #333;
-`;
-
-const ActionCell = styled(TableCell)`
-  display: flex;
-  gap: 8px;
-  justify-content: flex-end;
-`;
-
-const PaginationContainer = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 16px;
-  border-top: 1px solid #e0e0e0;
-`;
-
-const SearchContainer = styled.div`
-  padding: 16px;
-  background-color: #f5f5f5;
-  border-bottom: 1px solid #e0e0e0;
-`;
-
-const SearchInput = styled.input`
-  padding: 8px 16px 8px 40px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  width: 300px;
-  font-size: 14px;
-
-  &:focus {
-    outline: none;
-    border-color: #1976d2;
-  }
-`;
-
-const SearchIconWrapper = styled.span`
-  position: absolute;
-  padding: 8px;
-  color: #777;
-`;
-
-const SortIconWrapper = styled.span`
-  margin-left: 8px;
-  display: inline-flex;
-  flex-direction: column;
-`;
-
-const ActionButton = styled.button`
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: #555;
-  padding: 4px;
-  border-radius: 4px;
-
-  &:hover {
-    background-color: #eee;
-    color: #1976d2;
-  }
-`;
-
-// Componente de Tabla Dinámica
-const DynamicTable = ({
-  columns,
-  data,
-  onEdit,
-  onDelete,
-  onRowClick,
-  pageSizeOptions = [5, 10, 25],
-  defaultPageSize = 10,
-}) => {
-  const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
-  const [currentPage, setCurrentPage] = useState(0);
-  const [pageSize, setPageSize] = useState(defaultPageSize);
-  const [searchTerm, setSearchTerm] = useState("");
-
-  // Función para ordenar
-  const requestSort = (key) => {
-    let direction = "asc";
-    if (sortConfig.key === key && sortConfig.direction === "asc") {
-      direction = "desc";
-    }
-    setSortConfig({ key, direction });
-  };
-
-  // Función para filtrar y ordenar datos
-  const getFilteredAndSortedData = () => {
-    let filteredData = data;
-
-    // Filtrar
-    if (searchTerm) {
-      filteredData = data.filter((item) =>
-        columns.some((column) => {
-          const value = item[column.key];
-          return (
-            value &&
-            value.toString().toLowerCase().includes(searchTerm.toLowerCase())
-          );
-        })
-      );
-    }
-
-    // Ordenar
-    if (sortConfig.key) {
-      filteredData = [...filteredData].sort((a, b) => {
-        if (a[sortConfig.key] < b[sortConfig.key]) {
-          return sortConfig.direction === "asc" ? -1 : 1;
-        }
-        if (a[sortConfig.key] > b[sortConfig.key]) {
-          return sortConfig.direction === "asc" ? 1 : -1;
-        }
-        return 0;
-      });
-    }
-
-    return filteredData;
-  };
-
-  const filteredData = getFilteredAndSortedData();
-  const pageCount = Math.ceil(filteredData.length / pageSize);
-  const currentData = filteredData.slice(
-    currentPage * pageSize,
-    (currentPage + 1) * pageSize
-  );
+  const isColumnMain = (column) => column === mainColumn && "tableHead--main";
 
   return (
-    <div>
-      <SearchContainer>
-        <div style={{ position: "relative" }}>
-          <SearchIconWrapper>
-            <SearchIcon fontSize="small" />
-          </SearchIconWrapper>
-          <SearchInput
-            type="text"
-            placeholder="Buscar..."
-            value={searchTerm}
-            onChange={(e) => {
-              setSearchTerm(e.target.value);
-              setCurrentPage(0);
-            }}
-          />
-        </div>
-      </SearchContainer>
+    <TableWrapper
+      styles={{
+        ...styles,
+        typeTable: typeTable,
+      }}
+      fixedHeader={selectedRows.length > 0}
+    >
+      {selectedRows.length > 0 && (
+        <div className="tableHeadSelectedRows">
+          {isSelectable && (
+            <p className="tableHeadSelectedRows__text">
+              {selectedRows.length > 1 ? "Seleccionados" : "Seleccionado"} (
+              {selectedRows.length})
+            </p>
+          )}
 
-      <TableContainer>
-        <StyledTable>
-          <TableHeader>
-            <tr>
-              {columns.map((column) => (
-                <TableHeaderCell
-                  key={column.key}
-                  onClick={() => requestSort(column.key)}
-                  className={sortConfig.key === column.key ? "active" : ""}
-                >
-                  {column.label}
-                  <SortIconWrapper>
-                    {sortConfig.key === column.key ? (
-                      sortConfig.direction === "asc" ? (
-                        <ArrowUpIcon fontSize="small" />
-                      ) : (
-                        <ArrowDownIcon fontSize="small" />
-                      )
-                    ) : (
-                      <FilterIcon fontSize="small" />
-                    )}
-                  </SortIconWrapper>
-                </TableHeaderCell>
-              ))}
-              {(onEdit || onDelete) && (
-                <TableHeaderCell>Acciones</TableHeaderCell>
-              )}
-            </tr>
-          </TableHeader>
-          <tbody>
-            {currentData.length > 0 ? (
-              currentData.map((item, rowIndex) => (
-                <TableRow
-                  key={rowIndex}
-                  onClick={() => onRowClick && onRowClick(item)}
-                  style={{ cursor: onRowClick ? "pointer" : "default" }}
-                >
-                  {columns.map((column) => (
-                    <TableCell key={`${rowIndex}-${column.key}`}>
-                      {column.render ? column.render(item) : item[column.key]}
-                    </TableCell>
-                  ))}
-                  {(onEdit || onDelete) && (
-                    <ActionCell>
-                      {onEdit && (
-                        <ActionButton
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            onEdit(item);
-                          }}
-                        >
-                          <EditIcon fontSize="small" />
-                        </ActionButton>
-                      )}
-                      {onDelete && (
-                        <ActionButton
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            onDelete(item);
-                          }}
-                        >
-                          <DeleteIcon fontSize="small" />
-                        </ActionButton>
-                      )}
-                    </ActionCell>
-                  )}
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length + (onEdit || onDelete ? 1 : 0)}
-                  style={{ textAlign: "center" }}
-                >
-                  No se encontraron datos
-                </TableCell>
-              </TableRow>
+          {actionsSelected.length > 0 && (
+            <div
+              style={{ marginLeft: 20, display: "flex", alignItems: "center" }}
+            >
+              {actionsSelected.map((action, index) => {
+                return (
+                  <Button
+                    onClick={() => action.action(selectedRows)}
+                    className="btnactonselected"
+                  >
+                    {action.name}
+                  </Button>
+                  // <IconButton onClick={() => action.action(selectedRows)}>{action.icon}</IconButton>
+                  // <div
+                  //   key={index}
+                  //   onClick={() => action.action(selectedRows)}
+                  //   style={{
+                  //     display: "flex",
+                  //     alignItems: "center",
+                  //   }}
+                  // >
+                  //   <p>{action.title}</p>
+                  //   {action.icon}
+                  // </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      )}
+      <Table
+        styles={{
+          ...styles,
+          typeTable: typeTable,
+        }}
+        fixedHeader={selectedRows.length > 0}
+      >
+        <thead>
+          <tr className={`${selectedRows.length > 0 && "tableHiade"}`}>
+            {isSelectable && (
+              <th className={`tableHead tableHead--isselectable   `}>
+                <input
+                  type="checkbox"
+                  style={{ marginLeft: 4 }}
+                  onChange={(e) => {
+                    if (e.target.checked) {
+                      setSelectedRows(data);
+                    } else {
+                      setSelectedRows([]);
+                    }
+                  }}
+                />
+              </th>
             )}
-          </tbody>
-        </StyledTable>
-      </TableContainer>
 
-      <PaginationContainer>
-        <div>
-          Mostrando {currentData.length} de {filteredData.length} registros
-        </div>
-        <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
-          <select
-            value={pageSize}
-            onChange={(e) => {
-              setPageSize(Number(e.target.value));
-              setCurrentPage(0);
-            }}
-            style={{
-              padding: "8px",
-              borderRadius: "4px",
-              border: "1px solid #ddd",
-            }}
-          >
-            {pageSizeOptions.map((size) => (
-              <option key={size} value={size}>
-                {size} por página
-              </option>
+            {heads?.map((head, index) => {
+              return (
+                <th
+                  key={index}
+                  className={`tableHead ${isColumnMain(head.headText)} 
+                  ${orderBy && head?.orderby !== null && "tableHead--clickable"}
+                  `}
+                  onClick={() => {
+                    orderBy &&
+                      head?.orderby != null &&
+                      paginationData.handlePage(1);
+                    if (head?.orderby != null)
+                      setOrderBy &&
+                        setOrderBy((prev) =>
+                          prev === head.orderby
+                            ? `${head.orderby.slice(1)}`
+                            : `${head.orderby}`
+                        );
+                  }}
+                  // style={{ width: head?.width ? head.width : styles.widthColumn }}
+                >
+                  <div style={{ display: "flex" }}>
+                    {head.headText}
+                    {orderBy &&
+                      (orderBy === head.orderby ||
+                        orderBy === head.orderby?.slice(1)) && (
+                        <div
+                          style={{
+                            marginLeft: 5,
+                          }}
+                        >
+                          {orderBy.includes("-") ? (
+                            <span>↓</span>
+                          ) : (
+                            <span>↑</span>
+                          )}
+                        </div>
+                      )}
+                  </div>
+                </th>
+              );
+            })}
+
+            {actions && <th className={`tableHeadActions`}>Acciones</th>}
+          </tr>
+        </thead>
+
+        {isLoading && (
+          <TableBodyLoader
+            rowsLoader={rowsLoader}
+            heads={heads}
+            isSelectable={isSelectable}
+          />
+        )}
+
+        {!isLoading && (
+          <tbody>
+            {data.map((row, index) => (
+              <tr
+                key={index}
+                className={`tableRow ${row?.classname && row.classname} 
+               ${onRowClick && "tableRow--clickable"}
+              `}
+                onClick={() => onRowClick && onRowClick(row)}
+              >
+                {isSelectable && (
+                  <td
+                    className="tableData tableDataSelect"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <div className="tableDataContainer">
+                      <input
+                        type="checkbox"
+                        checked={selectedRows.some(
+                          (ce, index) => ce.id === row.id
+                        )}
+                        onChange={(e) => {
+                          e.stopPropagation();
+                          if (e.target.checked) {
+                            setSelectedRows([...selectedRows, row]);
+                          } else {
+                            setSelectedRows(
+                              selectedRows.filter(
+                                (ce, index) => ce.id !== row.id
+                              )
+                            );
+                          }
+                        }}
+                        onClick={(event) => {
+                          event.stopPropagation();
+                        }}
+                        // onChange={event => setSelectedRows([...selectedRows, row.id])}
+                        value={selectedRows.includes(row.id)}
+                      />
+                    </div>
+                  </td>
+                )}
+
+                {heads?.map((headData, index) => {
+                  if (
+                    customColumns &&
+                    (customColumns[headData.headText] ||
+                      customColumns[headData.headNormalize])
+                  ) {
+                    return (
+                      <td className="tableData" key={index}>
+                        <div className="tableDataContainer">
+                          {typeof headsParam[0] === "object"
+                            ? customColumns[headData.headNormalize]?.component(
+                                row,
+                                headData,
+                                index % 2 === 0,
+                                index === 0
+                              )
+                            : customColumns[headData.headText].component(
+                                row,
+                                headData,
+                                index % 2 === 0,
+                                index === 0
+                              )}
+                        </div>
+                      </td>
+                    );
+                  }
+
+                  if (
+                    (mainColumn === headData.headText ||
+                      mainColumn === headData.headNormalize) &&
+                    (onRowMainColumnClick || onMouseEnter)
+                  ) {
+                    return (
+                      <td
+                        key={index}
+                        className="tableDataId"
+                        onClick={() =>
+                          onRowMainColumnClick && onRowMainColumnClick(row)
+                        }
+                        onMouseEnter={() => onMouseEnter && onMouseEnter(row)}
+                      >
+                        <div className="tableDataContainer">
+                          {typeof headsParam[0] === "object"
+                            ? row[headData.headNormalize]
+                            : row[headData.headText]}
+                        </div>
+                      </td>
+                    );
+                  }
+
+                  return (
+                    <td className="tableData" key={index}>
+                      <div
+                        className={`tableDataContainer ${
+                          headData.iconComponent && "tableDataContainer--flex"
+                        }`}
+                      >
+                        {headData.iconComponent && (
+                          <div
+                            style={{
+                              marginRight: "10px",
+                              color: styles.headerColor,
+                            }}
+                          >
+                            {headData.iconComponent}
+                          </div>
+                        )}
+
+                        {/* if (customHeads || typeof headsParam[0] === "object") return setHeads(headsParam); */}
+
+                        {typeof headsParam[0] === "object"
+                          ? row[headData.headNormalize]
+                          : row[headData.headText]}
+                        {/* {row[headData.headText]} */}
+                      </div>
+                    </td>
+                  );
+                })}
+
+                {actions && (
+                  <MenuActions
+                    keys={index}
+                    pm={styles.primaryColor}
+                    rowItem={row}
+                    options={actions}
+                    typeActions={typeActions}
+                  />
+                )}
+                {/* {typeActions !== "default" && actions && <td>{renderActions(typeActions, row, actions)}</td>} */}
+              </tr>
             ))}
-          </select>
+          </tbody>
+        )}
+      </Table>
 
-          <div style={{ display: "flex", gap: "8px" }}>
-            <ActionButton
-              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 0))}
-              disabled={currentPage === 0}
-            >
-              <ArrowUpIcon fontSize="small" />
-            </ActionButton>
-            <span>
-              Página {currentPage + 1} de {pageCount || 1}
-            </span>
-            <ActionButton
-              onClick={() =>
-                setCurrentPage((prev) => Math.min(prev + 1, pageCount - 1))
-              }
-              disabled={currentPage >= pageCount - 1 || pageCount === 0}
-            >
-              <ArrowDownIcon fontSize="small" />
-            </ActionButton>
-          </div>
-        </div>
-      </PaginationContainer>
-    </div>
+      <div className="pagination">
+        {paginationData && paginationData.total > 20 && (
+          <Pagination
+            variant="outlined"
+            count={Math.ceil(paginationData.total / paginationData.limit)}
+            onChange={(e, value) => paginationData.handlePage(value)}
+            size="small"
+            page={paginationData.page}
+            color="primary"
+          />
+        )}
+      </div>
+    </TableWrapper>
   );
+}
+
+const useTableGeneral = (headsParam, customHeads) => {
+  const [heads, setHeads] = useState([]);
+
+  useEffect(() => {
+    if (customHeads || typeof headsParam[0] === "object")
+      return setHeads(headsParam);
+    let normalizedHeads = normalizeHeads(headsParam, "id");
+    setHeads(normalizedHeads);
+  }, [headsParam]);
+  return {
+    heads,
+  };
 };
 
-// Ejemplo de uso
-const App = () => {
-  const [people, setPeople] = useState([
-    { id: 1, name: "Juan Pérez", age: 28, email: "juan@example.com" },
-    { id: 2, name: "María García", age: 34, email: "maria@example.com" },
-    { id: 3, name: "Carlos López", age: 22, email: "carlos@example.com" },
-    { id: 4, name: "Ana Martínez", age: 45, email: "ana@example.com" },
-    { id: 5, name: "Pedro Sánchez", age: 31, email: "pedro@example.com" },
-  ]);
+let initalConfig = {
+  // widthColumnId: 200,
+  // widthColumn: 100,
+  // minHeight: 500,
+  // headerColor: "#212529",
+  // headerColorSecondary: "#5d6873",
+  // headerTextColor: "#ffff",
+  // primaryColor: "#f2f2f2",
+  // secondaryColor: "#fff",
+  // hoverColor: "#c9cfd4",
+  // nthChild: "#e0e0e0",
+  // typeTable: "default",
 
-  const columns = [
-    { key: "id", label: "ID" },
-    { key: "name", label: "Nombre" },
-    { key: "age", label: "Edad" },
-    {
-      key: "email",
-      label: "Correo Electrónico",
-      render: (item) => <a href={`mailto:${item.email}`}>{item.email}</a>,
-    },
-  ];
-
-  const handleEdit = (item) => {
-    console.log("Editar:", item);
-    // Aquí podrías abrir un modal o formulario de edición
-  };
-
-  const handleDelete = (item) => {
-    if (window.confirm(`¿Estás seguro de eliminar a ${item.name}?`)) {
-      setPeople(people.filter((p) => p.id !== item.id));
-    }
-  };
-
-  const handleRowClick = (item) => {
-    console.log("Fila clickeada:", item);
-  };
-
-  return (
-    <div style={{ padding: "24px", maxWidth: "1200px", margin: "0 auto" }}>
-      <h1>Tabla Dinámica Personalizada</h1>
-      <DynamicTable
-        columns={columns}
-        data={people}
-        onEdit={handleEdit}
-        onDelete={handleDelete}
-        onRowClick={handleRowClick}
-        pageSizeOptions={[3, 5, 10]}
-        defaultPageSize={5}
-      />
-    </div>
-  );
+  widthColumnId: 100,
+  widthColumn: 150,
+  minHeight: 500,
+  headerColor: "#FFFFFF",
+  headerColorSecondary: "#fff",
+  headerTextColor: "#9e9e9e",
+  primaryColor: "#000",
+  secondaryColor: "#fff",
+  hoverColor: "#c9cfd4",
+  nthChild: "#fff",
+  borderColor: "#e0e0e0",
+  typeTable: "border",
 };
 
-export default App;
+let initalConfigOrder = {
+  widthColumnId: 200,
+  widthColumn: 150,
+  minHeight: 500,
+  headerColor: "#FFFFFF",
+  headerColorSecondary: "#fff",
+  headerTextColor: "#9e9e9e",
+  primaryColor: "#000",
+  secondaryColor: "#fff",
+  hoverColor: "#ffff",
+  nthChild: "#fff",
+  borderColor: "#e0e0e0",
+  typeTable: "border",
+};
+
+// Orden Ascendente
+// Significado: De la fecha más antigua a la más reciente.
+// Ejemplo: 01/01/2020, 01/06/2020, 01/01/2021, 01/06/2021.
+// Descripción sencilla: Las fechas se ordenan empezando por la más lejana en el tiempo y avanzando hacia la más cercana al presente.
+
+// Orden Descendente
+// Significado: De la fecha más reciente a la más antigua.
+// Ejemplo: 01/06/2021, 01/01/2021, 01/06/2020, 01/01/2020.
+// Descripción sencilla: Las fechas se ordenan comenzando por la más cercana al presente y retrocediendo hacia la más lejana en el tiempo.
