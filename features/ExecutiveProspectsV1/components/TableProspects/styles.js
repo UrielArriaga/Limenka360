@@ -3,11 +3,11 @@ import styled, { css } from "styled-components";
 // * Styles for custom table
 
 export const tableHeadTypeDefault = css`
-  background-color: rgb(236, 241, 247);
+  background-color: rgb(221, 230, 240);
   color: rgb(101, 101, 101);
   &:hover {
     /* background-color: #ffcccb; */
-    color: #000;
+    /* color: #000; */
     font-weight: bold;
     transition: background-color 0.3s ease, color 0.3s ease;
   }

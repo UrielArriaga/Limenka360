@@ -1,35 +1,29 @@
 import React, { useEffect, useState } from "react";
 import { api } from "../../../services/api";
+import ProspectsService from "../service";
+import { is } from "date-fns/locale";
 
-class OportunitiesService {
-  async getProspectsByPhases({}) {
-    let params = {
-      limit: 5,
-      order: "-createdAt",
-      subquery: 1,
-      include: "category,clienttype",
-      join: "catego,clienttype",
-      where: {
-        isclient: false,
-        isoportunity: false,
-        discarted: false,
-        ejecutiveId: "YNQHRt32OCbt0shXa0yOa51t",
-      },
-    };
-    return await api.get("prospects/byphases", {
-      params,
-    });
-  }
-}
+const initialState = {
+  columns: {},
+  columnOrder: [],
+  isFetching: false,
+};
 
-export default function useMain() {
-  const service = new OportunitiesService();
+const initialDataSet = {
+  results: [],
+  count: 0,
+  isFetching: false,
+};
+
+export default function useMain(viewType) {
+  const service = new ProspectsService();
   const [flagToRefetch, setFlagToRefetch] = useState(false);
 
   const [modalViews, setModalViews] = useState({
     preview: false,
     limiBotChat: false,
     newOportunity: false,
+    movePhase: false,
   });
 
   const handleToggleModal = (modalName) => {
@@ -39,38 +33,62 @@ export default function useMain() {
     }));
   };
 
-  const [data, setData] = useState({
-    columns: {},
-    columnOrder: [],
-    isFetching: false,
-  });
+  const [data, setData] = useState(initialState);
 
-  const [showDragAreaOportunity, setShowDragAreaOportunity] = useState(false);
+  const [dataSet, setDataSet] = useState(initialDataSet);
 
   const [oportunityData, setOportunityData] = useState(null);
 
+  // * EFFECTO PRINICIPAL QUE TRAE LOS PROSPECTOS
+
   useEffect(() => {
-    const fetchData = async () => {
-      setData((prev) => ({ ...prev, isFetching: true }));
-      try {
-        const response = await service.getProspectsByPhases({});
+    if (viewType === "kanban") {
+      fetchDataByPhases();
+    }
+    if (viewType === "table") {
+      fetchDataByTable();
+    }
+  }, [flagToRefetch, viewType]);
 
-        setData((prev) => ({
-          ...prev,
-          columns: response.data?.columns,
-          columnOrder: response.data?.columnsOrder,
-          isFetching: false,
-        }));
+  // *¨PETICIONES PARA TIPOS DE VISTA
 
-        console.log(data);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-        setData((prev) => ({ ...prev, isFetching: false }));
-      }
-    };
+  const fetchDataByPhases = async () => {
+    setData((prev) => ({ ...prev, isFetching: true }));
+    try {
+      const response = await service.getProspectsByPhases({});
 
-    fetchData();
-  }, [flagToRefetch]);
+      setData((prev) => ({
+        ...prev,
+        columns: response.data?.columns,
+        columnOrder: response.data?.columnsOrder,
+        isFetching: false,
+      }));
+
+      console.log(data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      setData((prev) => ({ ...prev, isFetching: false }));
+    }
+  };
+
+  const fetchDataByTable = async () => {
+    setDataSet((prev) => ({ ...prev, isFetching: true }));
+    try {
+      const response = await service.getProspects({});
+
+      setDataSet((prev) => ({
+        ...prev,
+        results: service.mapToNormalizeProspects(response.data?.results),
+        count: response.data?.count,
+        isFetching: false,
+      }));
+
+      console.log(data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      setData((prev) => ({ ...prev, isFetching: false }));
+    }
+  };
 
   const handleRefetch = () => setFlagToRefetch((prev) => !prev);
 
@@ -110,7 +128,7 @@ export default function useMain() {
     if (type === "item") {
       if (startColumnId === "convert-zone") {
         handleToggleModal("newOportunity");
-        setShowDragAreaOportunity(false);
+        // setShowDragAreaOportunity(false);
       }
 
       if (startColumnId === endColumnId) {
@@ -131,6 +149,9 @@ export default function useMain() {
           columns: updatedColumns,
         }));
       } else {
+        console.log("move between columns");
+        handleToggleModal("modalPhase");
+
         const startColumnItems = Array.from(data.columns[startColumnId].items);
         const [movedItem] = startColumnItems.splice(source.index, 1);
 
@@ -153,25 +174,26 @@ export default function useMain() {
           ...prev,
           columns: updatedColumns,
         }));
+        return;
       }
     }
 
     if (destination.droppableId === "convert-zone") {
       console.log("object");
     }
-    setShowDragAreaOportunity(false);
+    // setShowDragAreaOportunity(false);
   };
 
   const onDragStart = (result) => {
     const { source } = result;
     const { droppableId } = source;
 
-    setShowDragAreaOportunity(true);
+    // setShowDragAreaOportunity(true);
   };
 
   return {
     data,
-    showDragAreaOportunity,
+    dataSet,
     onDragEnd,
     onDragStart,
     handleRefetch,

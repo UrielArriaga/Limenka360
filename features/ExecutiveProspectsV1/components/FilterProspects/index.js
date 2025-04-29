@@ -1,6 +1,7 @@
 import {
   Add,
   ArrowDropDown,
+  Cached,
   Dashboard,
   TableChart,
   ViewCarousel,
@@ -11,10 +12,15 @@ import styled from "styled-components";
 import { motion, AnimatePresence } from "framer-motion";
 import { IconButton } from "@material-ui/core";
 
-export default function FilterProspects() {
+export default function FilterProspects({
+  handleRefetch,
+
+  viewType,
+  setViewType,
+}) {
   const [showOptions, setShowOptions] = useState(false);
   const [selected, setSelected] = useState("Ordenar por: Nombre");
-  const [viewType, setViewType] = useState("Vista: Tabla");
+
   const [showViewOptions, setShowViewOptions] = useState(false);
   const viewOptions = ["Tabla", "Kanban"];
 
@@ -55,20 +61,33 @@ export default function FilterProspects() {
         <input type="text" placeholder="Buscar" />
       </div>
 
+      <div className="refetech">
+        <button className="refetchBtn" onClick={() => handleRefetch()}>
+          <Cached />
+        </button>
+      </div>
+
       <div className="viewtype">
         <IconButton
+          onClick={() => setViewType("table")}
           style={{
             borderRadius: 0,
-            background: "rgba(0, 123, 255, 0.04)",
-            color: "#007bff",
+            background:
+              viewType === "table" ? "rgba(0, 123, 255, 0.04)" : "none",
+            color: viewType === "table" ? "#007bff" : "inherit",
           }}
         >
           <ViewCarousel />
         </IconButton>
 
         <IconButton
+          onClick={() => setViewType("kanban")}
           style={{
             borderRadius: 0,
+            borderRadius: 0,
+            background:
+              viewType === "kanban" ? "rgba(0, 123, 255, 0.04)" : "none",
+            color: viewType === "kanban" ? "#007bff" : "inherit",
           }}
         >
           <ViewList />
@@ -158,7 +177,9 @@ const FilterProspectsStyled = styled.div`
   /* padding: 16px; */
   position: relative;
   font-family: "Inter", sans-serif;
-  margin-bottom: 40px;
+  margin-bottom: 20px;
+  /* height: 50px; */
+  /* border: 1px solid red; */
 
   .inputSearch input {
     padding: 10px 14px;
