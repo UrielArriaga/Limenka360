@@ -28,15 +28,19 @@ const DropContextStyled = styled.div`
 `;
 
 export default function ExecutivesProspectsV1() {
-  const { data, showDragAreaOportunity, onDragEnd, onDragStart, modalActions } =
-    useMain();
-  const [prospectSelected, setProspectSelected] = useState(null);
-  const [openPreview, setopenPreview] = useState(false);
-  const [openLimiBotChat, setOpenLimiBotChat] = useState(false);
-  const [openNewOportunity, setOpenNewOportunity1] = useState(false);
-  const [showArea, setShowArea] = useState(false);
+  const [viewType, setViewType] = useState("kanban");
+  const {
+    data,
+    dataSet,
+    modalActions,
+    handleRefetch,
+    handleInfiniteScroll,
+    onDragEnd,
+    onDragStart,
+  } = useMain(viewType);
 
-  let whatsappWindow = null;
+  const [prospectSelected, setProspectSelected] = useState(null);
+  const [openLimiBotChat, setOpenLimiBotChat] = useState(false);
 
   const onClickProspect = (item) => {
     setProspectSelected(item);
@@ -47,85 +51,95 @@ export default function ExecutivesProspectsV1() {
     modalActions.handleToggleModal("newOportunity");
   };
 
-  const onClickOpenPreview = (item) => {
-    setProspectSelected(item);
-    modalActions.handleToggleModal("preview");
-  };
-
-  const toogleModalPreview = () => {
-    setopenPreview(!openPreview);
-  };
-
   const toogleLimiBotChat = (item) => {
     setProspectSelected(item);
     setOpenLimiBotChat(!openLimiBotChat);
   };
 
-  const datos = [
-    { id: 1, name: "Juan", email: "juan@mail.com", phone: "123456789" },
-    { id: 2, name: "María", email: "maria@mail.com", phone: "987654321" },
-    { id: 3, name: "Carlos", email: "carlos@mail.com", phone: "555123456" },
-  ];
-
-  const [columns, setColumns] = useState([
-    { field: "name", headerName: "Nombre" },
-    { field: "email", headerName: "Correo" },
-    { field: "phone", headerName: "Teléfono" },
-  ]);
-
-  const handleEdit = (row) => {
-    console.log("Editar fila:", row);
-  };
-
-  const handleDelete = (row) => {
-    console.log("Eliminar fila:", row);
-  };
-
-  const [viewType, setViewType] = useState("kanban");
-
   return (
     <ExecutiveProspectsStyled>
-      <FilterProspects viewType={viewType} setViewType={setViewType} />
+      <FilterProspects
+        viewType={viewType}
+        setViewType={setViewType}
+        handleRefetch={handleRefetch}
+      />
+      {/* 
+      <button
+        onClick={() => {
+          console.log(data);
+        }}
+      >
+        click me
+      </button> */}
 
-      {/* <TableProspects
-        data={datos}
-        columns={columns}
-        setColumns={setColumns}
-        onEdit={handleEdit}
-        onDelete={handleDelete}
-      /> */}
+      {/* <pre>{JSON.stringify(dataSet, null, 2)}</pre> */}
+      {viewType === "table" && (
+        <TableProspects
+          data={dataSet.results}
+          heads={[
+            {
+              headText: "Fecha de Creacion",
+              headNormalize: "createdAt",
+              orderby: "-createdAt",
+            },
+            {
+              headText: "Nombre del prospecto",
+              headNormalize: "fullname",
+              orderby: "-createdAt",
+            },
+            {
+              headText: "Correo",
+              headNormalize: "email",
+              orderby: "-createdAt",
+            },
+            {
+              headText: "Telefono",
+              headNormalize: "phone",
+              orderby: "-createdAt",
+            },
+            {
+              headText: "Fase",
+              headNormalize: "createdAt",
+              orderby: "-createdAt",
+            },
+            {
+              headText: "Producto de interes",
+              headNormalize: "createdAt",
+              orderby: "-createdAt",
+            },
+            {
+              headText: "Proximo pendiente",
+              headNormalize: "createdAt",
+              orderby: "-createdAt",
+            },
+            {
+              headText: "ultimo seguimiento",
+              headNormalize: "createdAt",
+              orderby: "-createdAt",
+            },
+          ]}
+        />
+      )}
 
-      <DragDropContext onDragEnd={onDragEnd} onDragStart={onDragStart}>
-        <DropContextStyled>
-          <div className="kanban">
-            <Kanban
-              data={data}
-              actions={{
-                onClickProspect,
-                toogleLimiBotChat,
-                onClickNewOportunity,
-              }}
-            />
-          </div>
-          {/* 
-          <Droppable droppableId="convert-zone" type="item">
-            {(provided, snapshot) => (
-              <div
-                ref={provided.innerRef}
-                {...provided.droppableProps}
-                style={{ height: 200, background: "lightblue", marginLeft: 20 }}
-              >
-                Drop here
-                {provided.placeholder}
+      {viewType === "kanban" && (
+        <div className="scrollsection">
+          <DragDropContext onDragEnd={onDragEnd} onDragStart={onDragStart}>
+            <DropContextStyled>
+              <div className="kanban">
+                <Kanban
+                  data={data}
+                  handleFecthMore={handleInfiniteScroll}
+                  actions={{
+                    onClickProspect,
+                    toogleLimiBotChat,
+                    onClickNewOportunity,
+                  }}
+                />
               </div>
-            )}
-          </Droppable> */}
-          {/* <div className="convertarea">
-            {showDragAreaOportunity && <ConvertArea />}
-          </div> */}
-        </DropContextStyled>
-      </DragDropContext>
-
+            </DropContextStyled>
+          </DragDropContext>
+        </div>
+      )}
       <ModalPreview
         trackings={[]}
         pendingsData={[]}
@@ -133,7 +147,6 @@ export default function ExecutivesProspectsV1() {
         open={modalActions.modalViews.preview}
         toggleModal={() => modalActions.handleToggleModal("preview")}
       />
-
       <LimiBotChatIA
         trackings={[]}
         pendingsData={[]}
@@ -141,13 +154,14 @@ export default function ExecutivesProspectsV1() {
         open={openLimiBotChat}
         toggleModal={toogleLimiBotChat}
       />
-
       <NewOportunity
         open={modalActions.modalViews.newOportunity}
         toggleModal={() => modalActions.handleToggleModal("newOportunity")}
       />
-
-      {/* <ModalMovePhase open={true} /> */}
+      <ModalMovePhase
+        open={modalActions.modalViews.modalPhase}
+        toggleModal={() => modalActions.handleToggleModal("modalPhase")}
+      />
     </ExecutiveProspectsStyled>
   );
 }

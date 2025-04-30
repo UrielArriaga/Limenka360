@@ -40,6 +40,24 @@ class ProspectsService {
     });
   }
 
+  async getProspectsByPhase(queryParams) {
+    const { phaseId, page } = queryParams;
+    let params = {
+      limit: 5,
+      order: "-createdAt",
+      include: "category,clienttype",
+      join: "catego,clienttype",
+      skip: page,
+      where: {
+        isclient: false,
+        isoportunity: false,
+        discarted: false,
+        phaseId: phaseId,
+      },
+    };
+    return await api.get("prospects", { params });
+  }
+
   mapToNormalizeProspects(items = []) {
     return items;
     // return items.map((item) => this.normalizeProspects(item));

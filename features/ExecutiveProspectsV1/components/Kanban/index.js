@@ -3,7 +3,7 @@ import { Droppable } from "react-beautiful-dnd";
 import styled from "styled-components";
 import Column from "./Column";
 
-export default function Kanban({ data, actions }) {
+export default function Kanban({ data, actions, handleFecthMore }) {
   return (
     <Droppable droppableId="all-columns" direction="horizontal" type="column">
       {(provided) => (
@@ -22,6 +22,7 @@ export default function Kanban({ data, actions }) {
                 tasks={column.items}
                 index={index}
                 actions={actions}
+                handleFecthMore={handleFecthMore}
               />
             );
           })}

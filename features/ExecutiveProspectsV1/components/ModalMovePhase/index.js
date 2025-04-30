@@ -5,6 +5,16 @@ import Select from "react-select";
 import styled from "styled-components";
 import useGlobalCommons from "../../../../hooks/useGlobalCommons";
 import { commonSelector } from "../../../../redux/slices/commonSlice";
+import {
+  Phone as PhoneIcon,
+  WhatsApp as WhatsAppIcon,
+  Email as EmailIcon,
+  Event as EventIcon,
+  Group as GroupIcon,
+  AccessTime as AccessTimeIcon,
+  Today as TodayIcon,
+  DateRange as DateRangeIcon
+} from "@material-ui/icons";
 
 export default function ModalMovePhase({
   open,
@@ -14,8 +24,67 @@ export default function ModalMovePhase({
   },
 }) {
   const [showFormPending, setShowFormPending] = useState(false);
+  const [pendingType, setPendingType] = useState(null);
+  const [pendingDate, setPendingDate] = useState("");
   const { getCatalogBy } = useGlobalCommons();
   const common = useSelector(commonSelector);
+
+  const addBusinessDays = (date, days) => {
+    let currentDate = new Date(date);
+    let addedDays = 0;
+    
+    while (addedDays < days) {
+      currentDate.setDate(currentDate.getDate() + 1);
+      if (currentDate.getDay() !== 0 && currentDate.getDay() !== 6) {
+        addedDays++;
+      }
+    }
+    
+    return currentDate;
+  };
+
+  const formatDateForInput = (date) => {
+    return date.toISOString().slice(0, 16);
+  };
+
+  const handleQuickDate = (type) => {
+    const now = new Date();
+    let newDate;
+
+    switch (type) {
+      case '1h':
+        newDate = new Date(now.getTime() + 60 * 60 * 1000);
+        break;
+      case '1d':
+        newDate = addBusinessDays(now, 1);
+        break;
+      case '3d':
+        newDate = addBusinessDays(now, 3);
+        break;
+      case '5d':
+        newDate = addBusinessDays(now, 5);
+        break;
+      default:
+        newDate = now;
+    }
+
+    setPendingDate(formatDateForInput(newDate));
+  };
+
+  const quickDates = [
+    { value: '1h', label: '1 hora', icon: <AccessTimeIcon /> },
+    { value: '1d', label: '1 día', icon: <TodayIcon /> },
+    { value: '3d', label: '3 días', icon: <DateRangeIcon /> },
+    { value: '5d', label: '5 días', icon: <DateRangeIcon /> },
+  ];
+
+  const pendingTypes = [
+    { value: 'call', label: 'Llamada', icon: <PhoneIcon /> },
+    { value: 'whatsapp', label: 'WhatsApp', icon: <WhatsAppIcon /> },
+    { value: 'email', label: 'Email', icon: <EmailIcon /> },
+    { value: 'meeting', label: 'Reunión', icon: <GroupIcon /> },
+    { value: 'other', label: 'Otro', icon: <EventIcon /> }
+  ];
 
   return (
     <Modal open={open} onClose={toggleModal} closeAfterTransition>
@@ -55,9 +124,48 @@ export default function ModalMovePhase({
         </div>
         {showFormPending && (
           <div className="addpending">
+            <div className="quick-actions">
+              {pendingTypes.map((type) => (
+                <button
+                  key={type.value}
+                  className={`quick-action-btn ${pendingType?.value === type.value ? 'active' : ''}`}
+                  onClick={() => setPendingType(type)}
+                >
+                  {type.icon}
+                  <span>{type.label}</span>
+                </button>
+              ))}
+            </div>
             <div className="input-field">
-              <label>Agregar un nuevo pendiente</label>
-              <textarea rows={4} placeholder="Descripción del seguimiento" />
+              <label>Fecha del pendiente</label>
+              <div className="quick-dates">
+                {quickDates.map((date) => (
+                  <button
+                    key={date.value}
+                    className="quick-date-btn"
+                    onClick={() => handleQuickDate(date.value)}
+                    type="button"
+                  >
+                    {date.icon}
+                    <span>{date.label}</span>
+                  </button>
+                ))}
+              </div>
+              <div className="date-input">
+                <EventIcon className="date-icon" />
+                <input
+                  type="datetime-local"
+                  value={pendingDate}
+                  onChange={(e) => setPendingDate(e.target.value)}
+                />
+              </div>
+            </div>
+            <div className="input-field">
+              <label>Notas del pendiente</label>
+              <textarea 
+                rows={3} 
+                placeholder="Escribe aquí las notas importantes del pendiente..." 
+              />
             </div>
           </div>
         )}
@@ -102,109 +210,228 @@ export default function ModalMovePhase({
 }
 
 const ModalBox = styled(Box)`
-  /* background: white;
-  padding: 24px;
-  max-width: 500px;
-  margin: 10% auto;
-  
-  */
-  box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);
+  box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
   border-radius: 12px;
   position: absolute;
-  top: 40%;
+  top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 500px;
   background-color: #fff;
-  border-radius: 12px;
-  padding: 16px;
-  width: 700px;
-  /* height: 300px; */
+  padding: 24px;
+  width: 500px;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  gap: 20px;
 
-  h3 {
-    margin: 0;
-    font-size: 14px;
-    font-weight: 600;
-    color: #2a2f3a;
+  .title {
+    h3 {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 600;
+      color: #2a2f3a;
+    }
   }
 
   .inputs {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 16px;
 
     .input-field {
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: 8px;
 
       label {
-        font-size: 12px;
-        color: #757575;
+        font-size: 13px;
+        color: #666;
       }
 
-      input,
       textarea {
-        border-radius: 8px;
-        padding: 8px;
-        border: 1px solid #eee;
+        border-radius: 6px;
+        padding: 12px;
+        border: 1px solid #e0e0e0;
         font-size: 14px;
         color: #2a2f3a;
+        resize: vertical;
+        min-height: 80px;
 
         &:focus {
           outline: none;
           border-color: #39b8df;
         }
+
+        &::placeholder {
+          color: #999;
+        }
       }
     }
-  }
-
-  .checkbox {
-    width: 16px;
   }
 
   .input-check {
     display: flex;
     align-items: center;
     gap: 8px;
-    margin-top: 16px;
-    font-size: 14px;
-    color: #2a2f3a;
-    font-weight: 600;
+    margin: 8px 0;
+    
+    label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      color: #2a2f3a;
+      cursor: pointer;
+    }
+
+    .checkbox {
+      width: 16px;
+      height: 16px;
+      margin: 0;
+    }
   }
 
   .addpending {
     display: flex;
     flex-direction: column;
-    gap: 12px;
-    margin-top: 16px;
-    padding: 8px 0;
+    gap: 16px;
+    padding-top: 16px;
     border-top: 1px solid #eee;
+
+    .quick-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+
+      .quick-action-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 16px;
+        border: 1px solid #e0e0e0;
+        border-radius: 6px;
+        background: white;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        font-size: 13px;
+        color: #666;
+        font-weight: 500;
+
+        svg {
+          font-size: 18px;
+        }
+
+        &:hover {
+          background: #f5f5f5;
+          border-color: #ccc;
+        }
+
+        &.active {
+          background: #f0f9ff;
+          color: #0288d1;
+          border-color: #0288d1;
+
+          svg {
+            color: #0288d1;
+          }
+        }
+      }
+    }
 
     .input-field {
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: 8px;
 
       label {
-        font-size: 12px;
-        color: #757575;
+        font-size: 13px;
+        color: #666;
       }
 
-      input,
+      .quick-dates {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 8px;
+        flex-wrap: wrap;
+
+        .quick-date-btn {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          padding: 6px 12px;
+          border: 1px solid #e0e0e0;
+          border-radius: 6px;
+          background: white;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          font-size: 13px;
+          color: #666;
+          font-weight: 500;
+
+          svg {
+            font-size: 16px;
+            color: #666;
+          }
+
+          &:hover {
+            background: #f5f5f5;
+            border-color: #ccc;
+          }
+
+          &:active {
+            background: #f0f9ff;
+            color: #0288d1;
+            border-color: #0288d1;
+
+            svg {
+              color: #0288d1;
+            }
+          }
+        }
+      }
+
+      .date-input {
+        position: relative;
+
+        .date-icon {
+          position: absolute;
+          left: 12px;
+          top: 50%;
+          transform: translateY(-50%);
+          color: #666;
+          font-size: 18px;
+        }
+
+        input[type="datetime-local"] {
+          width: 100%;
+          padding: 10px 12px 10px 40px;
+          border-radius: 6px;
+          border: 1px solid #e0e0e0;
+          font-size: 14px;
+          color: #2a2f3a;
+
+          &:focus {
+            outline: none;
+            border-color: #39b8df;
+          }
+        }
+      }
+
       textarea {
-        border-radius: 8px;
-        padding: 8px;
-        border: 1px solid #eee;
+        border-radius: 6px;
+        padding: 12px;
+        border: 1px solid #e0e0e0;
         font-size: 14px;
         color: #2a2f3a;
+        resize: vertical;
+        min-height: 80px;
 
         &:focus {
           outline: none;
           border-color: #39b8df;
+        }
+
+        &::placeholder {
+          color: #999;
         }
       }
     }
@@ -212,31 +439,35 @@ const ModalBox = styled(Box)`
 
   .actions {
     display: flex;
-    /* justify-content: space-between; */
     justify-content: flex-end;
-    gap: 8px;
+    gap: 12px;
+    margin-top: 8px;
 
     button {
-      padding: 8px 16px;
-      border-radius: 8px;
+      padding: 8px 24px;
+      border-radius: 6px;
       font-size: 14px;
-      font-weight: 600;
-      color: #fff;
+      font-weight: 500;
       border: none;
       cursor: pointer;
       transition: all 0.2s ease;
 
       &.cancel {
-        background-color: #f44336;
+        background-color: #f5f5f5;
+        color: #666;
+        border: 1px solid #e0e0e0;
+
         &:hover {
-          background-color: #d32f2f;
+          background-color: #eee;
         }
       }
 
       &.save {
-        background-color: #39b8df;
+        background-color: #0288d1;
+        color: white;
+
         &:hover {
-          background-color: #0288d1;
+          background-color: #0277bd;
         }
       }
     }

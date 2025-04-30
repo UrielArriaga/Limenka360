@@ -90,6 +90,60 @@ export default function useMain(viewType) {
     }
   };
 
+  const handleInfiniteScroll = async (phaseId) => {
+    let column = data.columns[phaseId];
+
+    console.log(column);
+    if (column.items.length >= column.total || column.isFetching) return;
+
+    setData((prev) => ({ ...prev, isFetching: true }));
+    try {
+      const response = await service.getProspectsByPhase({
+        phaseId,
+        page: column.page + 1,
+      });
+
+      let newData = {
+        ...data,
+        columns: {
+          ...data.columns,
+          [phaseId]: {
+            ...data.columns[phaseId],
+            page: response.data?.page + 1,
+            total: response.data?.total,
+            items: [
+              ...data.columns[phaseId].items,
+              ...service.mapToNormalizeProspects(response.data?.results),
+            ],
+          },
+        },
+      };
+
+      setData((prev) => ({
+        ...prev,
+        columns: {
+          ...prev.columns,
+          [phaseId]: {
+            ...prev.columns[phaseId],
+            page: column.page + 1,
+            items: [
+              ...prev.columns[phaseId].items,
+              ...service.mapToNormalizeProspects(response.data?.results),
+            ],
+          },
+        },
+        isFetching: false,
+      }));
+
+      console.log(newData);
+
+      console.log(data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      setData((prev) => ({ ...prev, isFetching: false }));
+    }
+  };
+
   const handleRefetch = () => setFlagToRefetch((prev) => !prev);
 
   const onDragEnd = (result) => {
@@ -197,6 +251,7 @@ export default function useMain(viewType) {
     onDragEnd,
     onDragStart,
     handleRefetch,
+    handleInfiniteScroll,
     modalActions: {
       modalViews,
       handleToggleModal,

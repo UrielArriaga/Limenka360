@@ -29,18 +29,17 @@ export default function FilterProspects({
   const dropdownRef = useRef();
 
   const options = [
-    {
-      name: "Fecha de creación (ASC)",
-      value: "-createdAt",
-    },
-    {
-      name: "Fecha de creación (DESC)",
-      value: "createdAt",
-    },
+    "Nombre",
+    "Correo",
+    "Teléfono",
+    "Fecha de creación",
+    "Último contacto",
+    "Fuente",
+    "Estado",
   ];
 
   const handleSelect = (option) => {
-    setSelected(`Ordenar por: ${option.name}`);
+    setSelected(`Ordenar por: ${option}`);
     setShowOptions(false);
   };
 
@@ -101,6 +100,42 @@ export default function FilterProspects({
         </IconButton>
       </div>
 
+      {/* <div className="viewtype">
+          <button
+            className="dropdownBtn"
+            onClick={() => setShowViewOptions(!showViewOptions)}
+          >
+            {viewType} <ArrowDropDown />
+          </button>
+  
+  
+  
+          <AnimatePresence>
+            {showViewOptions && (
+              <motion.div
+                className="dropdownMenu"
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.2 }}
+              >
+                {viewOptions.map((opt, i) => (
+                  <div
+                    key={i}
+                    className="dropdownItem"
+                    onClick={() => {
+                      setViewType(`Vista: ${opt}`);
+                      setShowViewOptions(false);
+                    }}
+                  >
+                    {opt}
+                  </div>
+                ))}
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div> */}
+
       <div className="orderby">
         <button
           className="dropdownBtn"
@@ -128,7 +163,7 @@ export default function FilterProspects({
                   className="dropdownItem"
                   onClick={() => handleSelect(opt)}
                 >
-                  {opt.name}
+                  {opt}
                 </div>
               ))}
             </motion.div>

@@ -1,5 +1,5 @@
 import { AddAlert, AttachMoney, Schedule, WhatsApp } from "@material-ui/icons";
-import React, { useState } from "react";
+import React, { forwardRef, useState } from "react";
 import Select from "react-select";
 import { Popover, Tooltip } from "@material-ui/core";
 import styled from "styled-components";
@@ -11,7 +11,7 @@ import { useSelector } from "react-redux";
 import { commonSelector } from "../../../../redux/slices/commonSlice";
 import dayjs from "dayjs";
 
-export default function Item({ task: prospect, index, actions }) {
+const Item = forwardRef(({ task: prospect, index, actions }, externalRef) => {
   const { getCatalogBy } = useGlobalCommons();
   const common = useSelector(commonSelector);
   const [anchorEl, setAnchorEl] = useState(null);
@@ -33,7 +33,6 @@ export default function Item({ task: prospect, index, actions }) {
   const handlePendingOption = (option) => {
     console.log("Agregar pendiente:", option);
     handleCloseMenu();
-    // Puedes hacer acciones específicas aquí según la opción seleccionada
   };
 
   const cutString = (str = "", len = 40) => {
@@ -59,15 +58,27 @@ export default function Item({ task: prospect, index, actions }) {
     <Draggable draggableId={prospect.id} index={index}>
       {(provided) => (
         <ItemProspect
-          ref={provided.innerRef}
+          ref={(node) => {
+            provided.innerRef(node);
+
+            if (externalRef) {
+              if (typeof externalRef === "function") {
+                externalRef(node);
+              } else {
+                externalRef.current = node;
+              }
+            }
+          }}
+          {...provided.draggableProps}
+          {...provided.dragHandleProps}
           {...provided.draggableProps}
           {...provided.dragHandleProps}
         >
-          <div className="prospect-data">
-            <div
-              className="prospect-data__top"
-              onClick={() => actions.onClickProspect(prospect)}
-            >
+          <div
+            className="prospect-data"
+            onClick={() => actions.onClickProspect(prospect)}
+          >
+            <div className="prospect-data__top">
               <h3 className="fullname">{prospect?.fullname}</h3>
               <span
                 className="probability-badge"
@@ -87,14 +98,34 @@ export default function Item({ task: prospect, index, actions }) {
               <div className="last-tracking">
                 Últ. seguimiento:{" "}
                 <span>
-                  {new Date(
-                    prospect?.lastTracking?.createdAt
-                  ).toLocaleDateString()}
+                  {cutString(prospect.lastTracking?.observations, 80)}
+                  {/* {prospect.lastTrackig?.observations} */}
+                  {/* <pre>{JSON.stringify(prospect?.lastTracking, null, 2)}</pre> */}
                 </span>
               </div>
               <div className="last-tracking">
                 Siguiente pendiente
                 <span> {dayjs(dayjs().add(1, "day")).fromNow()}</span>
+              </div>
+            </div>
+
+            <div className="prospect-data__bottom">
+              <div className="datecontainer">
+                <span className="createdAt">
+                  <Schedule /> {dayjs(prospect.createdAt).format("DD/MM/YYYY")}
+                </span>
+              </div>
+
+              {/* <div className="datecontainer">
+                <span className="createdAt">
+                  <Schedule /> {dayjs(prospect.createdAt).format("DD/MM/YYYY")}
+                </span>
+              </div> */}
+
+              <div className="datecontainer">
+                <span className="createdAt">
+                  <Schedule /> {dayjs(prospect.createdAt).format("DD/MM/YYYY")}
+                </span>
               </div>
             </div>
           </div>
@@ -355,7 +386,9 @@ export default function Item({ task: prospect, index, actions }) {
       )}
     </Draggable>
   );
-}
+});
+
+export default Item;
 const ScheduleModal = styled.div`
   padding: 10px;
   display: flex;
@@ -404,7 +437,7 @@ const ScheduleModal = styled.div`
 
   .actions {
     display: flex;
-    /* justify-content: space-between; */
+
     justify-content: flex-end;
     gap: 8px;
 
@@ -483,7 +516,7 @@ const WhatsappModal = styled.div`
 
   .actions {
     display: flex;
-    /* justify-content: space-between; */
+
     justify-content: flex-end;
     gap: 8px;
 
@@ -516,10 +549,6 @@ const WhatsappModal = styled.div`
 
 const CustomMenu = styled(Menu)`
   .MuiPaper-root {
-    /* border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    padding: 8px 0;
-    min-width: 200px; */
   }
 
   .MuiMenuItem-root {
@@ -617,6 +646,7 @@ const ItemProspect = styled.div`
       .fullname {
         font-size: 16px;
         font-weight: 600;
+        text-transform: capitalize;
         color: #2a2f3a;
         margin: 0;
       }
@@ -624,7 +654,7 @@ const ItemProspect = styled.div`
       .probability-badge {
         font-size: 12px;
         font-weight: 600;
-        padding: 4px 8px;
+        padding: 1px 8px;
         border-radius: 12px;
         background-color: rgb(124, 221, 224, 0.4);
       }
