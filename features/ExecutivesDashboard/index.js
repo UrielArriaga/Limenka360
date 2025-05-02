@@ -1,8 +1,6 @@
 import React from "react";
 import useFunnelData from "./hooks/useFunnelData";
-import FunnelChartWithTextAndLine from "../../pages/prueba";
 import WelcomeDatePicker from "./components/WelcomeDatePicker";
-import CalendarPendings from "./components/CalendarPendings";
 import SummaryCards from "./components/SummaryCards";
 import ExecutiveGoalsProgress from "./components/ExecutiveGoalsProgress";
 import useGoalsData from "./hooks/useGoalsData";
@@ -16,7 +14,6 @@ import NewProspects from "./components/NewProspects";
 import useCalendarData from "./hooks/useCalendarData";
 import useProspectsData from "./hooks/useProspectsData";
 import useOportunitiesData from "./hooks/useOportunitiesData";
-import NewCalendarPendings from "../CalendarPendings/CalendarPendings";
 
 export default function ExecutivesDashboard() {
   const funnelData = useFunnelData();
@@ -34,9 +31,7 @@ export default function ExecutivesDashboard() {
       <Grid container spacing={0}>
         <Grid item md={4} className="grid-item grid-item-list">
           <LastPendings pendingsData={pendingsData} />
-
           <BestOportunities />
-
           <NewProspects />
         </Grid>
         <Grid item md={4} className="grid-item grid-item-funnel">
@@ -47,14 +42,6 @@ export default function ExecutivesDashboard() {
           <ExecutiveGoalsProgress data={goalsData} />
         </Grid>
       </Grid>
-
-      {/* <Grid item md={12}>
-        <NewCalendarPendings />
-      </Grid> */}
-
-      {/* <CalendarPendings calendarData={calendarData} /> */}
-      {/* <SummaryCards />
-      <CalendarPendings /> */}
     </ExecutivesDashboardStyled>
   );
 }
