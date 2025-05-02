@@ -1,10 +1,8 @@
 import React from "react";
 import useFunnelData from "./hooks/useFunnelData";
-import FunnelChartWithTextAndLine from "../../pages/prueba";
+
 import WelcomeDatePicker from "./components/WelcomeDatePicker";
-import CalendarPendings from "./components/CalendarPendings";
 import SummaryCards from "./components/SummaryCards";
-import ExecutiveGoalsProgress from "./components/ExecutiveGoalsProgress";
 import useGoalsData from "./hooks/useGoalsData";
 import { Grid } from "@material-ui/core";
 import { ExecutivesDashboardStyled } from "./styles/ExecutivesDashboard.styles";
@@ -16,7 +14,6 @@ import NewProspects from "./components/NewProspects";
 import useCalendarData from "./hooks/useCalendarData";
 import useProspectsData from "./hooks/useProspectsData";
 import useOportunitiesData from "./hooks/useOportunitiesData";
-import NewCalendarPendings from "../CalendarPendings/CalendarPendings";
 import TableExecutives from "./components/TableExecutives";
 import SuggestionsCloseout from "./components/SuggestionsCloseout";
 
