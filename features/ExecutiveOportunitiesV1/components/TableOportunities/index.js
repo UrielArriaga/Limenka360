@@ -2,7 +2,7 @@ import { Pagination } from "@material-ui/lab";
 import React, { useEffect, useState } from "react";
 import { Button } from "@material-ui/core";
 import MenuActions from "./Menu";
-import { Table, TableWrapper } from "./styles";
+import { Table, TableWrapper, StyledPaginationContainer } from "./styles";
 import TableBodyLoader from "./TableBodyLoader";
 import { normalizeHeads } from "./utils";
 
@@ -300,7 +300,7 @@ export default function TableOportunities({
         )}
       </Table>
 
-      <div className="pagination">
+      <StyledPaginationContainer>
         {paginationData && paginationData.total > 20 && (
           <Pagination
             variant="outlined"
@@ -311,7 +311,7 @@ export default function TableOportunities({
             color="primary"
           />
         )}
-      </div>
+      </StyledPaginationContainer>
     </TableWrapper>
   );
 }

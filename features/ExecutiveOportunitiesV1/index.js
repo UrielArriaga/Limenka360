@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
 import styled from "styled-components";
 import ModalPreview from "../ExecutiveProspects/components/ModalPreview";
@@ -14,9 +14,47 @@ import TableOportunities from "./components/TableOportunities";
 export default function ExecutiveOportunitiesV1() {
   const [viewType, setViewType] = useState("kanban");
 
-  const { data, oportunitiesData, onDragEnd, modalActions } = useMain({
+  const {
+    data,
+    oportunitiesData,
+    onDragEnd,
+    modalActions,
+    page,
+    setPage,
+    limit,
+    events,
+  } = useMain({
     viewType,
   });
+  const [query, setQuery] = useState("");
+  const [filteredResults, setFilteredResults] = useState([]);
+  useEffect(() => {
+    if (query) {
+      const filtered = oportunitiesData.results.filter((item) => {
+        const email = (item?.email || "").toLowerCase();
+        const name = (item?.fullname || "").toLowerCase();
+        const phone = (item?.phone || "").toLowerCase();
+        return (
+          email.includes(query) || name.includes(query) || phone.includes(query)
+        );
+      });
+
+      // Aquí, si no hay resultados en la página actual, se ajusta la página a la más cercana.
+      const maxPage = Math.ceil(filtered.length / limit);
+      if (page > maxPage) {
+        setPage(maxPage); // Establecer la página a la última disponible
+      }
+
+      setFilteredResults(filtered);
+    } else {
+      setFilteredResults(oportunitiesData.results);
+    }
+  }, [query, oportunitiesData.results, page, limit]);
+
+  const paginatedResults = filteredResults.slice(
+    (page - 1) * limit,
+    page * limit
+  );
 
   const [prospectSelected, setProspectSelected] = useState(null);
   const [openPreview, setopenPreview] = useState(false);
@@ -28,7 +66,9 @@ export default function ExecutiveOportunitiesV1() {
     setProspectSelected(item);
     modalActions.handleToggleModal("preview");
   };
-
+  const handlePageChange = (newPage) => {
+    setPage(newPage);
+  };
   const toogleModalPreview = () => {
     setopenPreview(!openPreview);
   };
@@ -37,10 +77,19 @@ export default function ExecutiveOportunitiesV1() {
     setProspectSelected(item);
     setOpenLimiBotChat(!openLimiBotChat);
   };
+  const handleSearch = (value) => {
+    const search = value.toLowerCase();
+    setQuery(search);
+    setPage(1);
+  };
 
   return (
     <ExecutiveProspectsStyled>
-      <FilterProspects viewType={viewType} setViewType={setViewType} />
+      <FilterProspects
+        viewType={viewType}
+        setViewType={setViewType}
+        onSearch={handleSearch}
+      />
 
       {viewType === "calendar" && (
         <ProspectCalendar
@@ -48,9 +97,9 @@ export default function ExecutiveOportunitiesV1() {
             onClickProspect,
             toogleLimiBotChat,
           }}
+          events={events}
         />
       )}
-
       {viewType === "table" && (
         <TableOportunities
           onRowClick={(e) => {
@@ -84,14 +133,24 @@ export default function ExecutiveOportunitiesV1() {
               headNormalize: "vencimiento",
               orderby: "asc",
             },
-
+            {
+              headText: "Fase",
+              headNormalize: "fase",
+              orderby: null,
+            },
             {
               headText: "Siguiente contacto",
               headNormalize: "vencimiento",
               orderby: "asc",
             },
           ]}
-          data={oportunitiesData.results}
+          data={query ? paginatedResults : oportunitiesData.results}
+          paginationData={{
+            total: query ? filteredResults.length : oportunitiesData.count,
+            limit: limit,
+            page: page,
+            handlePage: (value) => setPage(value),
+          }}
         />
       )}
 

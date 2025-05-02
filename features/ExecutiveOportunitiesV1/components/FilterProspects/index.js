@@ -10,7 +10,7 @@ import styled from "styled-components";
 import { motion, AnimatePresence } from "framer-motion";
 import { IconButton } from "@material-ui/core";
 
-export default function FilterProspects({ viewType, setViewType }) {
+export default function FilterProspects({ viewType, setViewType, onSearch }) {
   const [showOptions, setShowOptions] = useState(false);
   const [selected, setSelected] = useState("Ordenar por: Nombre");
 
@@ -51,7 +51,11 @@ export default function FilterProspects({ viewType, setViewType }) {
       <ListDropdown />
 
       <div className="inputSearch">
-        <input type="text" placeholder="Buscar" />
+        <input
+          type="text"
+          placeholder="Buscar"
+          onChange={(e) => onSearch?.(e.target.value)}
+        />
       </div>
       <div className="viewtype">
         <IconButton

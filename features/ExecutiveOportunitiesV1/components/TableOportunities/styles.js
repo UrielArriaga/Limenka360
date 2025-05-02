@@ -1,195 +1,188 @@
 import styled, { css } from "styled-components";
 
-// * Styles for custom table
-
 export const tableHeadTypeDefault = css`
-  background-color: red;
+  background-color: #1976d2;
+  color: white;
+  font-weight: bold;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 
-  &:hover {
-    background-color: #ffcccb;
-    color: #000;
-    font-weight: bold;
-    transition: background-color 0.3s ease, color 0.3s ease;
+  th {
+    background-color: #1976d2;
+    color: white;
+    transition: background-color 0.3s ease, transform 0.2s ease;
   }
 `;
 
 export const tableHeadTypeBorder = css`
-  border-bottom: 1px solid ${(props) => props.styles?.borderColor};
-  border-top: 1px solid ${(props) => props.styles?.borderColor};
-  font-size: 12px;
-  background-color: red;
+  border-bottom: 1px solid #d1d5db;
+  border-top: 1px solid #d1d5db;
+  font-size: 13px;
+  background-color: #f5f5f5;
+  color: #555;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 `;
 
 export const tableRowTypeBorder = css`
-  border-bottom: 1px solid ${(props) => props.styles?.borderColor};
-  font-size: 12px;
-  font-weight: normal;
-`;
+  border-bottom: 1px solid #e5e7eb;
+  font-size: 13px;
+  transition: background-color 0.2s ease, transform 0.2s ease;
 
-// * Styles for custom table
+  &:hover {
+    background-color: #f1f1f1;
+    transform: translateY(-2px);
+  }
+`;
 
 export const TableWrapper = styled.div`
   width: 100%;
-  /* overflow: auto; */
-  /* height: ${(props) => `${props.styles?.minHeight}px`}; */
+  overflow: auto;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 
-  /* flex: 1; */
-
-  /* height: $; */
   ::-webkit-scrollbar {
     width: 6px;
     height: 6px;
   }
-  ::-webkit-scrollbar-track {
-    -webkit-box-shadow: inset 0 0 6px rgb(166 164 164 / 20%);
-  }
+
   ::-webkit-scrollbar-thumb {
-    -webkit-box-shadow: inset 0 0 20px #9e9e9e;
+    background-color: #c1c1c1;
+    border-radius: 3px;
   }
 
   .tableHeadSelectedRows {
-    background-color: #e3eefa;
+    background-color: #e9f3fc;
+    padding: 12px;
     display: flex;
     align-items: center;
-    padding-left: 10px;
-    border-bottom: 1px solid #616161;
-    border-top-left-radius: 8px;
-    border-top-right-radius: 8px;
+    border-bottom: 1px solid #cfd8dc;
+    border-radius: 8px 8px 0 0;
     position: sticky;
-    /* top: 0; */
+    top: ${(props) => (props.fixedHeader ? "0" : "auto")};
     z-index: 1;
-    height: 40px;
-    top: ${(props) => (props?.fixedHeader ? "0" : "auto")};
 
     &__text {
-      margin-right: 20px;
-      color: #000;
-    }
-
-    .globalCheckbox {
-      margin-right: 10px;
-    }
-
-    p {
-      /* color: #fff; */
+      margin-right: 16px;
+      color: #333;
       font-weight: bold;
     }
 
     .btnactonselected {
-      display: flex;
-      align-items: center;
-      /* margin-left: 10px; */
-      height: 28px;
-      background-color: #039be5;
+      background-color: #1976d2;
       color: #fff;
-      /* color: #fff; */
-      /* background-color: #fff; */
-    }
-  }
+      border: none;
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background-color 0.2s ease;
 
-  .pagination {
-    margin-top: 20px;
-    display: flex;
-    justify-content: center;
+      &:hover {
+        background-color: #1565c0;
+      }
+    }
   }
 `;
 
+export const StyledPaginationContainer = styled.div`
+  margin-top: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 12px;
+  background-color: #f9f9f9;
+  border-top: 1px solid #e0e0e0;
+  border-radius: 0 0 12px 12px;
+
+  .MuiPagination-root {
+    display: flex;
+    gap: 10px;
+
+    button {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      font-size: 14px;
+      color: #555;
+      background-color: #fff;
+      border: 1px solid #ddd;
+      transition: all 0.3s ease;
+
+      &:hover {
+        background-color: #e0f7fa;
+        border-color: #1976d2;
+      }
+
+      &.Mui-selected {
+        background-color: #039be5 !important;
+        color: white !important;
+        transform: scale(1.1);
+      }
+    }
+  }
+`;
+
+// Table
 export const Table = styled.table`
   width: 100%;
   border-collapse: collapse;
-  width: 100%;
-  height: 100%;
-  flex: 1;
-  border-collapse: collapse;
   font-size: 14px;
+  border-radius: 0;
 
   thead {
     position: sticky;
-    /* prop fixedHeader */
-    top: ${(props) => (props?.fixedHeader ? "40px" : "0")};
+    top: ${(props) => (props.fixedHeader ? "40px" : "0")};
     z-index: 1;
 
     ${({ styles }) => styles?.typeTable === "border" && tableHeadTypeBorder};
     ${({ styles }) => styles?.typeTable === "default" && tableHeadTypeDefault};
   }
 
-  .tableHide {
-    display: none;
-  }
   .tableHead {
-    padding: 8px;
+    padding: 12px;
     text-align: left;
-    min-width: ${(props) => props?.styles?.widthColumn}px;
-    color: ${(props) => props.styles?.headerTextColor};
-    background-color: ${(props) => props.styles?.headerColorSecondary};
-
-    &--main {
-      min-width: ${(props) => props?.styles?.widthColumnId}px;
-      background-color: ${(props) => props.styles?.headerColor};
-    }
-
-    &--isselectable {
-      min-width: 10px;
-    }
-
-    &--hide {
-      background: blue;
-    }
+    background-color: ${(props) =>
+      props.styles?.headerColorSecondary || "#7fb3d5"};
+    color: ${(props) => props.styles?.headerTextColor || "#333"};
+    border-radius: 0; /* Sin redondeo */
   }
+
   .tableHead--clickable {
     cursor: pointer;
   }
 
-  .tableHeadActions {
-    background-color: ${(props) => props.styles?.headerColor};
-    padding: 8px;
-    text-align: left;
-
-    color: ${(props) => props.styles?.headerTextColor};
-    width: 10px;
-    &--main {
-    }
-  }
-
   .tableRow {
-    transition: all 0.1s ease;
-    /* font-weight: bold; */
-
-    ${({ styles }) => styles?.typeTable === "border" && tableRowTypeBorder}
+    transition: background-color 0.2s ease, transform 0.2s ease;
+    ${({ styles }) => styles?.typeTable === "border" && tableRowTypeBorder};
 
     &:nth-child(even) {
-      background-color: ${(props) => props.styles?.nthChild};
+      background-color: ${(props) => props.styles?.nthChild || "#fafafa"};
     }
 
     &:hover {
-      background-color: ${(props) => props.styles?.hoverColor};
+      background-color: ${(props) => props.styles?.hoverColor || "#f1f1f1"};
+      transform: translateY(-2px);
     }
 
-    .tableData {
-      padding: 8px;
-      /* color: grey; */
+    .tableData,
+    .tableDataId {
+      padding: 12px;
+      color: #444;
+      border-radius: 0;
     }
 
     .tableDataId {
-      padding: 8px;
-      /* color: grey; */
       cursor: pointer;
+
       &:hover {
         text-decoration: underline;
-        color: rgb(21, 79, 58);
+        color: #1a73e8;
       }
-    }
-
-    .tableDataContainer {
-      padding: 4px;
     }
 
     .tableDataContainer--flex {
       display: flex;
-      justify-content: flex-start;
-    }
-
-    .tableDataActions {
+      align-items: center;
     }
   }
 
@@ -198,6 +191,6 @@ export const Table = styled.table`
   }
 
   .tableRow--highlighted {
-    background-color: #e5efff;
+    background-color: #e0f3ff;
   }
 `;

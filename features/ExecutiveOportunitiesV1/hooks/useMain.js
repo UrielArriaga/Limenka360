@@ -3,8 +3,10 @@ import { api } from "../../../services/api";
 import dayjs from "dayjs";
 
 class OportunitiesService {
-  async getOportunities({}) {
+  async getOportunities({ page = 1, limit = 20 }) {
     const params = {
+      limit: limit,
+      skip: page,
       order: "-createdAt",
       attributes: {
         prospect: [
@@ -23,9 +25,9 @@ class OportunitiesService {
       },
       count: 1,
       where: {},
-      include: "prospect,prospect.clienttype",
+      include: "prospect,prospect.clienttype,phase",
       keys: "id,amount,certainty,concept,estimatedclossing,quoteurl,observations,nextpendingat",
-      join: "prospect,prospect.clienttyp",
+      join: "prospect,prospect.clienttype",
     };
 
     return await api.get("playground/oportunities", {
@@ -36,6 +38,7 @@ class OportunitiesService {
   async getOportunitiesByPhase({}) {
     let params = {
       limit: 5,
+
       order: "-createdAt",
       subquery: 1,
       where: { iscloseout: false },
@@ -43,6 +46,14 @@ class OportunitiesService {
     return await api.get("prospects/oportunitiesbyphases", {
       params,
     });
+  }
+  async getPendings() {
+    const params = {
+      order: "-date_from",
+      include: "pendingstype",
+    };
+
+    return await api.get("pendings", { params });
   }
 
   async getOportunitiesByPendings({}) {
@@ -76,6 +87,9 @@ export default function useMain({ viewType = "kanban" }) {
     limiBotChat: false,
     newOportunity: false,
   });
+  const [page, setPage] = useState(1);
+  const limit = 20;
+  const [events, setEvents] = useState([]);
 
   const handleToggleModal = (modalName) => {
     setModalViews((prev) => ({
@@ -97,6 +111,38 @@ export default function useMain({ viewType = "kanban" }) {
   });
 
   const [oportunityData, setOportunityData] = useState(null);
+  useEffect(() => {
+    const fetchPendingsForCalendar = async () => {
+      try {
+        const response = await service.getPendings({});
+        console.log("Respuesta completa de la API:", response);
+        const pendings = response.data?.results || [];
+
+        if (Array.isArray(pendings)) {
+          const formattedEvents = pendings.map((pending) => {
+            return {
+              title: pending.subject,
+              pendingstype: pending?.pendingstype,
+              start: new Date(pending.date_from),
+              end: pending.date_to
+                ? new Date(pending.date_to)
+                : new Date(pending.date_from),
+            };
+          });
+          setEvents(formattedEvents);
+        } else {
+          console.error(
+            'La respuesta no contiene un array en "results":',
+            pendings
+          );
+        }
+      } catch (error) {
+        console.error("Error fetching pendings for calendar:", error);
+      }
+    };
+
+    fetchPendingsForCalendar();
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -132,13 +178,15 @@ export default function useMain({ viewType = "kanban" }) {
 
     const fetchOportunities = async () => {
       try {
-        const reponse = await service.getOportunities({});
+        const reponse = await service.getOportunities({ page, limit });
         setOportunitiesData((prev) => ({
           ...prev,
           results: reponse.data?.results?.map((item, index) => {
             return {
               fullname: item?.prospect?.fullname,
+              fase: item?.phase?.name,
               email: item?.prospect?.email,
+              phone: item?.prospect?.phone,
               folio: item?.concept,
               monto: item?.amount,
               vencimiento: dayjs(item?.estimatedclossing).format("YYYY-MM-DD"),
@@ -146,7 +194,7 @@ export default function useMain({ viewType = "kanban" }) {
               siguientecontato: item?.nextpendingat,
             };
           }),
-          count: reponse.count,
+          count: reponse.data?.count,
           isFetching: false,
         }));
       } catch (error) {}
@@ -160,7 +208,7 @@ export default function useMain({ viewType = "kanban" }) {
     if (viewType === "kanban") {
       fetchData();
     }
-  }, [viewType]);
+  }, [viewType, page]);
 
   const onDragEnd = (result) => {
     const { destination, source, draggableId, type } = result;
@@ -168,8 +216,8 @@ export default function useMain({ viewType = "kanban" }) {
     console.log(result);
 
     if (!destination) return;
-    const startColumnId = source.droppableId; // Columna original
-    const endColumnId = destination.droppableId; // Columna destino
+    const startColumnId = source.droppableId;
+    const endColumnId = destination.droppableId;
 
     console.log("Drag Result:");
     console.log(`  Draggable ID: ${result.draggableId}`);
@@ -196,17 +244,16 @@ export default function useMain({ viewType = "kanban" }) {
     }
 
     if (type === "item") {
-      // Si el ítem se mueve dentro de la misma columna
       if (startColumnId === endColumnId) {
         const newColumnItems = Array.from(data.columns[startColumnId].items);
-        const [movedItem] = newColumnItems.splice(source.index, 1); // Eliminar ítem de la columna original
-        newColumnItems.splice(destination.index, 0, movedItem); // Insertar ítem en la nueva posición
+        const [movedItem] = newColumnItems.splice(source.index, 1);
+        newColumnItems.splice(destination.index, 0, movedItem);
 
         const updatedColumns = {
           ...data.columns,
           [startColumnId]: {
             ...data.columns[startColumnId],
-            items: newColumnItems, // Actualizar los ítems de la columna
+            items: newColumnItems,
           },
         };
 
@@ -215,22 +262,21 @@ export default function useMain({ viewType = "kanban" }) {
           columns: updatedColumns,
         }));
       } else {
-        // Si el ítem se mueve entre columnas
         const startColumnItems = Array.from(data.columns[startColumnId].items);
-        const [movedItem] = startColumnItems.splice(source.index, 1); // Eliminar ítem de la columna de origen
+        const [movedItem] = startColumnItems.splice(source.index, 1);
 
         const endColumnItems = Array.from(data.columns[endColumnId].items);
-        endColumnItems.splice(destination.index, 0, movedItem); // Insertar ítem en la columna de destino
+        endColumnItems.splice(destination.index, 0, movedItem);
 
         const updatedColumns = {
           ...data.columns,
           [startColumnId]: {
             ...data.columns[startColumnId],
-            items: startColumnItems, // Actualizar los ítems de la columna de origen
+            items: startColumnItems,
           },
           [endColumnId]: {
             ...data.columns[endColumnId],
-            items: endColumnItems, // Actualizar los ítems de la columna de destino
+            items: endColumnItems,
           },
         };
 
@@ -247,6 +293,10 @@ export default function useMain({ viewType = "kanban" }) {
     data,
     oportunitiesData,
     onDragEnd,
+    page,
+    setPage,
+    limit,
+    events,
     modalActions: {
       modalViews,
       handleToggleModal,
