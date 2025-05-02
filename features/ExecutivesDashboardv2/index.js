@@ -1,8 +1,7 @@
 import React from "react";
 import useFunnelData from "./hooks/useFunnelData";
-import FunnelChartWithTextAndLine from "../../pages/prueba";
 import WelcomeDatePicker from "./components/WelcomeDatePicker";
-import CalendarPendings from "./components/CalendarPendings";
+
 import SummaryCards from "./components/SummaryCards";
 import ExecutiveGoalsProgress from "./components/ExecutiveGoalsProgress";
 import useGoalsData from "./hooks/useGoalsData";
@@ -11,13 +10,12 @@ import { ExecutivesDashboardStyled } from "./styles/ExecutivesDashboard.styles";
 import MetricsAmounts from "./components/MetricsAmounts";
 import LastPendings from "./components/LastPendings";
 import usePendingsData from "./hooks/usePendingsData";
-import BestOportunities from "./components/BestOportunities";
+
 import NewProspects from "./components/NewProspects";
 import useCalendarData from "./hooks/useCalendarData";
 import useProspectsData from "./hooks/useProspectsData";
 import useOportunitiesData from "./hooks/useOportunitiesData";
 import OpportunitiesTable from "./components/OportunitiesClose";
-import NewCalendarPendings from "../CalendarPendings/CalendarPendings";
 
 export default function ExecutivesDashboardv2() {
   const funnelData = useFunnelData();
