@@ -10,6 +10,7 @@ import useGlobalCommons from "../../../../hooks/useGlobalCommons";
 import { useSelector } from "react-redux";
 import { commonSelector } from "../../../../redux/slices/commonSlice";
 import dayjs from "dayjs";
+import LimiBotAnimation from "../../../../componentx/LimiBotAnimation";
 
 const Item = forwardRef(({ task: prospect, index, actions }, externalRef) => {
   const { getCatalogBy } = useGlobalCommons();
@@ -20,6 +21,16 @@ const Item = forwardRef(({ task: prospect, index, actions }, externalRef) => {
 
   const [scheduleAnchorEl, setScheduleAnchorEl] = useState(null);
   const [whatsappAnchorEl, setWhatsappAnchorEl] = useState(null);
+
+  const [anchorIA, setAnchorIA] = React.useState(null);
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
   const handleOpenMenu = (event) => {
     event.stopPropagation();
@@ -208,18 +219,6 @@ const Item = forwardRef(({ task: prospect, index, actions }, externalRef) => {
                 label="Perzonalizado"
                 onClick={() => handlePendingOption("2d")}
               />
-
-              {/* <MenuItemStyled onClick={() => handlePendingOption("2h")}>
-                Dentro de 2 horas
-              </MenuItemStyled>
-              <CustomMenuItem
-                icon={Schedule}
-                label="Dentro de 2 días a la hora específica"
-                onClick={() => handlePendingOption("2d")}
-              />
-              <MenuItem onClick={() => handlePendingOption("2d")}>
-                Dentro de 2 días a la hora específica
-              </MenuItem> */}
             </CustomMenu>
           </div>
           <Popover
@@ -281,26 +280,6 @@ const Item = forwardRef(({ task: prospect, index, actions }, externalRef) => {
                   Guardar
                 </button>
               </div>
-              {/* <TextField
-                label="Descripción del seguimiento"
-                multiline
-                rows={2}
-                value={scheduleText}
-                onChange={(e) => setScheduleText(e.target.value)}
-                fullWidth
-                variant="outlined"
-                margin="normal"
-              />
-              <ModalActions>
-                <Button onClick={handleCloseScheduleModal}>Cancelar</Button>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={handleSaveSchedule}
-                >
-                  Guardar
-                </Button>
-              </ModalActions> */}
             </ScheduleModal>
           </Popover>
 
@@ -339,6 +318,10 @@ const Item = forwardRef(({ task: prospect, index, actions }, externalRef) => {
                 <div className="input-field">
                   <label>Mensaje</label>
                   <textarea rows={4} placeholder="Mensaje de WhatsApp" />
+
+                  <div className="flex-end">
+                    <LimiBotAnimation height="30px" width="30px" />
+                  </div>
                 </div>
               </div>
 
@@ -360,26 +343,6 @@ const Item = forwardRef(({ task: prospect, index, actions }, externalRef) => {
                   Guardar
                 </button>
               </div>
-              {/* <TextField
-                label="Descripción del seguimiento"
-                multiline
-                rows={2}
-                value={scheduleText}
-                onChange={(e) => setScheduleText(e.target.value)}
-                fullWidth
-                variant="outlined"
-                margin="normal"
-              />
-              <ModalActions>
-                <Button onClick={handleCloseScheduleModal}>Cancelar</Button>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={handleSaveSchedule}
-                >
-                  Guardar
-                </Button>
-              </ModalActions> */}
             </WhatsappModal>
           </Popover>
         </ItemProspect>
