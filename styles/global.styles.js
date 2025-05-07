@@ -33,20 +33,21 @@ export const sharedProps = css`
 `;
 
 export const customWidth = css`
-  width: ${({ isOpen }) => (isOpen ? "calc(100% - 250px)" : "calc(100% - 75px)")};
+  width: ${({ isOpen }) =>
+    isOpen ? "calc(100% - 250px)" : "calc(100% - 75px)"};
   overflow: scroll;
   /* background: url("https://limenka.sfo3.digitaloceanspaces.com/img/limenka360.png"); */
   /* padding-top: 60px; */
 `;
 
 export const BackgroundColor = css`
-  background-color: ${props => (props.bg ? props.bg : colors.secondaryColor)};
+  background-color: ${(props) => (props.bg ? props.bg : colors.secondaryColor)};
 `;
 
 export const customWidthNavBar = css`
   transition: all 0.3s ease-in-out;
   /* width: ${({ sideBar }) => (sideBar ? "calc(100% - 250px)" : "100%")}; */
-  width: ${props =>
+  width: ${(props) =>
     // if primary
     props.sideBar && props.isOpen
       ? "calc(100% - 250px)"
@@ -261,7 +262,7 @@ export const RequiredData = styled.span`
 
 // * Share perfiel css
 
-export const styleScrollReactSelect = base => {
+export const styleScrollReactSelect = (base) => {
   return {
     ...base,
     "::-webkit-scrollbar": {

@@ -67,6 +67,13 @@ class ProspectsApi {
 
     return api.get("pendings", { params });
   }
+  async getProspectDetails(prospectId) {
+    let params = {
+      include:
+        "category,city,entity,phase,ejecutive,ejecutive.group,clientcompany,origin,clienttype,specialty,postal,prospectslabels,prospectslabels.label,channel",
+    };
+    return api.get(`prospects/${prospectId}`, { params });
+  }
 
   async updateProspectPhase(prospectId, phaseId) {
     return api.put(`prospects/${prospectId}`, { phaseId });

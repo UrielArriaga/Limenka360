@@ -22,63 +22,72 @@ const initialState = {
   userPhoto: null,
 };
 
-export const loginUser = createAsyncThunk("users/login", async ({ email, password }, thunkAPI) => {
-  try {
-    const response = await api.post("auth/login", { email, password });
-    let data = await response.data;
-    if (response.status === 200) {
-      api.defaults.headers.common["Authorization"] = data.tokenSession;
-      localStorage.setItem("token", data.tokenSession);
+export const loginUser = createAsyncThunk(
+  "users/login",
+  async ({ email, password }, thunkAPI) => {
+    try {
+      const response = await api.post("auth/login", { email, password });
+      let data = await response.data;
+      if (response.status === 200) {
+        api.defaults.headers.common["Authorization"] = data.tokenSession;
+        localStorage.setItem("token", data.tokenSession);
 
-      return data;
-    } else {
-      return thunkAPI.rejectWithValue(data);
+        return data;
+      } else {
+        return thunkAPI.rejectWithValue(data);
+      }
+    } catch (e) {
+      console.log("Error", e.response.data);
+      return thunkAPI.rejectWithValue(e.response.data);
     }
-  } catch (e) {
-    console.log("Error", e.response.data);
-    return thunkAPI.rejectWithValue(e.response.data);
   }
-});
+);
 
-export const fetchUserBytoken = createAsyncThunk("users/fetchUserByToken", async ({}, thunkAPI) => {
-  try {
-    let token = localStorage.getItem("token");
+export const fetchUserBytoken = createAsyncThunk(
+  "users/fetchUserByToken",
+  async ({}, thunkAPI) => {
+    try {
+      let token = localStorage.getItem("token");
 
-    if (token === undefined || token === null) {
-      return thunkAPI.rejectWithValue({ email: "" });
+      if (token === undefined || token === null) {
+        return thunkAPI.rejectWithValue({ email: "" });
+      }
+      api.defaults.headers.common["Authorization"] = token;
+      const response = await api.post("auth/me");
+      let data = response.data;
+      if (response.status === 201) {
+        return { ...data };
+      } else {
+        return thunkAPI.rejectWithValue(data);
+      }
+    } catch (e) {
+      console.log(error);
+      console.log("Error", e.response.data);
+      return thunkAPI.rejectWithValue(e.response.data);
     }
-    api.defaults.headers.common["Authorization"] = token;
-    const response = await api.post("auth/me");
-    let data = response.data;
-    if (response.status === 201) {
-      return { ...data };
-    } else {
-      return thunkAPI.rejectWithValue(data);
-    }
-  } catch (e) {
-    console.log(error);
-    console.log("Error", e.response.data);
-    return thunkAPI.rejectWithValue(e.response.data);
   }
-});
+);
 
-export const logoutUser = createAsyncThunk("users/logoutUser", async ({}, thunkAPI) => {
-  console.log("here");
-  try {
-    let token = localStorage.getItem("token");
+export const logoutUser = createAsyncThunk(
+  "users/logoutUser",
+  async ({}, thunkAPI) => {
+    console.log("here");
+    try {
+      let token = localStorage.getItem("token");
 
-    if (token == null || token === undefined) {
+      if (token == null || token === undefined) {
+      }
+      if (response.status === 200) {
+        return { ...data };
+      } else {
+        return thunkAPI.rejectWithValue(data);
+      }
+    } catch (e) {
+      console.log("Error", e.response.data);
+      return thunkAPI.rejectWithValue(e.response.data);
     }
-    if (response.status === 200) {
-      return { ...data };
-    } else {
-      return thunkAPI.rejectWithValue(data);
-    }
-  } catch (e) {
-    console.log("Error", e.response.data);
-    return thunkAPI.rejectWithValue(e.response.data);
   }
-});
+);
 
 export const userSlice = createSlice({
   name: "user",
@@ -166,10 +175,10 @@ export const userSlice = createSlice({
       state.isError = true;
       state.errorMessage = "Error";
     },
-    [loginUser.pending]: state => {
+    [loginUser.pending]: (state) => {
       state.isFetching = true;
     },
-    [fetchUserBytoken.pending]: state => {
+    [fetchUserBytoken.pending]: (state) => {
       state.isFetching = true;
     },
     [fetchUserBytoken.fulfilled]: (state, { payload }) => {
@@ -191,7 +200,7 @@ export const userSlice = createSlice({
       state.userData = payload?.user;
       state.userPhoto = payload?.user?.photo;
     },
-    [fetchUserBytoken.rejected]: state => {
+    [fetchUserBytoken.rejected]: (state) => {
       //console.log("fetchUserBytoken");
       state.isFetching = false;
       state.isError = true;
@@ -199,22 +208,26 @@ export const userSlice = createSlice({
   },
 });
 
-export const signupUser = createAsyncThunk("users/signupUser", async ({ name, email, password }, thunkAPI) => {
-  try {
-    // TODO Logica de registro
-    let data = await response.json();
-    if (response.status === 200) {
-      localStorage.setItem("token", data.token);
-      return { ...data, username: name, email: email };
-    } else {
-      return thunkAPI.rejectWithValue(data);
+export const signupUser = createAsyncThunk(
+  "users/signupUser",
+  async ({ name, email, password }, thunkAPI) => {
+    try {
+      // TODO Logica de registro
+      let data = await response.json();
+      if (response.status === 200) {
+        localStorage.setItem("token", data.token);
+        return { ...data, username: name, email: email };
+      } else {
+        return thunkAPI.rejectWithValue(data);
+      }
+    } catch (e) {
+      console.log("Error", e.response.data);
+      return thunkAPI.rejectWithValue(e.response.data);
     }
-  } catch (e) {
-    console.log("Error", e.response.data);
-    return thunkAPI.rejectWithValue(e.response.data);
   }
-});
+);
 
-export const { clearState, changeStatus, login, updatePhoto } = userSlice.actions;
+export const { clearState, changeStatus, login, updatePhoto } =
+  userSlice.actions;
 
-export const userSelector = state => state.user;
+export const userSelector = (state) => state.user;

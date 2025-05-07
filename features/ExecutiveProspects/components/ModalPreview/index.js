@@ -20,6 +20,7 @@ import ProductsOportunities from "./ProductsOportunities";
 import ProductsOportunitiesTable from "./ProductsOportunitiesTable";
 import useTrackings from "../../../ExecutiveProspectsV2/hooks/useTrackings";
 import usePending from "../../../ExecutiveProspectsV2/hooks/usePending";
+import EditProspectDrawer from "../DrawerEditProspect";
 
 export default function ModalPreview({
   open,
@@ -44,6 +45,11 @@ export default function ModalPreview({
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
   };
+  const [editDrawerOpen, setEditDrawerOpen] = useState(false);
+
+  const toggleEditDrawer = (open) => () => {
+    setEditDrawerOpen(open);
+  };
 
   return (
     <ModalPreviewStyled
@@ -61,7 +67,12 @@ export default function ModalPreview({
               <button className="btn btn--primary">
                 Convertir en Oportunidad
               </button>
-              <button className="btn btn--secondary">Editar</button>
+              <button
+                className="btn btn--secondary"
+                onClick={toggleEditDrawer(true)}
+              >
+                Editar
+              </button>
               <button className="btn btn--secondary">Eliminar</button>
             </div>
           </div>
@@ -143,6 +154,11 @@ export default function ModalPreview({
               <AttachFile />
             </IconButton>
           </div>
+          <EditProspectDrawer
+            open={editDrawerOpen}
+            onClose={toggleEditDrawer(false)}
+            prospect={prospectSelected}
+          />
 
           <div className="actionsbar__item">
             <IconButton className="actionsbar__icon">

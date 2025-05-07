@@ -1,4 +1,9 @@
-import { BusinessCenter, MonetizationOn, Payment, PeopleAlt } from "@material-ui/icons";
+import {
+  BusinessCenter,
+  MonetizationOn,
+  Payment,
+  PeopleAlt,
+} from "@material-ui/icons";
 import dayjs from "dayjs";
 import { months } from "../BD/databd";
 import { handleOpenGlobalAlert } from "../redux/slices/alertSlice";
@@ -100,9 +105,9 @@ export const RedirectPage = (role, router) => {
       router.push("/almacenesforaneos");
       break;
 
-      case "biomedica":
-        router.push("/biomedica/productos");
-        break;
+    case "biomedica":
+      router.push("/biomedica/productos");
+      break;
 
     case "jefe_de_flotilla":
       router.push("/jefedeflotilla/salidas");
@@ -111,14 +116,14 @@ export const RedirectPage = (role, router) => {
     case "gestor_de_compras_int":
       router.push("/gestorcomprasint");
       break;
-      
+
     case "administrador_biomedico":
       router.push("/administradorbiomedica");
       break;
   }
 };
 
-export const getDialogName = route => {
+export const getDialogName = (route) => {
   switch (route) {
     case "NUEVO GRUPO":
       return "newgroup";
@@ -162,7 +167,13 @@ export function colorLog(message, color) {
   }
 }
 
-export const handleGlobalAlert = (severity, message, type, dispatch, time = 3000) => {
+export const handleGlobalAlert = (
+  severity,
+  message,
+  type,
+  dispatch,
+  time = 3000
+) => {
   dispatch(
     handleOpenGlobalAlert({
       show: true,
@@ -190,7 +201,7 @@ export const handleAlert = (severity, message, type, setState) => {
   }, 3000);
 };
 
-export const toUpperCaseChart = phrase => {
+export const toUpperCaseChart = (phrase) => {
   if (phrase === "" || phrase === undefined || phrase === null) {
     return "";
   } else {
@@ -198,27 +209,27 @@ export const toUpperCaseChart = phrase => {
       return phrase
         .toLowerCase()
         .split(" ")
-        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
         .join(" ");
     }
   }
 };
 
-export const formatDate = date => {
+export const formatDate = (date) => {
   const dateObj = new Date(date);
   const day = dateObj.getUTCDate();
   const month = months[dateObj.getUTCMonth()];
   const year = dateObj.getUTCFullYear();
   return `${month} ${day}, ${year}`;
 };
-export const formatHour = str => {
+export const formatHour = (str) => {
   let time = dayjs(str);
   let hour = time.hour().toString();
   let minutes = time.minute().toString();
   let newminute = minutes.length == 1 ? `0${minutes}` : minutes;
   return `${hour}:${newminute}`;
 };
-export const formatDatecomplete = str => {
+export const formatDatecomplete = (str) => {
   let datecomplete = dayjs(str);
   let month = months.filter((i, ix) => ix == datecomplete.month());
   let day = datecomplete.format("D");
@@ -230,7 +241,7 @@ export const formatDatecomplete = str => {
   return `${month[0]} ${day}, ${year} ${hour}:${newminute}`;
 };
 
-export const formatDateToISO = date => {
+export const formatDateToISO = (date) => {
   let newDate = dayjs(date).startOf("day").add(1, "second").toISOString();
   return newDate;
 };
@@ -239,7 +250,7 @@ export function capitalizeString(text) {
   return text[0].toUpperCase() + text.slice(1);
 }
 
-export const formatNumber = number => {
+export const formatNumber = (number) => {
   let options = { style: "currency", currency: "MXN" };
   let numberFormat = new Intl.NumberFormat("es-MX", options);
 
@@ -250,20 +261,26 @@ export const formatNumber = number => {
   }
 };
 
-export const formatNumberAbrv = number => {
+export const formatNumberAbrv = (number) => {
   let options = { style: "currency", currency: "MXN" };
   let numberFormat = new Intl.NumberFormat("es-MX", options);
 
   if (!isNaN(number)) {
     if (number >= 1000000000) {
       const billions = (number / 1000000000).toFixed(2);
-      return billions.endsWith(".00") ? billions.replace(/\.00$/, "") + "B" : billions + "B";
+      return billions.endsWith(".00")
+        ? billions.replace(/\.00$/, "") + "B"
+        : billions + "B";
     } else if (number >= 1000000) {
       const millions = (number / 1000000).toFixed(2);
-      return millions.endsWith(".00") ? millions.replace(/\.00$/, "") + "M" : millions + "M";
+      return millions.endsWith(".00")
+        ? millions.replace(/\.00$/, "") + "M"
+        : millions + "M";
     } else if (number >= 1000) {
       const thousands = (number / 1000).toFixed(2);
-      return thousands.endsWith(".00") ? thousands.replace(/\.00$/, "") + "k" : thousands + "k";
+      return thousands.endsWith(".00")
+        ? thousands.replace(/\.00$/, "") + "k"
+        : thousands + "k";
     } else {
       return numberFormat.format(number);
     }
@@ -272,11 +289,11 @@ export const formatNumberAbrv = number => {
   }
 };
 
-export const formatNumberNoSymbol = number => {
+export const formatNumberNoSymbol = (number) => {
   return new Intl.NumberFormat("es-MX").format(number);
 };
 
-export const returnFomatTime = item => {
+export const returnFomatTime = (item) => {
   if (item === undefined || item === null) {
     return "";
   } else {
@@ -308,7 +325,7 @@ export const returnFomatTime = item => {
   }
 };
 
-export const formatLink = link => {
+export const formatLink = (link) => {
   return (
     <a
       target={"_blank"}
@@ -328,18 +345,19 @@ export const formatLink = link => {
   );
 };
 
-export const isEmptyArray = array => (array?.length <= 0 ? true : false);
+export const isEmptyArray = (array) => (array?.length <= 0 ? true : false);
 
-export const calculatePercentaje = (percent, total) => ((percent / 100) * total).toFixed(2);
+export const calculatePercentaje = (percent, total) =>
+  ((percent / 100) * total).toFixed(2);
 
-export const getDataDay = dates => {
+export const getDataDay = (dates) => {
   let date = new Date(dates.toISOString().slice(0, 10));
   let today = new Date(date);
   let tomorrow = new Date(date.setDate(date.getDate() + 1));
   return [today.toISOString(), tomorrow.toISOString()];
 };
 
-export const getDataDaysWeek = dates => {
+export const getDataDaysWeek = (dates) => {
   let date = new Date(dates.toISOString().slice(0, 10));
   let monday = new Date(date.setDate(date.getDate() - date.getDay()));
   let lastDayWeek = new Date(monday.toISOString().slice(0, 10));
@@ -347,7 +365,7 @@ export const getDataDaysWeek = dates => {
   return [monday.toISOString(), sunday.toISOString()];
 };
 
-export const getDataDaysMonth = dates => {
+export const getDataDaysMonth = (dates) => {
   let date = new Date(dates.toISOString().slice(0, 10));
   let primerDia = new Date(date.getFullYear(), date.getMonth(), 1);
   let ultimoDia = new Date(date.getFullYear(), date.getMonth() + 1, 0);
@@ -364,7 +382,7 @@ export const currentMonth = () => {
   return [primerDia.toISOString(), ultimoDia.toISOString()];
 };
 
-export const checkIfItExpired = dateString => {
+export const checkIfItExpired = (dateString) => {
   const paymentDate = new Date(dateString);
   const today = new Date();
 
@@ -375,9 +393,9 @@ export const checkIfItExpired = dateString => {
   }
 };
 
-export const isEmpty = obj => Object.keys(obj).length === 0;
+export const isEmpty = (obj) => Object.keys(obj).length === 0;
 
-export const validateIncludes = type => {
+export const validateIncludes = (type) => {
   let includes;
   if (type === "Grupal" || type === "Individual" || type === "Empresarial") {
     includes = "ejecutive,group,company,goal,goal.goaltype,goal.goalname";
@@ -387,7 +405,7 @@ export const validateIncludes = type => {
   return includes;
 };
 
-export const validateJoins = type => {
+export const validateJoins = (type) => {
   let joins;
   if (type === "Grupal" || type === "Individual" || type === "Empresarial") {
     joins = "1,2,3,goal,goal.goaltype,goal.goalname";
@@ -404,9 +422,10 @@ export const validNullData = (data, toChange) => {
   return value;
 };
 
-export const generateTemporalId = length => {
+export const generateTemporalId = (length) => {
   var result = "";
-  var characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  var characters =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
   var charactersLength = characters.length;
   for (var i = 0; i < length; i++) {
     result += characters.charAt(Math.floor(Math.random() * charactersLength));
@@ -414,7 +433,7 @@ export const generateTemporalId = length => {
   return result;
 };
 
-export const abbreviationNumber = num => {
+export const abbreviationNumber = (num) => {
   if (!num) return 0;
   if (num >= 1000000000) {
     return (num / 1000000000).toFixed(1).replace(/\.0$/, "") + "G";
@@ -470,9 +489,9 @@ let dataCardExecutives = [
 ];
 export { dataCardExecutives };
 
-export const normalizeTableData = data => {
+export const normalizeTableData = (data) => {
   let normalizeData = [];
-  data.map(item =>
+  data.map((item) =>
     normalizeData.push({
       ["id"]: item.id,
       ["nombre"]: item.oportunity.soldby.name,
@@ -533,7 +552,7 @@ export const consoleColor = (message, color) => {
   }
 };
 
-export const validateURL = url => {
+export const validateURL = (url) => {
   if (!url) return "";
   try {
     let validate = new URL(url);
@@ -561,8 +580,8 @@ export const DatePickerEsFormat = () => {
   const daysBG = ["Lu", "Ma", "Mi", "Ju", "Vi", "Sa", "Do"];
   let formatDatePicker = {
     localize: {
-      month: n => monthsBG[n],
-      day: n => daysBG[n],
+      month: (n) => monthsBG[n],
+      day: (n) => daysBG[n],
     },
     formatLong: {
       date: () => "mm/dd/yyyy",
@@ -574,19 +593,20 @@ export const formatDateZone = () => {
   let offsetMinutesDates = new Date().getTimezoneOffset();
   let hours = Math.floor(offsetMinutesDates / 60);
   let minutes = offsetMinutesDates % 60;
-  let offsetStr = `${hours > 0 ? "-" : "+"}${Math.abs(hours).toString().padStart(2, "0")}:${Math.abs(minutes)
+  let offsetStr = `${hours > 0 ? "-" : "+"}${Math.abs(hours)
     .toString()
-    .padStart(2, "0")}`;
+    .padStart(2, "0")}:${Math.abs(minutes).toString().padStart(2, "0")}`;
   let h12 = offsetStr.split(":");
   let horas = h12[0];
   let minutosPorHora = 60;
   let segundosPorMinuto = 60;
   let milisegundosPorSegundo = 1000;
-  let milisegundosTotal = horas * minutosPorHora * segundosPorMinuto * milisegundosPorSegundo;
+  let milisegundosTotal =
+    horas * minutosPorHora * segundosPorMinuto * milisegundosPorSegundo;
   return `${hours > 0 ? "" : "+"}${milisegundosTotal}`;
 };
 
-export const getColorByLetter = letter => {
+export const getColorByLetter = (letter) => {
   const colors = [
     "#FF5733",
     "#33FF57",
