@@ -30,6 +30,7 @@ const DropContextStyled = styled.div`
 export default function ExecutivesProspectsV1() {
   const [viewType, setViewType] = useState("kanban");
   const {
+    actionsItem,
     data,
     dataSet,
     modalActions,
@@ -129,11 +130,7 @@ export default function ExecutivesProspectsV1() {
                 <Kanban
                   data={data}
                   handleFecthMore={handleInfiniteScroll}
-                  actions={{
-                    onClickProspect,
-                    toogleLimiBotChat,
-                    onClickNewOportunity,
-                  }}
+                  actions={actionsItem}
                 />
               </div>
             </DropContextStyled>

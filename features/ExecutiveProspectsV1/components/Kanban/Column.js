@@ -1,7 +1,8 @@
 import React, { useEffect, useRef } from "react";
 import { Draggable, Droppable } from "react-beautiful-dnd";
-import Item from "./Item";
+
 import styled from "styled-components";
+import Item from "./Item";
 
 export default function Column({
   column,
@@ -121,7 +122,7 @@ const ColumStyled = styled.div`
   min-height: 80px;
   border-radius: 4px;
   overflow-y: scroll;
-  height: 700px;
+  height: 800px;
   flex-grow: 1;
 
   ::-webkit-scrollbar {

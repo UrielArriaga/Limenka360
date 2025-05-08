@@ -39,6 +39,11 @@ export default function useMain(viewType) {
 
   const [oportunityData, setOportunityData] = useState(null);
 
+  // * Prospecto Data
+  const [prospectSelected, setProspectSelected] = useState(null);
+
+  //* PRospecto
+
   // * EFFECTO PRINICIPAL QUE TRAE LOS PROSPECTOS
 
   useEffect(() => {
@@ -245,6 +250,20 @@ export default function useMain(viewType) {
     // setShowDragAreaOportunity(true);
   };
 
+  const handleOnClickProspects = (item) => {
+    setProspectSelected(item);
+    handleToggleModal("preview");
+  };
+  const handleOnClickNewOportunity = () => {
+    handleToggleModal("newOportunity");
+  };
+  const handleOnClickLimiBotChat = (item) => {
+    setProspectSelected(item);
+    handleToggleModal("limiBotChat");
+  };
+
+  const handleNewTracking = async (data) => {};
+
   return {
     data,
     dataSet,
@@ -255,6 +274,11 @@ export default function useMain(viewType) {
     modalActions: {
       modalViews,
       handleToggleModal,
+    },
+    actionsItem: {
+      handleOnClickProspects,
+      handleOnClickNewOportunity,
+      handleOnClickLimiBotChat,
     },
   };
 }

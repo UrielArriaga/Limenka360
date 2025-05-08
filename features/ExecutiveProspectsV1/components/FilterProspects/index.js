@@ -1,18 +1,34 @@
+import { IconButton } from "@material-ui/core";
 import {
   Add,
+  ArrowDownward,
   ArrowDropDown,
+  ArrowUpward,
   Cached,
-  Dashboard,
-  TableChart,
   ViewCarousel,
   ViewList,
-  ArrowUpward,
-  ArrowDownward,
 } from "@material-ui/icons";
-import React, { useState, useRef, useEffect } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
-import { motion, AnimatePresence } from "framer-motion";
-import { IconButton } from "@material-ui/core";
+import SelectOrder from "./SelectOrder";
+
+const options = [
+  { name: "Nombre (ASC)", value: "-name" },
+  { name: "Nombre (DESC)", value: "name" },
+  {
+    name: "Fecha de creación (ASC)",
+    value: "-createdAt",
+  },
+  {
+    name: "Fecha de creación (DESC)",
+    value: "createdAt",
+  },
+  {
+    name: "Fecha de último contacto (ASC)",
+    value: "-lastContact",
+  },
+];
 
 export default function FilterProspects({
   handleRefetch,
@@ -27,17 +43,6 @@ export default function FilterProspects({
   const viewOptions = ["Tabla", "Kanban"];
 
   const dropdownRef = useRef();
-
-  const options = [
-    {
-      name: "Fecha de creación (ASC)",
-      value: "-createdAt",
-    },
-    {
-      name: "Fecha de creación (DESC)",
-      value: "createdAt",
-    },
-  ];
 
   const handleSelect = (option) => {
     setSelected(`Ordenar por: ${option.name}`);
@@ -101,40 +106,7 @@ export default function FilterProspects({
         </IconButton>
       </div>
 
-      <div className="orderby">
-        <button
-          className="dropdownBtn"
-          onClick={() => setShowOptions(!showOptions)}
-        >
-          {selected} <ArrowDropDown />
-        </button>
-
-        <button className="sortDirectionBtn" onClick={toggleSortDirection}>
-          {sortDirection === "asc" ? <ArrowUpward /> : <ArrowDownward />}
-        </button>
-
-        <AnimatePresence>
-          {showOptions && (
-            <motion.div
-              className="dropdownMenu"
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.2 }}
-            >
-              {options.map((opt, i) => (
-                <div
-                  key={i}
-                  className="dropdownItem"
-                  onClick={() => handleSelect(opt)}
-                >
-                  {opt.name}
-                </div>
-              ))}
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
+      <SelectOrder />
 
       <div className="add">
         <button className="addprospects">
@@ -273,19 +245,14 @@ const FilterProspectsStyled = styled.div`
 function ListDropdown() {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
-  const [selected, setSelected] = useState("All Deals");
+  const [selected, setSelected] = useState("Todos los prospectos");
   const dropdownRef = useRef();
 
   const defaultLists = ["Solution Open Deals", "My All Deals"];
   const myLists = [
-    "Security Solutions",
-    "Closed Opps",
-    "My Security Solutions",
-    "Inside Sales",
-    "Open Opps",
-    "Open Opportunities",
-    "Solution Open Deals",
-    "Open Deals - Solution",
+    "Todos los prospectos",
+    "Ultimo seguimiento hace 5 dias",
+    "Prospectos reasignados",
   ];
 
   const filteredLists = myLists.filter((item) =>
@@ -319,7 +286,7 @@ function ListDropdown() {
             transition={{ duration: 0.2 }}
           >
             <div className="dropdown-top">
-              <h4>Select List or Tag</h4>
+              <h4>Selecciona una opcion</h4>
               <button className="add-btn">
                 <Add />
               </button>
@@ -329,13 +296,13 @@ function ListDropdown() {
               <Add size={16} />
               <input
                 type="text"
-                placeholder="Search for lists and tags"
+                placeholder="Buscar accesso rapido"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
               />
             </div>
 
-            <div className="section">
+            {/* <div className="section">
               {defaultLists.map((item, i) => (
                 <div
                   key={i}
@@ -348,9 +315,9 @@ function ListDropdown() {
                   {item}
                 </div>
               ))}
-            </div>
+            </div> */}
 
-            <h5>My Lists</h5>
+            <h5>Accesos rapidos</h5>
             <div className="section scroll">
               {filteredLists.map((item, i) => (
                 <div

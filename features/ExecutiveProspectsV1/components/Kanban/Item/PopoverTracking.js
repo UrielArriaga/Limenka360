@@ -1,114 +1,102 @@
-import { Box, Modal } from "@mui/material";
+import { Popover } from "@material-ui/core";
 import React, { useState } from "react";
-import { useSelector } from "react-redux";
-import Select from "react-select";
 import styled from "styled-components";
-import useGlobalCommons from "../../../../hooks/useGlobalCommons";
-import { commonSelector } from "../../../../redux/slices/commonSlice";
-import {
-  Phone as PhoneIcon,
-  WhatsApp as WhatsAppIcon,
-  Email as EmailIcon,
-  Event as EventIcon,
-  Group as GroupIcon,
-  AccessTime as AccessTimeIcon,
-  Today as TodayIcon,
-  DateRange as DateRangeIcon,
-} from "@material-ui/icons";
-import dayjs from "dayjs";
+import Select from "react-select";
 
-export default function ModalMovePhase({
+import useGlobalCommons from "../../../../../hooks/useGlobalCommons";
+import { commonSelector } from "../../../../../redux/slices/commonSlice";
+import { useSelector } from "react-redux";
+import { pendingTypes, quickDates } from "./contants";
+import { Event } from "@material-ui/icons";
+import dayjs from "dayjs";
+import { motion } from "framer-motion";
+export default function PopoverTracking({
   open,
-  toggleModal,
   onClose,
-  prospectData = {
-    fullname: "Nombre del prospecto",
-  },
+  setOpenScheduleModal,
+  anchorEl,
+  handlSaveTracking,
 }) {
+  const { getCatalogBy } = useGlobalCommons();
+  const common = useSelector(commonSelector);
   const [showFormPending, setShowFormPending] = useState(false);
   const [pendingType, setPendingType] = useState(null);
   const [pendingDate, setPendingDate] = useState("");
-  const { getCatalogBy } = useGlobalCommons();
-  const common = useSelector(commonSelector);
 
-  const addBusinessDays = (date, days) => {
-    let currentDate = new Date(date);
-    let addedDays = 0;
+  const handleQuickDate = (type) => {
+    const now = dayjs();
+    let newDate;
 
-    while (addedDays < days) {
-      currentDate.setDate(currentDate.getDate() + 1);
-      if (currentDate.getDay() !== 0 && currentDate.getDay() !== 6) {
-        addedDays++;
-      }
+    switch (type) {
+      case "1h":
+        newDate = now.add(1, "hour");
+        break;
+      case "1d":
+        newDate = skipWeekends(now.add(1, "day"));
+        break;
+      case "3d":
+        newDate = skipWeekends(now.add(3, "day"));
+        break;
+      case "5d":
+        newDate = skipWeekends(now.add(5, "day"));
+        break;
+      default:
+        newDate = now;
     }
 
-    return currentDate;
+    setPendingDate(newDate.format("YYYY-MM-DDTHH:mm"));
+  };
+
+  const skipWeekends = (date, dayjs) => {
+    let adjustedDate = dayjs(date);
+    const dayOfWeek = adjustedDate.day();
+
+    if (dayOfWeek === 6) {
+      adjustedDate = adjustedDate.add(2, "day");
+    } else if (dayOfWeek === 0) {
+      adjustedDate = adjustedDate.add(1, "day");
+    }
+
+    return adjustedDate;
   };
 
   const formatDateForInput = (date) => {
     return date.toISOString().slice(0, 16);
   };
 
-  const handleQuickDate = (type) => {
-    const now = dayjs().format();
-    let newDate;
-
-    switch (type) {
-      case "1h":
-        newDate = new Date(now.getTime() + 60 * 60 * 1000);
-        break;
-      case "1d":
-        newDate = addBusinessDays(now, 1);
-        break;
-      case "3d":
-        newDate = addBusinessDays(now, 3);
-        break;
-      case "5d":
-        newDate = addBusinessDays(now, 5);
-        break;
-      default:
-        newDate = now;
-    }
-
-    setPendingDate(formatDateForInput(newDate));
-  };
-
-  const quickDates = [
-    { value: "1h", label: "1 hora", icon: <AccessTimeIcon /> },
-    { value: "1d", label: "1 día", icon: <TodayIcon /> },
-    { value: "3d", label: "3 días", icon: <DateRangeIcon /> },
-    { value: "5d", label: "5 días", icon: <DateRangeIcon /> },
-  ];
-
-  const pendingTypes = [
-    { value: "call", label: "Llamada", icon: <PhoneIcon /> },
-    { value: "whatsapp", label: "WhatsApp", icon: <WhatsAppIcon /> },
-    { value: "email", label: "Email", icon: <EmailIcon /> },
-    { value: "meeting", label: "Reunión", icon: <GroupIcon /> },
-    { value: "other", label: "Otro", icon: <EventIcon /> },
-  ];
-
   return (
-    <Modal open={open} onClose={onClose} closeAfterTransition>
-      <ModalBox>
+    <TrackingStyled
+      open={open}
+      anchorEl={anchorEl}
+      onClose={() => onClose()}
+      anchorOrigin={{
+        vertical: "bottom",
+        horizontal: "right",
+      }}
+      transformOrigin={{
+        vertical: "top",
+        horizontal: "left",
+      }}
+    >
+      <ScheduleModal>
         <div className="title">
-          <h3>Mover de fase</h3>
+          <h3>Agregar seguimiento</h3>
         </div>
 
         <div className="inputs">
           <div className="input-field">
-            <label>Accion de segumiento</label>
+            <label>Accion</label>
             <Select
               onMenuOpen={() => getCatalogBy("actions")}
               placeholder="Selecciona una opción"
               options={common.actions?.results}
               getOptionLabel={(option) => option.name}
               getOptionValue={(option) => option.id}
-              // menuPosition="fixed"
+              menuPosition="fixed"
             />
           </div>
           <div className="input-field">
-            <label>Descripción de seguimiento</label>
+            <label>Descripción</label>
             <textarea rows={4} placeholder="Descripción del seguimiento" />
           </div>
         </div>
@@ -124,8 +112,17 @@ export default function ModalMovePhase({
             Agregar pendiente
           </label>
         </div>
+
         {showFormPending && (
-          <div className="addpending">
+          <AddPendingStyled
+            variants={{
+              hidden: { opacity: 0, height: 0 },
+              visible: { opacity: 1, height: "auto" },
+            }}
+            initial="hidden"
+            animate="visible"
+            className="addpending"
+          >
             <div className="quick-actions">
               {pendingTypes.map((type) => (
                 <button
@@ -156,7 +153,7 @@ export default function ModalMovePhase({
                 ))}
               </div>
               <div className="date-input">
-                <EventIcon className="date-icon" />
+                <Event className="date-icon" />
                 <input
                   type="datetime-local"
                   value={pendingDate}
@@ -171,14 +168,14 @@ export default function ModalMovePhase({
                 placeholder="Escribe aquí las notas importantes del pendiente..."
               />
             </div>
-          </div>
+          </AddPendingStyled>
         )}
 
         <div className="actions">
           <button
             className="cancel"
             onClick={() => {
-              toggleModal();
+              onClose();
             }}
           >
             Cancelar
@@ -186,111 +183,94 @@ export default function ModalMovePhase({
           <button
             className="save"
             onClick={() => {
-              toggleModal();
+              onClose();
             }}
           >
             Guardar
           </button>
         </div>
-
-        {/* <div className="content">
-          <p className="title">Mover {prospectData?.fullname} a </p>
-
-          <div className="inputContainer">
-            <label htmlFor="">Seguimiento</label>
-            <textarea type="text" />
-          </div>
-        </div>
-
-        <div className="actions">
-          <Button onClick={toggleModal}>Cancelar</Button>
-          <Button variant="contained" color="primary">
-            Guardar
-          </Button>
-        </div> */}
-      </ModalBox>
-    </Modal>
+      </ScheduleModal>
+    </TrackingStyled>
   );
 }
 
-const ModalBox = styled(Box)`
-  box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
-  border-radius: 12px;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: #fff;
-  padding: 24px;
-  width: 500px;
+const TrackingStyled = styled(Popover)``;
+
+const ScheduleModal = styled.div`
+  padding: 10px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 16px;
+  width: 500px;
+  border-radius: 10px;
 
-  .title {
-    h3 {
-      margin: 0;
-      font-size: 16px;
-      font-weight: 600;
-      color: #2a2f3a;
-    }
+  h3 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: #2a2f3a;
   }
 
   .inputs {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 12px;
 
     .input-field {
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 4px;
 
       label {
-        font-size: 13px;
-        color: #666;
+        font-size: 12px;
+        color: #757575;
       }
 
+      input,
       textarea {
-        border-radius: 6px;
-        padding: 12px;
-        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        padding: 8px;
+        border: 1px solid #eee;
         font-size: 14px;
         color: #2a2f3a;
-        resize: vertical;
-        min-height: 80px;
 
         &:focus {
           outline: none;
           border-color: #39b8df;
         }
-
-        &::placeholder {
-          color: #999;
-        }
       }
     }
   }
 
-  .input-check {
+  .actions {
     display: flex;
-    align-items: center;
+
+    justify-content: flex-end;
     gap: 8px;
-    margin: 8px 0;
 
-    label {
-      display: flex;
-      align-items: center;
-      gap: 8px;
+    button {
+      padding: 8px 16px;
+      border-radius: 8px;
       font-size: 14px;
-      color: #2a2f3a;
+      font-weight: 600;
+      color: #fff;
+      border: none;
       cursor: pointer;
-    }
+      transition: all 0.2s ease;
 
-    .checkbox {
-      width: 16px;
-      height: 16px;
-      margin: 0;
+      &.cancel {
+        background-color: #f44336;
+        &:hover {
+          background-color: #d32f2f;
+        }
+      }
+
+      &.save {
+        background-color: #39b8df;
+        &:hover {
+          background-color: #0288d1;
+        }
+      }
     }
   }
 
@@ -477,3 +457,5 @@ const ModalBox = styled(Box)`
     }
   }
 `;
+
+const AddPendingStyled = styled(motion.div)``;

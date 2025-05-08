@@ -6,11 +6,26 @@ import styled from "styled-components";
 import { Menu, MenuItem } from "@material-ui/core";
 
 import { Draggable } from "react-beautiful-dnd";
-import useGlobalCommons from "../../../../hooks/useGlobalCommons";
 import { useSelector } from "react-redux";
-import { commonSelector } from "../../../../redux/slices/commonSlice";
 import dayjs from "dayjs";
-import LimiBotAnimation from "../../../../componentx/LimiBotAnimation";
+// import { commonSelector } from "../../../../redux/slices/commonSlice";
+// import useGlobalCommons from "../../../../hooks/useGlobalCommons";
+// import LimiBotAnimation from "../../../../componentx/LimiBotAnimation";
+
+import {
+  Phone as PhoneIcon,
+  WhatsApp as WhatsAppIcon,
+  Email as EmailIcon,
+  Event as EventIcon,
+  Group as GroupIcon,
+  AccessTime as AccessTimeIcon,
+  Today as TodayIcon,
+  DateRange as DateRangeIcon,
+} from "@material-ui/icons";
+import { commonSelector } from "../../../../../redux/slices/commonSlice";
+import useGlobalCommons from "../../../../../hooks/useGlobalCommons";
+import LimiBotAnimation from "../../../../../componentx/LimiBotAnimation";
+import PopoverTracking from "./PopoverTracking";
 
 const Item = forwardRef(({ task: prospect, index, actions }, externalRef) => {
   const { getCatalogBy } = useGlobalCommons();
@@ -65,6 +80,27 @@ const Item = forwardRef(({ task: prospect, index, actions }, externalRef) => {
     setOpenSendWhatsapp(true);
   };
 
+  // Segumiento con pendiente
+
+  const [showFormPending, setShowFormPending] = useState(false);
+  const [pendingType, setPendingType] = useState(null);
+  const [pendingDate, setPendingDate] = useState("");
+
+  const pendingTypes = [
+    { value: "call", label: "Llamada", icon: <PhoneIcon /> },
+    { value: "whatsapp", label: "WhatsApp", icon: <WhatsAppIcon /> },
+    { value: "email", label: "Email", icon: <EmailIcon /> },
+    { value: "meeting", label: "Reunión", icon: <GroupIcon /> },
+    { value: "other", label: "Otro", icon: <EventIcon /> },
+  ];
+
+  const quickDates = [
+    { value: "1h", label: "1 hora", icon: <AccessTimeIcon /> },
+    { value: "1d", label: "1 día", icon: <TodayIcon /> },
+    { value: "3d", label: "3 días", icon: <DateRangeIcon /> },
+    { value: "5d", label: "5 días", icon: <DateRangeIcon /> },
+  ];
+
   return (
     <Draggable draggableId={prospect.id} index={index}>
       {(provided) => (
@@ -87,7 +123,7 @@ const Item = forwardRef(({ task: prospect, index, actions }, externalRef) => {
         >
           <div
             className="prospect-data"
-            onClick={() => actions.onClickProspect(prospect)}
+            onClick={() => actions.handleOnClickProspects(prospect)}
           >
             <div className="prospect-data__top">
               <h3 className="fullname">{prospect?.fullname}</h3>
@@ -221,7 +257,13 @@ const Item = forwardRef(({ task: prospect, index, actions }, externalRef) => {
               />
             </CustomMenu>
           </div>
-          <Popover
+
+          <PopoverTracking
+            open={openScheduleModal}
+            anchorEl={scheduleAnchorEl}
+            onClose={() => setOpenScheduleModal(false)}
+          />
+          {/* <Popover
             open={openScheduleModal}
             anchorEl={scheduleAnchorEl}
             onClose={() => {
@@ -238,7 +280,7 @@ const Item = forwardRef(({ task: prospect, index, actions }, externalRef) => {
           >
             <ScheduleModal>
               <div className="title">
-                <h3>Agendar seguimiento</h3>
+                <h3>Agregar seguimiento</h3>
               </div>
 
               <div className="inputs">
@@ -262,6 +304,68 @@ const Item = forwardRef(({ task: prospect, index, actions }, externalRef) => {
                 </div>
               </div>
 
+              <div className="input-check">
+                <label>
+                  <input
+                    className="checkbox"
+                    type="checkbox"
+                    checked={showFormPending}
+                    onChange={(e) => setShowFormPending(e.target.checked)}
+                  />
+                  Agregar pendiente
+                </label>
+              </div>
+
+              {showFormPending && (
+                <div className="addpending">
+                  <div className="quick-actions">
+                    {pendingTypes.map((type) => (
+                      <button
+                        key={type.value}
+                        className={`quick-action-btn ${
+                          pendingType?.value === type.value ? "active" : ""
+                        }`}
+                        onClick={() => setPendingType(type)}
+                      >
+                        {type.icon}
+                        <span>{type.label}</span>
+                      </button>
+                    ))}
+                  </div>
+                  <div className="input-field">
+                    <label>Fecha del pendiente</label>
+                    <div className="quick-dates">
+                      {quickDates.map((date) => (
+                        <button
+                          key={date.value}
+                          className="quick-date-btn"
+                          onClick={() => handleQuickDate(date.value)}
+                          type="button"
+                        >
+                          {date.icon}
+                          <span>{date.label}</span>
+                        </button>
+                      ))}
+                    </div>
+                    <div className="date-input">
+                      <EventIcon className="date-icon" />
+                      <input
+                        type="datetime-local"
+                        value={pendingDate}
+                        onChange={(e) => setPendingDate(e.target.value)}
+                      />
+                    </div>
+                  </div>
+                  <div className="input-field">
+                    <label>Notas del pendiente</label>
+                    <textarea
+                      rows={3}
+                      placeholder="Escribe aquí las notas importantes del pendiente..."
+                    />
+                  </div>
+                </div>
+              )}
+
               <div className="actions">
                 <button
                   className="cancel"
@@ -281,7 +385,7 @@ const Item = forwardRef(({ task: prospect, index, actions }, externalRef) => {
                 </button>
               </div>
             </ScheduleModal>
-          </Popover>
+          </Popover> */}
 
           <Popover
             open={openSendWhatsapp}

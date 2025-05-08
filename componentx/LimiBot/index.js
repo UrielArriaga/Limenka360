@@ -31,6 +31,8 @@ const ChatBot = ({
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef(null);
 
+  const [showAnimationPopup, setshowAnimationPopup] = useState(false);
+
   const toggleChat = () => {
     setIsOpen(!isOpen);
     if (!isOpen) setIsMinimized(false);
@@ -78,6 +80,10 @@ const ChatBot = ({
       e.preventDefault();
       handleSendMessage();
     }
+  };
+
+  const handleShowAnimationPopup = () => {
+    setshowAnimationPopup(!showAnimationPopup);
   };
 
   useEffect(() => {
@@ -214,7 +220,7 @@ const ChatBot = ({
             )}
           </ChatWindow>
         ) : (
-          <motion.div
+          <LottiContainer
             key="lottie-button"
             variants={lottieVariants}
             initial="hidden"
@@ -230,6 +236,29 @@ const ChatBot = ({
               cursor: "pointer",
             }}
           >
+            {showAnimationPopup && (
+              <PopupCloud
+                initial="hidden"
+                animate="visible"
+                exit="exit"
+                variants={{
+                  hidden: { opacity: 0, scale: 0.8 },
+                  visible: {
+                    opacity: 1,
+                    scale: 1,
+                    transition: {
+                      type: "spring",
+                      damping: 10,
+                      stiffness: 100,
+                    },
+                  },
+                  exit: { opacity: 0, y: -50, transition: { duration: 0.3 } },
+                }}
+              >
+                <p>Tienes nuevas sugerencias s</p>
+              </PopupCloud>
+            )}
+
             <Lottie
               className="lottie"
               animationData={animation}
@@ -239,9 +268,20 @@ const ChatBot = ({
                 height: "200px",
               }}
             />
-          </motion.div>
+          </LottiContainer>
         )}
       </AnimatePresence>
+
+      <button
+        style={{
+          marginTop: 1000,
+        }}
+        onClick={() => {
+          handleShowAnimationPopup();
+        }}
+      >
+        click me{" "}
+      </button>
     </ChatContainer>
   );
 };
@@ -364,6 +404,45 @@ const SendButton = styled(motion.button)`
     color: #b0bec5;
     cursor: not-allowed;
   }
+`;
+
+const LottiContainer = styled(motion.div)`
+  .cloudofthinking {
+    position: absolute;
+    top: -80px;
+
+    left: -30px;
+    height: 100px;
+    width: 150px;
+
+    background-color: white;
+    border-radius: 50%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    font-size: 12px;
+  }
+`;
+
+const PopupCloud = styled(motion.div)`
+  position: absolute;
+  top: -80px;
+  left: -30px;
+  width: 150px;
+  height: 100px;
+  background-color: white;
+  border-radius: 50%;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 12px;
+  color: #333;
+  font-weight: bold;
+  padding: 10px;
 `;
 
 export default ChatBot;
