@@ -265,6 +265,7 @@ export default function useMain(viewType) {
   const handleNewTracking = async (data) => {};
 
   return {
+    prospectSelected,
     data,
     dataSet,
     onDragEnd,

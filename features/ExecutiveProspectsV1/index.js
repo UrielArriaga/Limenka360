@@ -38,9 +38,10 @@ export default function ExecutivesProspectsV1() {
     handleInfiniteScroll,
     onDragEnd,
     onDragStart,
+    prospectSelected,
   } = useMain(viewType);
 
-  const [prospectSelected, setProspectSelected] = useState(null);
+  const [dasda, setProspectSelected] = useState(null);
   const [openLimiBotChat, setOpenLimiBotChat] = useState(false);
 
   const onClickProspect = (item) => {
