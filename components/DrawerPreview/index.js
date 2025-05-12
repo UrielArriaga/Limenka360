@@ -32,10 +32,10 @@ export default function PreviewCuote({ open, setOpen, oportunitySelect: oportuni
 
 const Preview = styled(Drawer)`
   margin: 0;
-  min-width: 800px;
+  min-width: 500px;
 
   .preview__pdf {
     display: flex;
-    min-width: 800px;
+    min-width: 500px;
   }
 `;

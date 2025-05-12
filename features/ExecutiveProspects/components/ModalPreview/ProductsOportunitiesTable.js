@@ -1,130 +1,26 @@
 import dayjs from "dayjs";
 import React from "react";
 import styled from "styled-components";
-import {
-  LocalShipping,
-  Build,
-  School,
-  CheckCircle,
-  Cancel,
-  Inventory,
-  Info,
-  ExpandMore,
-  ExpandLess,
-} from "@material-ui/icons";
+import { CheckCircle, Cancel } from "@material-ui/icons";
 
-let productsBackend = [
-  {
-    id: "8BKgtKdUHYudshKjzWC1bMAE",
-    quantity: 1,
-    discount: 0,
-    dispercentage: 0,
-    iva: 208,
-    newprice: 1300,
-    total: 1508,
-    observations: "Producto frágil, manejar con cuidado",
-    note: "Cliente solicita entrega antes del viernes",
-    shownote: true,
-    isshipped: false,
-    totalorder: 0,
-    isfullorder: false,
-    isfullshopping: false,
-    totalshopping: 0,
-    deliverytimedone: null,
-    shoppingstatus: "",
-    delivered: false,
-    trainingrequest: true,
-    installationrequest: false,
-    isreplace: false,
-    createdAt: "2025-03-24T20:03:23.452Z",
-    updatedAt: "2025-03-24T20:03:23.452Z",
-    productpackageId: null,
-    productreplaceId: null,
-    productId: "RoNCX44XuEBn5SQrX7HEuDkk",
-    oportunityId: "GgaRx3Vpix2AWjEFXwEsiTM6",
-    warehouseId: null,
-    companyId: "62dz3qnimTqzfPfKpt7JtOtE",
-    deliverytimeId: null,
-    statuspooId: null,
-    product: {
-      id: "RoNCX44XuEBn5SQrX7HEuDkk",
-      name: "KIT DE PRIMEROS AUXILIOS MEDKIT PRO",
-      amount: 1000,
-      storeamount: 1100,
-      callamount: 1300,
-      code: "PACK01",
-      import: false,
-      isactive: true,
-      system: false,
-      description:
-        "Kit profesional de primeros auxilios con 35 piezas esenciales",
-      physicalstock: 12,
-      stock: 10,
-      stockrepair: null,
-      stockapart: null,
-      stockassigned: null,
-      totaldollars: 0,
-      length: 30,
-      width: 20,
-      weight: 2.5,
-      height: 15,
-      ispackage: true,
-      stockintransit: 0,
-      stocktotal: 0,
-      createdAt: "2024-10-23T19:53:45.438Z",
-      updatedAt: "2025-03-28T22:08:22.985Z",
-      categoryId: "62d09Tuuhp22mowzna3pH002",
-      brandId: "62d09Tuuhp22mowzna3pO051",
-      producttypeId: "62d09Tuuhp22mowzna3pR005",
-      providerId: "62d09Tuuhp22mowzna3pG050",
-      companyId: "62dz3qnimTqzfPfKpt7JtOtE",
-      warrantytimeId: null,
-    },
-  },
-  {
-    id: "9CKgtKdUHYudshKjzWC1bMAF",
-    quantity: 2,
-    discount: 100,
-    dispercentage: 5,
-    iva: 190,
-    newprice: 1800,
-    total: 3790,
-    observations: "Producto con garantía extendida",
-    note: "Cliente VIP - Descuento especial aplicado",
-    shownote: true,
-    isshipped: true,
-    delivered: true,
-    trainingrequest: false,
-    installationrequest: true,
-    product: {
-      id: "SoNCX44XuEBn5SQrX7HEuDkl",
-      name: "MONITOR CARDIACO PRO",
-      code: "MON-2024",
-      stock: 5,
-      description: "Monitor cardiaco de última generación",
-    },
-  },
-];
+const statusIcons = {
+  true: <CheckCircle style={{ color: "green" }} />,
+  false: <Cancel style={{ color: "red" }} />,
+};
 
 export default function ProductsOportunitiesTable({
-  products = productsBackend,
+  products = [],
 }) {
   const formatCurrency = (amount) => `$${amount.toFixed(2)}`;
-  const [expandedRows, setExpandedRows] = React.useState({});
-
-  const toggleRow = (id) => {
-    setExpandedRows((prev) => ({
-      ...prev,
-      [id]: !prev[id],
-    }));
-  };
 
   return (
     <TableContainer>
       <div className="header">
         <h2>Productos en Cotización</h2>
         <div className="summary">
-          <span>{products.length} productos</span>
+          <span>
+            {products.length} {products.length === 1 ? "producto" : "productos"}
+          </span>
           <span>
             Total:{" "}
             {formatCurrency(products.reduce((sum, p) => sum + p.total, 0))}
@@ -144,6 +40,49 @@ export default function ProductsOportunitiesTable({
             <th className="actions-col"></th>
           </tr>
         </thead>
+        <tbody>
+          {products.map((product) => (
+            <tr key={product.id}>
+              <td>
+                <div className="product-info">
+                  <div>
+                    <div className="product-name">{product.product?.name}</div>
+                    <div className="product-code">{product.product?.code}</div>
+                  </div>
+                </div>
+              </td>
+              <td>{formatCurrency(product.newprice)}</td>
+              <td>{product.quantity}</td>
+              <td>{formatCurrency(product.total)}</td>
+              <td className={product.product?.stock <= 5 ? "low-stock" : ""}>
+                {product.product?.stock !== null
+                  ? product.product.stock
+                  : "N/A"}
+              </td>
+              <td>
+                <div
+                  className={`status ${
+                    product.delivered ? "delivered" : "pending"
+                  }`}
+                >
+                  {statusIcons[product.delivered]}
+                  {product.delivered ? "Entregado" : "Pendiente"}
+                </div>
+              </td>
+              <td className="actions-col"></td>
+            </tr>
+          ))}
+          {products.length === 0 && (
+            <tr>
+              <td
+                colSpan="7"
+                style={{ textAlign: "center", padding: "15px", color: "#777" }}
+              >
+                No hay productos asociados a esta oportunidad.
+              </td>
+            </tr>
+          )}
+        </tbody>
       </StyledTable>
     </TableContainer>
   );

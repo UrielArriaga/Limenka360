@@ -9,7 +9,13 @@ import {
   WhatsApp,
 } from "@material-ui/icons";
 import AddTracking from "./AddTracking";
-import { Grid, IconButton, Tabs, Tab } from "@material-ui/core";
+import {
+  Grid,
+  IconButton,
+  Tabs,
+  Tab,
+  CircularProgress,
+} from "@material-ui/core";
 import InfoProspect from "./InfoProspect";
 import LineTime from "./LineTime";
 import AddPending from "./AddPending";
@@ -21,6 +27,11 @@ import ProductsOportunitiesTable from "./ProductsOportunitiesTable";
 import useTrackings from "../../../ExecutiveProspectsV2/hooks/useTrackings";
 import usePending from "../../../ExecutiveProspectsV2/hooks/usePending";
 import EditProspectDrawer from "../DrawerEditProspect";
+import useOpportunityProducts from "../../hooks/useOpportunityProducts";
+import useQuotePDF from "../../hooks/useQuotePDF";
+import useFiles from "../../hooks/useFiles";
+import PreviewCuote from "../../../../components/DrawerPreview";
+import Files from "./FilesUploader";
 
 export default function ModalPreview({
   open,
@@ -40,6 +51,37 @@ export default function ModalPreview({
 
   const { pendingsData } = usePending(prospectSelected?.id);
 
+  const {
+    products,
+    loading: loadingProducts,
+    error: errorProducts,
+  } = useOpportunityProducts(prospectSelected?.id);
+
+  const { opportunities } = useQuotePDF(prospectSelected?.id);
+
+  const {
+    files,
+    setFile,
+    filesCount,
+    isLoader,
+    isLoaderUpload,
+    refetch,
+    pageFiles,
+    file,
+    fileSelected,
+    setFileSelected,
+    setPageFiles,
+    handleFileSelect,
+    handleDrop,
+    handleDragOver,
+    handleDownloadFile,
+    setRefetch,
+    string_to_slug,
+    returnStyleTypeFile,
+    searchColorStyle,
+    limitFiles,
+    filesLenght
+  } = useFiles(prospectSelected);
   let trackings = trackingData.results || [];
 
   const handleTabChange = (event, newValue) => {
@@ -122,7 +164,62 @@ export default function ModalPreview({
             </Grid>
           )}
 
-          {tabValue === 1 && <ProductsOportunitiesTable products={[]} />}
+          {tabValue === 1 && (
+            <>
+              {loadingProducts ? (
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    padding: "20px",
+                  }}
+                >
+                  <CircularProgress />
+                </div>
+              ) : errorProducts ? (
+                <div style={{ padding: "20px", color: "red" }}>
+                  Error al cargar los productos.
+                </div>
+              ) : (
+                <ProductsOportunitiesTable products={products} />
+              )}
+            </>
+          )}
+
+          {tabValue === 2 && (
+            <PreviewCuote
+              open={tabValue === 2}
+              setOpen={() => setTabValue(0)}
+              oportunitySelect={opportunities}
+            />
+          )}
+
+          {tabValue === 3 && (
+            <Files
+              files={files}
+              setFile={setFile}
+              filesCount={filesCount}
+              isLoader={isLoader}
+              isLoaderUpload={isLoaderUpload}
+              refetch={refetch}
+              pageFiles={pageFiles}
+              file={file}
+              fileSelected={fileSelected}
+              setFileSelected={setFileSelected}
+              setPageFiles={setPageFiles}
+              handleFileSelect={handleFileSelect}
+              handleDrop={handleDrop}
+              handleDragOver={handleDragOver}
+              handleDownloadFile={handleDownloadFile}
+              setRefetch={setRefetch}
+              string_to_slug={string_to_slug}
+              returnStyleTypeFile={returnStyleTypeFile}
+              searchColorStyle={searchColorStyle}
+              limitFiles={limitFiles}
+              filesLenght={filesLenght}
+            />
+          )}
           <div className="close" onClick={() => toggleModal()}>
             <Close />
           </div>

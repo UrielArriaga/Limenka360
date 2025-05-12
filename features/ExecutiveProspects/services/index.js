@@ -82,6 +82,23 @@ class ProspectsApi {
   async addAutomaticTracking(dataTracking) {
     return api.post("trackings", dataTracking);
   }
+
+  async getOpportunityProducts(query){
+    let params = {
+      count: 1,
+      where: JSON.stringify(query),
+      include: "product"
+    }
+    return api.get("productsoportunities", { params })
+  }
+
+  async getOpportunity(query){
+    let params = {
+      count: 1,
+      where: JSON.stringify(query)
+    }
+    return api.get("oportunities", { params })
+  }
 }
 
 export default ProspectsApi;
