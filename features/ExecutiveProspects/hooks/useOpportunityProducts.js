@@ -1,11 +1,14 @@
 import { useState, useEffect } from "react";
 import ProspectsApi from "../services";
+import usePagination from "../../../hooks/usePagination";
 
 export default function useOpportunityProducts(oportunityId) {
   const request = new ProspectsApi();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [count, setCount] = useState(0);
+  const { page, limit, handlePage } = usePagination({ defaultLimit: 5, defaultPage: 1 });
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -13,8 +16,9 @@ export default function useOpportunityProducts(oportunityId) {
       setError(null);
       try {
         let query = { oportunityId };
-        const response = await request.getOpportunityProducts(query);
+        const response = await request.getOpportunityProducts(limit, page, query);
         setProducts(response.data.results);
+        setCount(response.data.count)
       } catch (err) {
         setError(err);
       } finally {
@@ -28,7 +32,17 @@ export default function useOpportunityProducts(oportunityId) {
       setProducts([]);
       setLoading(false);
     }
-  }, [oportunityId]);
+  }, [oportunityId, page]);
 
-  return { products, loading, error };
+  return {
+    products,
+    loading,
+    error,
+    count,
+    paginationData: {
+      handlePage,
+      page,
+      limit,
+    },
+  };
 }

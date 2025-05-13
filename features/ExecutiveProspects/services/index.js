@@ -83,9 +83,11 @@ class ProspectsApi {
     return api.post("trackings", dataTracking);
   }
 
-  async getOpportunityProducts(query){
+  async getOpportunityProducts(limit = 5, page = 1, query){
     let params = {
       count: 1,
+      limit: limit,
+      skip: page,
       where: JSON.stringify(query),
       include: "product"
     }
@@ -98,6 +100,17 @@ class ProspectsApi {
       where: JSON.stringify(query)
     }
     return api.get("oportunities", { params })
+  }
+
+  async getForecastReason() {
+    let params = {
+      count: 1,
+    }
+    return api.get("forecastreasons", { params })
+  }
+
+  async updateOportunitiesForecast(id, body) {
+    return api.put(`oportunities/additionaldata/updated/${id}`, body)
   }
 }
 

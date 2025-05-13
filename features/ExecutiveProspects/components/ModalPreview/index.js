@@ -7,6 +7,7 @@ import {
   ContactMail,
   Help,
   WhatsApp,
+  PanTool,
 } from "@material-ui/icons";
 import AddTracking from "./AddTracking";
 import {
@@ -32,6 +33,8 @@ import useQuotePDF from "../../hooks/useQuotePDF";
 import useFiles from "../../hooks/useFiles";
 import PreviewCuote from "../../../../components/DrawerPreview";
 import Files from "./FilesUploader";
+import ModalForecast from "./ModalForecast";
+import useForecast from "../../hooks/useForecast";
 
 export default function ModalPreview({
   open,
@@ -55,6 +58,8 @@ export default function ModalPreview({
     products,
     loading: loadingProducts,
     error: errorProducts,
+    count: countProducts,
+    paginationData: paginationDataProducts,
   } = useOpportunityProducts(prospectSelected?.id);
 
   const { opportunities } = useQuotePDF(prospectSelected?.id);
@@ -82,6 +87,9 @@ export default function ModalPreview({
     limitFiles,
     filesLenght
   } = useFiles(prospectSelected);
+
+  const { reasons, loadingReasons, errorReasons, updateForecast, isForecastModalOpen,
+    handleOpenForecastModal, handleCloseForecastModal } = useForecast(prospectSelected);
   let trackings = trackingData.results || [];
 
   const handleTabChange = (event, newValue) => {
@@ -182,7 +190,14 @@ export default function ModalPreview({
                   Error al cargar los productos.
                 </div>
               ) : (
-                <ProductsOportunitiesTable products={products} />
+                <ProductsOportunitiesTable
+                  products={products}
+                  countProducts={countProducts}
+                  paginationDataProducts={{
+                    ...paginationDataProducts,
+                    total: countProducts,
+                  }}
+                />
               )}
             </>
           )}
@@ -262,8 +277,24 @@ export default function ModalPreview({
               <ContactMail />
             </IconButton>
           </div>
+          <div className="actionsbar__item">
+            <IconButton
+              className="actionsbar__icon"
+              onClick={handleOpenForecastModal}
+            >
+              <PanTool />
+            </IconButton>
+          </div>
         </div>
       </div>
+      <ModalForecast
+        isOpen={isForecastModalOpen}
+        onClose={handleCloseForecastModal}
+        reasons={reasons}
+        loadingReasons={loadingReasons}
+        errorReasons={errorReasons}
+        updateForecast={updateForecast}
+      />
     </ModalPreviewStyled>
   );
 }

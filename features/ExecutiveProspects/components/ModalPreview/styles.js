@@ -1,5 +1,5 @@
-import { Drawer, Paper, Popover } from "@material-ui/core";
-import styled from "styled-components";
+import { Drawer, Paper, Popover, Typography } from "@material-ui/core";
+import styled, { keyframes } from "styled-components";
 import { colors } from "../../../../styles/global.styles";
 
 export const ModalPreviewStyled = styled(Drawer)`
@@ -484,6 +484,24 @@ export const MenuFile = styled(Popover)`
   }
 `;
 
+const borderPulse = keyframes`
+  0% {
+    border-color: #007bff;
+    border-width: 2px;
+    box-shadow: 0 0 0px #007bff50;
+  }
+  50% {
+    border-color: #3399ff;
+    border-width: 2px;
+    box-shadow: 0 0 10px #3399ff80;
+  }
+  100% {
+    border-color: #007bff;
+    border-width: 2px;
+    box-shadow: 0 0 0px #007bff50;
+  }
+`;
+
 export const DropArea = styled.div`
   border: 2px dashed #ccc;
   border-radius: 8px;
@@ -495,10 +513,43 @@ export const DropArea = styled.div`
 
   &:hover {
     border-color: #007bff;
+    animation: ${borderPulse} 0.5s ease infinite;
   }
 
   &.drag-drop-area {
     border-color: #007bff;
     background-color: #f0f8ff;
   }
+`;
+
+// ----- > MODALFORECAST < ------
+export const ModalContainer = styled.div`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 420px;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  padding: 32px;
+  outline: none;
+`;
+
+export const ActionButtons = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 24px;
+  gap: 12px;
+`;
+
+export const LoadingContainer = styled.div`
+  display: flex;
+  align-items: center;
+  margin-top: 8px;
+`;
+
+export const ErrorText = styled(Typography)`
+  color: #f44336;
+  margin-top: 8px;
 `;

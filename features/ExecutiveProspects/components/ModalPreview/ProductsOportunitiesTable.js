@@ -2,6 +2,7 @@ import dayjs from "dayjs";
 import React from "react";
 import styled from "styled-components";
 import { CheckCircle, Cancel } from "@material-ui/icons";
+import { Pagination } from "@material-ui/lab";
 
 const statusIcons = {
   true: <CheckCircle style={{ color: "green" }} />,
@@ -10,6 +11,8 @@ const statusIcons = {
 
 export default function ProductsOportunitiesTable({
   products = [],
+  paginationDataProducts,
+  countProducts,
 }) {
   const formatCurrency = (amount) => `$${amount.toFixed(2)}`;
 
@@ -19,7 +22,7 @@ export default function ProductsOportunitiesTable({
         <h2>Productos en Cotización</h2>
         <div className="summary">
           <span>
-            {products.length} {products.length === 1 ? "producto" : "productos"}
+            {countProducts} {countProducts === 1 ? "producto" : "productos"}
           </span>
           <span>
             Total:{" "}
@@ -84,6 +87,20 @@ export default function ProductsOportunitiesTable({
           )}
         </tbody>
       </StyledTable>
+      <div className="pagination">
+        {paginationDataProducts && paginationDataProducts.total > 5 && (
+          <Pagination
+            variant="outlined"
+            count={Math.ceil(
+              paginationDataProducts.total / paginationDataProducts.limit
+            )}
+            onChange={(e, value) => paginationDataProducts.handlePage(value)}
+            size="small"
+            page={paginationDataProducts.page}
+            color="primary"
+          />
+        )}
+      </div>
     </TableContainer>
   );
 }
@@ -118,6 +135,11 @@ const TableContainer = styled.div`
         color: #2c3e50;
       }
     }
+  }
+  .pagination {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
   }
 `;
 
