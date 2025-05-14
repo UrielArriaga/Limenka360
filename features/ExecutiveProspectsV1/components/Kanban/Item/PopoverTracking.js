@@ -202,6 +202,7 @@ const ScheduleModal = styled.div`
   flex-direction: column;
   gap: 16px;
   width: 500px;
+  max-height: 500px;
   border-radius: 10px;
 
   h3 {
@@ -247,6 +248,8 @@ const ScheduleModal = styled.div`
 
     justify-content: flex-end;
     gap: 8px;
+
+    padding-bottom: 20px;
 
     button {
       padding: 8px 16px;

@@ -35,6 +35,7 @@ import PreviewCuote from "../../../../components/DrawerPreview";
 import Files from "./FilesUploader";
 import ModalForecast from "./ModalForecast";
 import useForecast from "../../hooks/useForecast";
+import LimiBot from "./LimiBot";
 
 export default function ModalPreview({
   open,
@@ -118,7 +119,7 @@ export default function ModalPreview({
       <div className="row">
         <div className="modalcontainer">
           <div className="headerPreview">
-            <h1>Oportunidad</h1>
+            <h1>{prospectSelected?.email}</h1>
             {/* <ArrowStepsComponent /> */}
 
             <div className="actionmodal">
@@ -143,9 +144,11 @@ export default function ModalPreview({
               aria-label="simple tabs example"
             >
               <Tab label="Resumen" />
+
               <Tab label="Productos" />
               <Tab label="Cotizacion PDF" />
               <Tab label="Documentos" />
+              <Tab label="LimiBOT" />
             </Tabs>
           </div>
 
@@ -246,6 +249,26 @@ export default function ModalPreview({
               limitFiles={limitFiles}
               filesLenght={filesLenght}
             />
+          )}
+
+          {tabValue === 4 && (
+            <Grid container spacing={2}>
+              <Grid item md={4} xs={12}>
+                <InfoProspect
+                  prospectSelected={prospectSelected}
+                  setProspectSelected={setProspectSelected}
+                  onTrackingCreated={refetchTrackings}
+                />
+              </Grid>
+
+              <Grid item md={8} xs={12}>
+                <LimiBot
+                  prospectSelected={prospectSelected}
+                  setProspectSelected={setProspectSelected}
+                  onTrackingCreated={refetchTrackings}
+                />
+              </Grid>
+            </Grid>
           )}
           <div className="close" onClick={() => toggleModal()}>
             <Close />
