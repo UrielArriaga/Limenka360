@@ -17,6 +17,7 @@ export default function ExecutiveProspects() {
     setColumns,
     handleScrollColumn,
     openPreview,
+    setProspectSelected,
     toogleModalPreview,
     handleClickProspect,
     prospectSelected,
@@ -64,9 +65,6 @@ export default function ExecutiveProspects() {
         <div
           style={{
             display: "flex",
-            // width: "50%",
-            // background: "red",
-            // overflowX: "auto",
           }}
         >
           <DragDropContext
@@ -90,6 +88,7 @@ export default function ExecutiveProspects() {
           trackings={trackings}
           pendingsData={pendingsData}
           prospectSelected={prospectSelected}
+          setProspectSelected={setProspectSelected}
           open={openPreview}
           toggleModal={toogleModalPreview}
         />

@@ -1,21 +1,35 @@
 import { Grid, Tooltip } from "@material-ui/core";
 import React from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
-
+import { EntitiesLocal } from "../../../../BD/databd";
 import dayjs from "dayjs";
+import { useSelector } from "react-redux";
+import { commonSelector } from "../../../../redux/slices/commonSlice";
 import { colors } from "../../../../styles/global.styles";
 import { type } from "os";
 import InputField from "./InputField";
-export default function InfoProspect({ prospectSelected }) {
+import ProspectsApi from "../../services";
+import { toast } from "react-toastify";
+
+export default function InfoProspect({ prospectSelected, onTrackingCreated }) {
   const [showAllInfo, setShowAllInfo] = useState(false);
   let separation = 5;
+  const [prospectDetails, setProspectDetails] = useState(null);
+  const prospectsApi = new ProspectsApi();
+  useEffect(() => {
+    if (showAllInfo && prospectSelected?.id && !prospectDetails) {
+      prospectsApi.getProspectDetails(prospectSelected.id).then((response) => {
+        setProspectDetails(response.data);
+      });
+    }
+  }, [showAllInfo, prospectSelected]);
 
-  const printNa = value => {
+  const printNa = (value) => {
     return value ? value : "N/A";
   };
 
-  const formatDate = date => {
+  const formatDate = (date) => {
     return date ? dayjs(date).format("DD/MM/YYYY") : "N/A";
   };
 
@@ -24,19 +38,183 @@ export default function InfoProspect({ prospectSelected }) {
     currentValue: "",
     identifier: "",
   });
+  const [trackings, setTrackings] = useState([]);
+
+  const clientTypeCatalog = useSelector(commonSelector)?.clientTypes?.results;
+
+  const getClientTypeName = (id) => {
+    return clientTypeCatalog?.find((item) => item.id === id)?.name || "N/A";
+  };
+  const categoryCatalog = useSelector(commonSelector)?.categories?.results;
+
+  const getCategoryName = (id) => {
+    return categoryCatalog?.find((item) => item.id === id)?.name || "N/A";
+  };
+
+  const channelCatalog = useSelector(commonSelector)?.channels?.results;
+  const getChannelName = (id) =>
+    channelCatalog?.find((item) => item.id === id)?.name || "N/A";
+
+  const phaseCatalog = useSelector(commonSelector)?.phases?.results;
+  const getPhaseName = (id) =>
+    phaseCatalog?.find((item) => item.id === id)?.name || "N/A";
+
+  const getLocalEntityName = (id) => {
+    return EntitiesLocal.find((entity) => entity.id === id)?.name || "N/A";
+  };
+
+  const postalCatalog = useSelector(commonSelector)?.postals?.results;
+  const getPostalCode = (id) =>
+    postalCatalog?.find((item) => item.id === id)?.postal_code || "N/A";
 
   const prospectFields = [
     { label: "Nombre", value: prospectSelected?.fullname, type: "text" },
     { label: "Correo", value: prospectSelected?.email, type: "text" },
     { label: "No. Celular", value: prospectSelected?.phone, type: "text" },
-    { label: "Producto de Interes", value: prospectSelected?.product, type: "text" },
-    { label: "Categoria de Interes", id: "categories", value: prospectSelected?.category?.name, type: "cities" },
-    { label: "Fecha de Creacion", disabled: true, value: formatDate(prospectSelected?.createdAt), type: "text" },
-    { label: "Tipo de Cliente", value: prospectSelected?.phone, type: "select" },
-    { label: "Estado", id: "entities", value: prospectSelected?.entity?.name, type: "select" },
-  ];
+    {
+      label: "Producto de Interes",
+      value: prospectSelected?.product,
+      type: "text",
+    },
+    {
+      label: "Categoria de Interes",
+      id: "categories",
+      value: getCategoryName(prospectSelected?.categoryId),
+      type: "select",
+    },
+    {
+      label: "Tipo de Cliente",
+      id: "clientTypes",
+      value: getClientTypeName(prospectSelected?.clientTypeId),
+      type: "select",
+    },
+    ...(showAllInfo && prospectDetails
+      ? [
+          {
+            label: "Municipio",
+            id: "cityId",
+            value: prospectDetails?.city?.name || "N/A",
+            type: "text",
+          },
 
-  const handleOnClickField = field => {
+          {
+            label: "Canal",
+            id: "channels",
+            value: prospectDetails?.channel?.name || "N/A",
+            type: "select",
+          },
+          {
+            label: "Genero",
+            value: prospectDetails?.gender,
+            type: "select",
+            id: "gender",
+            options: [
+              { label: "Hombre", value: "Hombre" },
+              { label: "Mujer", value: "Mujer" },
+            ],
+          },
+          {
+            label: "Telefono Opcional",
+            value: prospectDetails?.optionalphone,
+            type: "text",
+          },
+          {
+            label: "Fase",
+            id: "phases",
+            value: prospectDetails?.phase?.name || "N/A",
+            type: "select",
+          },
+          {
+            label: "Origen",
+            id: "origins",
+            value: prospectDetails?.origin?.name || "N/A",
+            type: "select",
+          },
+          {
+            label: "Título",
+            value: prospectDetails?.title,
+            type: "text",
+          },
+          {
+            label: "Codigo Postal",
+            id: "postals",
+            value: prospectDetails?.postal?.postal_code || "N/A",
+            type: "text",
+          },
+
+          {
+            label: "Estado",
+            id: "EntitiesLocal",
+            value: getLocalEntityName(prospectDetails?.entity?.id),
+            type: "select",
+          },
+
+          {
+            label: "Calle",
+            value: prospectDetails?.street,
+            type: "text",
+          },
+          {
+            label: "Google Maps",
+            value: prospectDetails?.location,
+            type: "text",
+          },
+          {
+            label: "Facebook",
+            value: prospectDetails?.facebook,
+            type: "text",
+          },
+          {
+            label: "Pagina Web",
+            value: prospectDetails?.url,
+            type: "text",
+          },
+        ]
+      : []),
+  ];
+  const handleOnUpdateTracking = async (fieldName, oldValue, newValue) => {
+    if (oldValue !== newValue) {
+      try {
+        const actions = await prospectsApi.getActions();
+        const seguimientoAction = actions.data.results.find(
+          (a) => a.name === "Seguimiento Automatico"
+        );
+
+        if (!seguimientoAction) {
+          toast.error("No se encontró la acción 'Seguimiento Automatico'");
+          return;
+        }
+
+        const newTracking = {
+          actionId: seguimientoAction.id,
+          reason: `Actualización de campo ${fieldName}`,
+          observations: `Campo actualizado: ${fieldName}. De: ${oldValue} a: ${newValue}`,
+          prospectId: prospectSelected.id,
+          status: 1,
+        };
+
+        await prospectsApi.addAutomaticTracking(newTracking);
+        toast.success("Seguimiento creado exitosamente");
+
+        const updatedProspect = { [fieldName]: newValue };
+        await prospectsApi.updateProspectField(
+          prospectSelected.id,
+          updatedProspect
+        );
+
+        prospectSelected[fieldName] = newValue;
+
+        if (typeof onTrackingCreated === "function") {
+          onTrackingCreated();
+        }
+      } catch (error) {
+        console.error(error);
+        toast.error("Error al guardar el seguimiento");
+      }
+    }
+  };
+
+  const handleOnClickField = (field) => {
     if (field.disabled) return;
     setfieldToUpdate({
       value: field.value,
@@ -47,119 +225,104 @@ export default function InfoProspect({ prospectSelected }) {
   };
   return (
     <InfoProspectStyled>
-      <Grid container spacing={0}>
+      <Grid container spacing={2}>
         {prospectFields.map((field, index) => {
+          const isRequired =
+            field.label === "Nombre" ||
+            field.label === "Origen" ||
+            field.label === "Fase" ||
+            field.label === "Tipo de Cliente";
           return (
-            <Grid item md={separation} xs={12}>
+            <Grid item md={separation} xs={12} key={index}>
               {field.label === itemToUpdate.identifier && (
-                <div className="itemData toUpdate" onClick={() => handleOnClickField(field)}>
-                  <p className="label">Actualizar {field.label}</p>
-                  <InputField type={field.type} itemToUpdate={itemToUpdate} setfieldToUpdate={setfieldToUpdate} />
+                <div
+                  className="itemData toUpdate"
+                  onClick={() => handleOnClickField(field)}
+                >
+                  <p className="label">
+                    {field.label}{" "}
+                    {isRequired && <span className="required">*</span>}
+                  </p>
+                  <InputField
+                    type={field.type}
+                    itemToUpdate={itemToUpdate}
+                    setfieldToUpdate={setfieldToUpdate}
+                    prospectId={prospectSelected.id}
+                    onUpdate={() => {
+                      prospectsApi
+                        .getProspectDetails(prospectSelected.id)
+                        .then((response) => {
+                          const updatedData = response.data;
+
+                          prospectSelected.fullname = updatedData.fullname;
+                          prospectSelected.email = updatedData.email;
+                          prospectSelected.phone = updatedData.phone;
+                          prospectSelected.product = updatedData.product;
+                          prospectSelected.category =
+                            updatedData.category?.name;
+                          prospectSelected.clienttype = updatedData.clienttype;
+
+                          if (showAllInfo) {
+                            setProspectDetails(updatedData);
+                          }
+
+                          if (itemToUpdate.identifier === "Nombre") {
+                            handleOnUpdateTracking(
+                              "Nombre",
+                              itemToUpdate.currentValue,
+                              updatedData.fullname
+                            );
+                          } else if (itemToUpdate.identifier === "Correo") {
+                            handleOnUpdateTracking(
+                              "Correo",
+                              itemToUpdate.currentValue,
+                              updatedData.email
+                            );
+                          } else if (
+                            itemToUpdate.identifier === "No. Celular"
+                          ) {
+                            handleOnUpdateTracking(
+                              "No. Celular",
+                              itemToUpdate.currentValue,
+                              updatedData.phone
+                            );
+                          }
+
+                          toast.success("Campo actualizado correctamente", {
+                            autoClose: 2000,
+                          });
+                          setfieldToUpdate({
+                            value: "",
+                            currentValue: "",
+                            identifier: "",
+                            id: field.id || null,
+                          });
+                        })
+                        .catch(() => {
+                          toast.error("Hubo un error al actualizar el campo");
+                        });
+                    }}
+                  />
                 </div>
               )}
 
               {field.label !== itemToUpdate.identifier && (
-                <div className="itemData" onClick={() => handleOnClickField(field)}>
-                  <p className="label">{field.label}</p>
-                  <p className="value">{printNa(field?.value)}</p>
+                <div
+                  className="itemData"
+                  onClick={() => handleOnClickField(field)}
+                >
+                  <p className="label">
+                    {field.label}{" "}
+                    {isRequired && <span className="required">*</span>}
+                  </p>
+                  <Tooltip title={printNa(field?.value)}>
+                    <FieldValue>{printNa(field?.value)}</FieldValue>
+                  </Tooltip>
                 </div>
               )}
             </Grid>
           );
         })}
-
-        {/* <pre>{JSON.stringify(prospectSelected, null, 2)}</pre> */}
-        {/* <Grid item md={separation} xs={12}>
-          <div
-            className="itemData"
-            onClick={() => {
-              setfieldToUpdate({
-                value: prospectSelected?.fullname,
-                currentValue: prospectSelected?.fullname,
-                identifier: "fullname",
-              });
-            }}
-          >
-            <p className="label">Nombre</p>
-            <Tooltip title="Click para editar" placement="bottom-start">
-              {itemToUpdate.identifier === "fullname" ? (
-                <>
-                  <input
-                    className="inputItemData"
-                    placeholder="Nombre"
-                    value={itemToUpdate.value}
-                    onBlur={() => {
-                      let isConfirm = window.confirm("¿Desea guardar los cambios?");
-                      if (!isConfirm) return;
-
-                      setfieldToUpdate({ value: "", currentValue: "", identifier: "" });
-                    }}
-                    onChange={e => setfieldToUpdate({ ...itemToUpdate, value: e.target.value })}
-                    onKeyDown={e => {
-                      if (e.key === "Enter") {
-                        let isConfirm = window.confirm("¿Desea guardar los cambios?");
-                        if (!isConfirm) return;
-
-                        setfieldToUpdate({ value: "", currentValue: "", identifier: "" });
-                      }
-                    }}
-                  />
-                  <p className="alert">Enter para guardar</p>
-                </>
-              ) : (
-                <p className="value">{printNa(prospectSelected?.fullname)}</p>
-              )}
-            </Tooltip>
-          </div>
-        </Grid>
-
-        <Grid item md={separation} xs={12}>
-          <div className="itemData">
-            <p className="label">Correo</p>
-            <p className="value">{printNa(prospectSelected?.email)}</p>
-          </div>
-        </Grid>
-
-        <Grid item md={separation} xs={12}>
-          <div className="itemData">
-            <p className="label">No. Celular</p>
-            <p className="value">{printNa(prospectSelected?.phone)}</p>
-          </div>
-        </Grid>
-
-        <Grid item md={separation} xs={12}>
-          <div className="itemData">
-            <p className="label">Producto de Interes</p>
-            <p className="value">{printNa(prospectSelected?.product)}</p>
-          </div>
-        </Grid>
-
-        <Grid item md={separation} xs={12}>
-          <div className="itemData">
-            <p className="label">Categoria de Interes</p>
-            <p className="value">{printNa(prospectSelected?.category?.name)}</p>
-          </div>
-        </Grid>
-
-        <Grid item md={separation} xs={12}>
-          <div className="itemData">
-            <p className="label">Fecha de Creacion</p>
-            <p className="value">{formatDate(prospectSelected?.createdAt)}</p>
-          </div>
-        </Grid> */}
-
-        {showAllInfo && (
-          <>
-            <Grid item md={separation} xs={12}>
-              <div className="itemData">
-                <p className="label">Tipo de Cliente</p>
-                <p className="value">{printNa(prospectSelected?.phone)}</p>
-              </div>
-            </Grid>
-          </>
-        )}
-
-        {/* <Grid item md={6} xs={12}></Grid> */}
       </Grid>
 
       <div className="center">
@@ -168,7 +331,7 @@ export default function InfoProspect({ prospectSelected }) {
             setShowAllInfo(!showAllInfo);
           }}
         >
-          Ver mas datos
+          {showAllInfo ? "Ver menos" : "Ver más datos"}
         </button>
       </div>
     </InfoProspectStyled>
@@ -184,34 +347,56 @@ const InfoProspectStyled = styled.div`
 
   .itemData {
     margin-bottom: 10px;
+    padding-right: 8px;
+    padding-left: 8px;
     cursor: pointer;
   }
 
   .toUpdate {
-    /* background-color: #f9f9f9; */
-
     .labe {
       color: red;
     }
   }
   .label {
-    /* font-weight: bold; */
-    margin-bottom: 5px;
-    color: #a3a9b1;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #1576b6;
+    font-size: 16px;
+    font-family: "Inter", sans-serif;
+    transition: color 0.3s ease;
+  }
+  .required {
+    color: red;
+    font-size: 18px;
+    margin-left: 4px;
   }
   .value {
     font-weight: bold;
-    /* margin-bottom: 5px; */
+
     color: #000;
-    /* border: 1px solid transparent; */
   }
 
   .inputItemData {
-    background-color: #fff;
-    border: 1px solid #ced4da;
-    border-radius: 0.25rem;
-    padding: 5px;
-    width: 90%;
+    background-color: #f8fafc;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    padding: 8px 12px;
+    width: 100%;
+    font-size: 14px;
+    color: #1e293b;
+    font-family: "Inter", sans-serif;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .inputItemData:focus {
+    border-color: #1976d2;
+    box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.2);
+  }
+
+  .inputItemData::placeholder {
+    color: #94a3b8;
+    font-style: italic;
   }
 
   .center {
@@ -222,12 +407,23 @@ const InfoProspectStyled = styled.div`
   }
 
   button {
-    background-color: transparent;
+    background-color: ${colors.primaryColor};
     border: none;
-    color: ${colors.primaryColor};
-    /* padding: 10px 20px; */
-    border-radius: 5px;
+    color: #fff;
+    padding: 8px 16px;
+    border-radius: 6px;
     cursor: pointer;
-    margin-top: 10px;
+    transition: background-color 0.2s ease;
+
+    &:hover {
+      background-color: #004085;
+    }
   }
+`;
+const FieldValue = styled.p`
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 250px;
+  margin: 0;
 `;

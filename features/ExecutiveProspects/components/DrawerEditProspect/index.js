@@ -27,6 +27,7 @@ export default function EditProspectDrawer({ open, onClose, prospect }) {
     hasError,
     setValueForm,
     controlForm,
+
     resetForm,
     getValues,
     getEntitieCityByPostals,
@@ -75,6 +76,8 @@ export default function EditProspectDrawer({ open, onClose, prospect }) {
       const normalized = {
         ...data,
         postal_code: data?.postal?.postal_code || "",
+        cityId: data?.city?.id || "",
+
         settlement: data?.postal?.settlement || "",
         product: data.product || "",
       };
@@ -87,7 +90,7 @@ export default function EditProspectDrawer({ open, onClose, prospect }) {
     try {
       const values = getValues();
 
-      const postalId = values.postal ? values.postal.id : values.postalId;
+      const postalId = values.postal_code?.id || values.postalId;
 
       const payload = {
         name: values.name || "",
@@ -107,7 +110,7 @@ export default function EditProspectDrawer({ open, onClose, prospect }) {
         product: values.product || "",
         postalId: postalId?.toString() || "",
         settlement: values.settlement || "",
-        clientTypes: values.clientTypes?.toString() || "",
+        clientTypeId: values.clientTypeId?.toString() || "",
         phaseId: values.phaseId?.toString() || "",
         specialtyId: values.specialtyId?.toString() || "",
         facebook: values.facebook || "",
@@ -126,7 +129,7 @@ export default function EditProspectDrawer({ open, onClose, prospect }) {
 
       await api.put(`prospects/${prospect.id}`, payload);
       onClose();
-      onSaved?.();
+      if (onSaved) onSaved(); // Asegúrate de que 'onSaved' está definida en el componente
     } catch (error) {
       if (error.response?.data.internalCode === "47582") {
         toast.error("El correo o telefono ya existe!");
@@ -136,6 +139,11 @@ export default function EditProspectDrawer({ open, onClose, prospect }) {
     } finally {
       setSaving(false);
     }
+  };
+
+  // Definir la función onSaved
+  const onSaved = () => {
+    console.log("Prospecto guardado correctamente");
   };
 
   return (
@@ -332,32 +340,32 @@ export default function EditProspectDrawer({ open, onClose, prospect }) {
               />
             </Grid>
             <Grid item xs={12} sm={6} md={4} className="item">
-              <div>
-                <label>Especialidad</label>
-                <Controller
-                  control={controlForm}
-                  name="specialtyId"
-                  rules={{ required: false }}
-                  render={({ field }) => (
-                    <Select
-                      {...field}
-                      options={specialties.results}
-                      isLoading={specialties.isFetching}
-                      onMenuOpen={() => getCatalogBy("specialties")}
-                      loadingMessage={() => "Cargando Opciones..."}
-                      placeholder="Selecciona una Opción"
-                      onChange={(e) => handleSelectValue(e, "specialtyId")}
-                      value={specialties.results.find(
-                        (c) => c.id === field.value
-                      )}
-                      getOptionValue={(option) => `${option["id"]}`}
-                      getOptionLabel={(option) =>
-                        `${toUpperCaseChart(option.name)}`
-                      }
-                    />
-                  )}
-                />
+              <div className="ContentTitleandAlert">
+                <p>Especialidad</p>
               </div>
+              <Controller
+                control={controlForm}
+                name="specialtyId"
+                rules={{ required: false }}
+                render={({ field }) => (
+                  <Select
+                    {...field}
+                    options={specialties.results}
+                    isLoading={specialties.isFetching}
+                    onMenuOpen={() => getCatalogBy("specialties")}
+                    loadingMessage={() => "Cargando Opciones..."}
+                    placeholder="Selecciona una Opción"
+                    onChange={(e) => handleSelectValue(e, "specialtyId")}
+                    value={specialties.results.find(
+                      (c) => c.id === field.value
+                    )}
+                    getOptionValue={(option) => `${option["id"]}`}
+                    getOptionLabel={(option) =>
+                      `${toUpperCaseChart(option.name)}`
+                    }
+                  />
+                )}
+              />
             </Grid>
             <Grid item xs={12} sm={6} md={4} className="item">
               <div className="ContentTitleandAlert">
@@ -487,23 +495,28 @@ export default function EditProspectDrawer({ open, onClose, prospect }) {
             <LocationOn className="section-icon-info" /> Dirección y Ubicación
           </SectionTitle>
           <Grid container spacing={2}>
-            <Grid item xs={12} sm={6} md={4} className="item">
-              <p>Código Postal *</p>
-              <input
-                placeholder="Código postal"
-                className="input"
-                {...registerForm("postal_code", {
-                  required: true,
-                  onChange: (e) => {
-                    const postalCode = e.target.value;
-
-                    if (postalCode.length === 5) {
-                      getEntitieCityByPostals(postalCode);
-                    }
-                  },
-                })}
-              />
+            <Grid item xs={12} sm={6} md={4}>
+              <div className="item">
+                <p>
+                  Código postal<strong>*</strong>
+                </p>
+                {hasError("postal_code") && <ErrorMessage />}
+                <input
+                  placeholder="Código postal"
+                  className="input"
+                  {...registerForm("postal_code", {
+                    required: true,
+                    onChange: async (e) => {
+                      const postalCode = e.target.value;
+                      if (postalCode.length === 5) {
+                        await getEntitieCityByPostals(postalCode); // ya actualiza los campos necesarios
+                      }
+                    },
+                  })}
+                />
+              </div>
             </Grid>
+
             <Grid item xs={12} sm={6} md={4} className="item">
               <div className="ContentTitleandAlert">
                 <p>
@@ -548,9 +561,11 @@ export default function EditProspectDrawer({ open, onClose, prospect }) {
                     }
                     isLoading={citiesByEntity?.isFetching}
                     onChange={(e) => handleSelectValue(e, "cityId")}
-                    value={citiesByEntity?.results?.filter(
-                      (item) => item.id === field.value
-                    )}
+                    value={
+                      citiesByEntity?.results?.filter(
+                        (item) => item.id === field.value
+                      )[0]
+                    } // Asegúrate de que se esté seleccionando el valor correcto
                     getOptionValue={(option) => `${option["id"]}`}
                     getOptionLabel={(option) =>
                       `${toUpperCaseChart(option.name)}`
@@ -559,18 +574,9 @@ export default function EditProspectDrawer({ open, onClose, prospect }) {
                 )}
               />
             </Grid>
+
             <Grid item xs={12} sm={6} md={4} className="item">
-              <div>
-                <p>Colonia</p>
-                <input
-                  placeholder="Colonia"
-                  className="input"
-                  {...registerForm("settlement")}
-                />
-              </div>
-            </Grid>
-            <Grid item xs={12} sm={6} md={4} className="item">
-              <div>
+              <div className="item">
                 <p>Calle</p>
                 <input
                   placeholder="Calle"

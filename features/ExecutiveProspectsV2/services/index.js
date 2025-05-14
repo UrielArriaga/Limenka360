@@ -27,6 +27,19 @@ class ProspectsApi {
     return api.get("prospects", { params });
   }
 
+  async getTrackings(queryParams = {}) {
+    let params = {
+      limit: 5,
+      ...queryParams,
+      order: "-createdAt",
+      include: "action",
+    };
+
+    return api.get("trackings", { params });
+  }
+  async getActions() {
+    return api.get("actions");
+  }
   async getProspects(queryParams = {}) {
     let params = {
       limit: 20,

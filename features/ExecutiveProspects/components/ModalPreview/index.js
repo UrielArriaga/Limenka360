@@ -40,6 +40,7 @@ export default function ModalPreview({
   open,
   toggleModal,
   prospectSelected,
+  setProspectSelected,
   // trackings,
   // pendingsData,
 }) {
@@ -50,7 +51,7 @@ export default function ModalPreview({
     setShowAction(null);
   };
 
-  const { trackingData } = useTrackings(prospectSelected);
+  const { trackingData, refetchTrackings } = useTrackings(prospectSelected);
 
   const { pendingsData } = usePending(prospectSelected?.id);
 
@@ -85,11 +86,18 @@ export default function ModalPreview({
     returnStyleTypeFile,
     searchColorStyle,
     limitFiles,
-    filesLenght
+    filesLenght,
   } = useFiles(prospectSelected);
 
-  const { reasons, loadingReasons, errorReasons, updateForecast, isForecastModalOpen,
-    handleOpenForecastModal, handleCloseForecastModal } = useForecast(prospectSelected);
+  const {
+    reasons,
+    loadingReasons,
+    errorReasons,
+    updateForecast,
+    isForecastModalOpen,
+    handleOpenForecastModal,
+    handleCloseForecastModal,
+  } = useForecast(prospectSelected);
   let trackings = trackingData.results || [];
 
   const handleTabChange = (event, newValue) => {
@@ -144,7 +152,11 @@ export default function ModalPreview({
           {tabValue === 0 && (
             <Grid container spacing={2}>
               <Grid item md={6} xs={12}>
-                <InfoProspect prospectSelected={prospectSelected} />
+                <InfoProspect
+                  prospectSelected={prospectSelected}
+                  setProspectSelected={setProspectSelected}
+                  onTrackingCreated={refetchTrackings}
+                />
                 <AddPending
                   pendingsData={pendingsData}
                   prospectSelected={prospectSelected}

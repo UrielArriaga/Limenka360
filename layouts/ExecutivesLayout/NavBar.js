@@ -163,6 +163,20 @@ export const NavbarLayout = ({ children }) => {
             <Assignment />
             <span>Oportunidades</span>
           </div>
+
+          <div
+            className="nav-item"
+            onClick={() =>
+              router.push({
+                pathname: `/ejecutivo/clientes/${version}`,
+                query: { version },
+              })
+            }
+          >
+            <People />
+            <span>Clientes</span>
+          </div>
+
           <div className="nav-item">
             <ShoppingCart />
             <span>Pedidos</span>

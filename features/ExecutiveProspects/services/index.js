@@ -74,6 +74,9 @@ class ProspectsApi {
     };
     return api.get(`prospects/${prospectId}`, { params });
   }
+  async updateProspectField(prospectId, data) {
+    return api.put(`prospects/${prospectId}`, data);
+  }
 
   async updateProspectPhase(prospectId, phaseId) {
     return api.put(`prospects/${prospectId}`, { phaseId });
@@ -83,34 +86,34 @@ class ProspectsApi {
     return api.post("trackings", dataTracking);
   }
 
-  async getOpportunityProducts(limit = 5, page = 1, query){
+  async getOpportunityProducts(limit = 5, page = 1, query) {
     let params = {
       count: 1,
       limit: limit,
       skip: page,
       where: JSON.stringify(query),
-      include: "product"
-    }
-    return api.get("productsoportunities", { params })
+      include: "product",
+    };
+    return api.get("productsoportunities", { params });
   }
 
-  async getOpportunity(query){
+  async getOpportunity(query) {
     let params = {
       count: 1,
-      where: JSON.stringify(query)
-    }
-    return api.get("oportunities", { params })
+      where: JSON.stringify(query),
+    };
+    return api.get("oportunities", { params });
   }
 
   async getForecastReason() {
     let params = {
       count: 1,
-    }
-    return api.get("forecastreasons", { params })
+    };
+    return api.get("forecastreasons", { params });
   }
 
   async updateOportunitiesForecast(id, body) {
-    return api.put(`oportunities/additionaldata/updated/${id}`, body)
+    return api.put(`oportunities/additionaldata/updated/${id}`, body);
   }
 }
 

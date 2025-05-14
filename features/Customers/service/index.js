@@ -9,7 +9,6 @@ class ProspectsService {
       include: "category,clienttype",
       join: "catego,clienttype",
       where: {
-        isclient: false,
         isoportunity: false,
         discarted: false,
         ejecutiveId: "YNQHRt32OCbt0shXa0yOa51t",
@@ -28,7 +27,6 @@ class ProspectsService {
       include: "category,clienttype,phase",
       join: "catego,clienttype,phase",
       where: {
-        isclient: false,
         isoportunity: false,
         discarted: false,
         ejecutiveId: "YNQHRt32OCbt0shXa0yOa51t",
@@ -57,7 +55,6 @@ class ProspectsService {
       join: "catego,clienttype",
       skip: page,
       where: {
-        isclient: false,
         isoportunity: false,
         discarted: false,
         phaseId: phaseId,

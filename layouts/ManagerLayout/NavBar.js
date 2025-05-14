@@ -164,6 +164,7 @@ export const NavbarLayout = ({ children }) => {
             <Assignment />
             <span>Oportunidades</span>
           </div>
+
           <div className="nav-item">
             <ShoppingCart />
             <span>Pedidos</span>

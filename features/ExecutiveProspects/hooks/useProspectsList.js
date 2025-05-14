@@ -81,7 +81,10 @@ export default function useProspectsList() {
           items: element[Object.keys(element)[0]].prospects,
           name: element[Object.keys(element)[0]].name,
           total: element[Object.keys(element)[0]].total,
-          totalPages: Math.abs(element[Object.keys(element)[0]].total / element[Object.keys(element)[0]].limit),
+          totalPages: Math.abs(
+            element[Object.keys(element)[0]].total /
+              element[Object.keys(element)[0]].limit
+          ),
           limit: element[Object.keys(element)[0]].limit,
           page: element[Object.keys(element)[0]].page,
           id: Object.keys(element)[0],
@@ -97,7 +100,8 @@ export default function useProspectsList() {
 
   async function fetchProspectByPhase(phaseId) {
     try {
-      let results = (await prospectsApi.getProspectByPhase({ phaseId })).data?.results;
+      let results = (await prospectsApi.getProspectByPhase({ phaseId })).data
+        ?.results;
       setColumns(results);
     } catch (error) {}
   }
@@ -115,7 +119,7 @@ export default function useProspectsList() {
   }
   async function fetchPendings(prospectId) {
     try {
-      setpendingsData(prev => {
+      setpendingsData((prev) => {
         return {
           ...prev,
           isFetching: true,
@@ -151,7 +155,9 @@ export default function useProspectsList() {
 
   async function createTrakingAutomatic(prospectId, phaseId, lastPhaseName) {
     try {
-      let actionsTrackingAumtomatic = actions.results.filter(action => action.name == "Seguimiento Automatico")[0];
+      let actionsTrackingAumtomatic = actions.results.filter(
+        (action) => action.name == "Seguimiento Automatico"
+      )[0];
       let actionId = actionsTrackingAumtomatic.id;
 
       let dataTracking = {
@@ -180,7 +186,7 @@ export default function useProspectsList() {
       if (column.page >= column.totalPages) return;
 
       try {
-        setColumns(prev => {
+        setColumns((prev) => {
           return {
             ...prev,
             [column.id]: {
@@ -210,9 +216,10 @@ export default function useProspectsList() {
 
         console.log(params);
 
-        let results = (await prospectsApi.getProspectByPhase(column.id, params)).data?.results;
+        let results = (await prospectsApi.getProspectByPhase(column.id, params))
+          .data?.results;
 
-        setColumns(prev => {
+        setColumns((prev) => {
           return {
             ...prev,
             [column.id]: {
@@ -229,13 +236,13 @@ export default function useProspectsList() {
     }
   };
 
-  const handleClickProspect = prospect => {
+  const handleClickProspect = (prospect) => {
     console.log(prospect);
     setProspectSelected(prospect);
     toogleModalPreview(true);
   };
 
-  const toogleModalPreview = isOpen => {
+  const toogleModalPreview = (isOpen) => {
     if (isOpen) {
       toggleModal();
       return;
@@ -252,7 +259,9 @@ export default function useProspectsList() {
   };
 
   const handleTest = () => {
-    let actionsTrackingAumtomatic = actions.results.filter(action => action.name == "Seguimiento Automatico")[0];
+    let actionsTrackingAumtomatic = actions.results.filter(
+      (action) => action.name == "Seguimiento Automatico"
+    )[0];
     console.log(actionsTrackingAumtomatic);
     console.log(actions);
 
@@ -314,6 +323,7 @@ export default function useProspectsList() {
   return {
     prospectSelected,
     updateProspectPhase,
+    setProspectSelected,
     onDragEnd,
     columns,
     trackings,
@@ -333,11 +343,36 @@ export default function useProspectsList() {
 }
 
 const itemsFromBackend = [
-  { id: "UAZA1", content: "First task", name: "Uriel Arriaga", phone: "1234567890" },
-  { id: "UAZA2", content: "Second task", name: "Juan Perez", phone: "1234567890" },
-  { id: "UAZA3", content: "Third task", name: "Pedro Lopez", phone: "1234567890" },
-  { id: "UAZA4", content: "Fourth task", name: "Maria Martinez", phone: "1234567890" },
-  { id: "UAZA5", content: "Fifth task", name: "Jose Hernandez", phone: "1234567890" },
+  {
+    id: "UAZA1",
+    content: "First task",
+    name: "Uriel Arriaga",
+    phone: "1234567890",
+  },
+  {
+    id: "UAZA2",
+    content: "Second task",
+    name: "Juan Perez",
+    phone: "1234567890",
+  },
+  {
+    id: "UAZA3",
+    content: "Third task",
+    name: "Pedro Lopez",
+    phone: "1234567890",
+  },
+  {
+    id: "UAZA4",
+    content: "Fourth task",
+    name: "Maria Martinez",
+    phone: "1234567890",
+  },
+  {
+    id: "UAZA5",
+    content: "Fifth task",
+    name: "Jose Hernandez",
+    phone: "1234567890",
+  },
 ];
 
 export const phases = {
