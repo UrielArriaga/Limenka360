@@ -45,17 +45,16 @@ export default function useProspectDetails(prospectId, open) {
       }
 
       if (prospectId?.entityId !== null || prospectId?.entityId !== undefined) {
-        getCitiesByEntity(prospectId?.entityId); // Obtiene las ciudades de la entidad
+        getCitiesByEntity(prospectId?.entityId);
       }
     }
-  }, [open, prospectId?.postalId, prospectId?.entityId]); // Dependencias actualizadas
+  }, [open, prospectId?.postalId, prospectId?.entityId]);
 
   async function getDataPostal(postalId) {
     if (postalId === null || postalId === undefined) return;
     try {
       let currentPostalCode = getValues("postal_code");
       if (currentPostalCode && currentPostalCode.length === 5) {
-        // Ya hay uno escrito manualmente, no lo sobrescribas
         return;
       }
 

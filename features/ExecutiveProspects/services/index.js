@@ -56,7 +56,9 @@ class ProspectsApi {
 
     return api.get("trackings", { params });
   }
-
+  async getActions() {
+    return api.get("actions");
+  }
   async getPendings(queryParams = {}) {
     let params = {
       limit: 5,

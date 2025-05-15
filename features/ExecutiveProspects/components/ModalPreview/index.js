@@ -52,7 +52,8 @@ export default function ModalPreview({
     setShowAction(null);
   };
 
-  const { trackingData, refetchTrackings } = useTrackings(prospectSelected);
+  const { trackingData, refetchTrackings, setTrackingData } =
+    useTrackings(prospectSelected);
 
   const { pendingsData } = usePending(prospectSelected?.id);
 
@@ -159,6 +160,7 @@ export default function ModalPreview({
                   prospectSelected={prospectSelected}
                   setProspectSelected={setProspectSelected}
                   onTrackingCreated={refetchTrackings}
+                  setTrackingData={setTrackingData}
                 />
                 <AddPending
                   pendingsData={pendingsData}

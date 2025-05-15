@@ -129,7 +129,7 @@ export default function EditProspectDrawer({ open, onClose, prospect }) {
 
       await api.put(`prospects/${prospect.id}`, payload);
       onClose();
-      if (onSaved) onSaved(); // Asegúrate de que 'onSaved' está definida en el componente
+      if (onSaved) onSaved();
     } catch (error) {
       if (error.response?.data.internalCode === "47582") {
         toast.error("El correo o telefono ya existe!");
@@ -216,8 +216,14 @@ export default function EditProspectDrawer({ open, onClose, prospect }) {
                 )}
               </div>
               <input
-                placeholder="ejemplo@gmail.com "
-                {...registerForm("email", {})}
+                placeholder="ejemplo@gmail.com"
+                {...registerForm("email", {
+                  pattern: {
+                    value: /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/,
+                    message: "Correo inválido o contiene mayúsculas",
+                  },
+                })}
+                onInput={(e) => (e.target.value = e.target.value.toLowerCase())}
                 className="input"
               />
             </Grid>
@@ -229,19 +235,42 @@ export default function EditProspectDrawer({ open, onClose, prospect }) {
                 )}
               </div>
               <input
-                {...registerForm("phone")}
-                placeholder="Digíte número a 10 dígitos "
+                {...registerForm("phone", {
+                  required: "El número es obligatorio",
+                  pattern: {
+                    value: /^[0-9]{10}$/,
+                    message: "El teléfono debe tener exactamente 10 dígitos",
+                  },
+                })}
+                placeholder="Digite número a 10 dígitos"
                 className="input"
                 type="number"
+                maxLength={10}
+                onInput={(e) => {
+                  e.target.value = e.target.value
+                    .replace(/[^0-9]/g, "")
+                    .slice(0, 10);
+                }}
               />
             </Grid>
             <Grid item xs={12} sm={6} md={4} className="item">
               <p>Teléfono opcional</p>
               <input
                 type="number"
-                {...registerForm("optionalphone")}
+                {...registerForm("optionalphone", {
+                  pattern: {
+                    value: /^[0-9]{10}$/,
+                    message: "El teléfono debe tener exactamente 10 dígitos",
+                  },
+                })}
                 placeholder="Digíte número a 10 dígitos "
                 className="input"
+                maxLength={10}
+                onInput={(e) => {
+                  e.target.value = e.target.value
+                    .replace(/[^0-9]/g, "")
+                    .slice(0, 10);
+                }}
               />
             </Grid>
             <Grid item xs={12} sm={6} md={4} className="item">
@@ -509,7 +538,7 @@ export default function EditProspectDrawer({ open, onClose, prospect }) {
                     onChange: async (e) => {
                       const postalCode = e.target.value;
                       if (postalCode.length === 5) {
-                        await getEntitieCityByPostals(postalCode); // ya actualiza los campos necesarios
+                        await getEntitieCityByPostals(postalCode);
                       }
                     },
                   })}
@@ -565,7 +594,7 @@ export default function EditProspectDrawer({ open, onClose, prospect }) {
                       citiesByEntity?.results?.filter(
                         (item) => item.id === field.value
                       )[0]
-                    } // Asegúrate de que se esté seleccionando el valor correcto
+                    }
                     getOptionValue={(option) => `${option["id"]}`}
                     getOptionLabel={(option) =>
                       `${toUpperCaseChart(option.name)}`

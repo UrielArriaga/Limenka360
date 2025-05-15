@@ -12,9 +12,22 @@ import InputField from "./InputField";
 import ProspectsApi from "../../services";
 import { toast } from "react-toastify";
 
-export default function InfoProspect({ prospectSelected, onTrackingCreated }) {
+export default function InfoProspect({
+  prospectSelected,
+  onTrackingCreated,
+  setTrackingData,
+}) {
   const [showAllInfo, setShowAllInfo] = useState(false);
   let separation = 5;
+  const boldFields = [
+    "Nombre",
+    "Correo",
+    "No. Celular",
+    "Producto de Interes",
+    "Categoria de Interes",
+    "Tipo de Cliente",
+  ];
+
   const [prospectDetails, setProspectDetails] = useState(null);
   const prospectsApi = new ProspectsApi();
   useEffect(() => {
@@ -63,10 +76,6 @@ export default function InfoProspect({ prospectSelected, onTrackingCreated }) {
     return EntitiesLocal.find((entity) => entity.id === id)?.name || "N/A";
   };
 
-  const postalCatalog = useSelector(commonSelector)?.postals?.results;
-  const getPostalCode = (id) =>
-    postalCatalog?.find((item) => item.id === id)?.postal_code || "N/A";
-
   const prospectFields = [
     { label: "Nombre", value: prospectSelected?.fullname, type: "text" },
     { label: "Correo", value: prospectSelected?.email, type: "text" },
@@ -91,19 +100,6 @@ export default function InfoProspect({ prospectSelected, onTrackingCreated }) {
     ...(showAllInfo && prospectDetails
       ? [
           {
-            label: "Municipio",
-            id: "cityId",
-            value: prospectDetails?.city?.name || "N/A",
-            type: "text",
-          },
-
-          {
-            label: "Canal",
-            id: "channels",
-            value: prospectDetails?.channel?.name || "N/A",
-            type: "select",
-          },
-          {
             label: "Genero",
             value: prospectDetails?.gender,
             type: "select",
@@ -117,6 +113,12 @@ export default function InfoProspect({ prospectSelected, onTrackingCreated }) {
             label: "Telefono Opcional",
             value: prospectDetails?.optionalphone,
             type: "text",
+          },
+          {
+            label: "Canal",
+            id: "channels",
+            value: prospectDetails?.channel?.name || "N/A",
+            type: "select",
           },
           {
             label: "Fase",
@@ -135,12 +137,14 @@ export default function InfoProspect({ prospectSelected, onTrackingCreated }) {
             value: prospectDetails?.title,
             type: "text",
           },
+
+          /* 
           {
             label: "Codigo Postal",
             id: "postals",
             value: prospectDetails?.postal?.postal_code || "N/A",
             type: "text",
-          },
+          }*/
 
           {
             label: "Estado",
@@ -148,7 +152,12 @@ export default function InfoProspect({ prospectSelected, onTrackingCreated }) {
             value: getLocalEntityName(prospectDetails?.entity?.id),
             type: "select",
           },
-
+          {
+            label: "Municipio",
+            id: "cityId",
+            value: prospectDetails?.city?.name || "",
+            type: "select",
+          },
           {
             label: "Calle",
             value: prospectDetails?.street,
@@ -193,7 +202,7 @@ export default function InfoProspect({ prospectSelected, onTrackingCreated }) {
           status: 1,
         };
 
-        await prospectsApi.addAutomaticTracking(newTracking);
+        await prospectsApi.addAutomaticTracking(newTracking); // Crea el seguimiento
         toast.success("Seguimiento creado exitosamente");
 
         const updatedProspect = { [fieldName]: newValue };
@@ -201,8 +210,19 @@ export default function InfoProspect({ prospectSelected, onTrackingCreated }) {
           prospectSelected.id,
           updatedProspect
         );
-
         prospectSelected[fieldName] = newValue;
+
+        const trackingResponse = await prospectsApi.getTrackings({
+          where: JSON.stringify({
+            prospectId: prospectSelected.id,
+          }),
+        });
+
+        setTrackingData((prevState) => ({
+          ...prevState,
+          results: trackingResponse.data.results,
+          count: trackingResponse.data.count,
+        }));
 
         if (typeof onTrackingCreated === "function") {
           onTrackingCreated();
@@ -215,12 +235,37 @@ export default function InfoProspect({ prospectSelected, onTrackingCreated }) {
   };
 
   const handleOnClickField = (field) => {
-    if (field.disabled) return;
+    let extraProps = {};
+
+    if (field.label === "Municipio") {
+      extraProps.entityId = prospectDetails?.entity?.id;
+    }
+
     setfieldToUpdate({
-      value: field.value,
-      currentValue: field.value,
+      value: field.value ?? "",
+      currentValue: field.value ?? "",
       identifier: field.label,
       id: field.id || null,
+      ...extraProps,
+    });
+  };
+  const handlePhoneChange = (e) => {
+    // Permitir solo números y asegurarse de que el número tenga solo 10 dígitos
+    const phoneValue = e.target.value.replace(/\D/g, ""); // Eliminar cualquier caracter no numérico
+    if (phoneValue.length <= 10) {
+      setfieldToUpdate({
+        ...itemToUpdate,
+        value: phoneValue,
+      });
+    }
+  };
+
+  const handleEmailChange = (e) => {
+    // Convertir el correo a minúsculas
+    const emailValue = e.target.value.toLowerCase();
+    setfieldToUpdate({
+      ...itemToUpdate,
+      value: emailValue,
     });
   };
   return (
@@ -303,6 +348,9 @@ export default function InfoProspect({ prospectSelected, onTrackingCreated }) {
                         });
                     }}
                   />
+                  <div className="saveLegend">
+                    <p>Presiona Enter para guardar los cambios</p>
+                  </div>
                 </div>
               )}
 
@@ -316,7 +364,15 @@ export default function InfoProspect({ prospectSelected, onTrackingCreated }) {
                     {isRequired && <span className="required">*</span>}
                   </p>
                   <Tooltip title={printNa(field?.value)}>
-                    <FieldValue>{printNa(field?.value)}</FieldValue>
+                    <FieldValue
+                      style={{
+                        fontWeight: boldFields.includes(field.label)
+                          ? "bold"
+                          : "normal",
+                      }}
+                    >
+                      {printNa(field?.value)}
+                    </FieldValue>
                   </Tooltip>
                 </div>
               )}
@@ -350,6 +406,12 @@ const InfoProspectStyled = styled.div`
     padding-right: 8px;
     padding-left: 8px;
     cursor: pointer;
+  }
+  .saveLegend {
+    margin-top: 5px;
+    font-size: 13px;
+    color: ${colors.gray};
+    font-style: italic;
   }
 
   .toUpdate {
@@ -421,6 +483,7 @@ const InfoProspectStyled = styled.div`
   }
 `;
 const FieldValue = styled.p`
+  font-weight: bold;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

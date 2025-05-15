@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ReactSelect from "react-select";
 import useGlobalCommons from "../../../../hooks/useGlobalCommons";
 import { useSelector } from "react-redux";
@@ -6,6 +6,7 @@ import { commonSelector } from "../../../../redux/slices/commonSlice";
 import ProspectsApi from "../../services";
 import { EntitiesLocal } from "../../../../BD/databd";
 import { toast } from "react-toastify";
+import { api } from "../../../../services/api";
 
 const fieldMap = {
   Nombre: "fullname",
@@ -21,7 +22,6 @@ const fieldMap = {
   "Telefono Opcional": "optionalphone",
   Fase: "phaseId",
   Título: "title",
-  "Codigo Postal": "postalId",
   Estado: "entityId",
   Calle: "street",
   "Google Maps": "location",
@@ -40,6 +40,35 @@ export default function InputField({
   const commonValues = useSelector(commonSelector);
   const prospectsApi = new ProspectsApi();
   const [hasSaved, setHasSaved] = useState(false);
+  const [citiesByEntity, setCitiesByEntity] = useState({ results: [] });
+
+  const getCitiesByEntitys = async (entityId) => {
+    try {
+      console.log("Obteniendo municipios para entidad:", entityId);
+      const query = { entityId };
+      const response = await api.get(
+        `cities?where=${JSON.stringify(
+          query
+        )}&include=entity&limit=1000&order=name`
+      );
+      const cities = response.data?.results ?? [];
+      setCitiesByEntity({ results: cities, count: cities.length });
+      console.log("Ciudades recibidas:", cities);
+    } catch (err) {
+      console.error("Error al obtener municipios:", err);
+      setCitiesByEntity({ results: [] });
+    }
+  };
+
+  useEffect(() => {
+    if (
+      itemToUpdate.identifier === "Municipio" &&
+      citiesByEntity.results.length === 0 &&
+      itemToUpdate.entityId
+    ) {
+      getCitiesByEntitys(itemToUpdate.entityId);
+    }
+  }, [itemToUpdate.identifier]);
 
   const handleSave = async (newValue) => {
     const fieldKey = fieldMap[itemToUpdate.identifier];
@@ -55,7 +84,6 @@ export default function InputField({
 
       await prospectsApi.updateProspectField(prospectId, payload);
       onUpdate?.();
-      toast.success("Datos actualizados correctamente.");
     } catch (error) {
       console.error("Error actualizando el prospecto:", error);
       toast.error("Error al guardar los cambios.");
@@ -64,60 +92,34 @@ export default function InputField({
       setHasSaved(false);
     }
   };
-  if (itemToUpdate.identifier === "Codigo Postal") {
-    const [loadingPostal, setLoadingPostal] = useState(false);
+  const handleInputChange = (e) => {
+    const { value } = e.target;
 
-    const handlePostalChange = async (code) => {
-      if (code.length !== 5) return;
+    if (itemToUpdate.identifier === "No. Celular") {
+      let phoneValue = value.replace(/\D/g, "");
 
-      try {
-        setLoadingPostal(true);
-        const response = await prospectsApi.getEntitieCityByPostals(code);
-        const postal = response?.data?.results?.[0];
-
-        if (!postal) {
-          alert("Código postal no encontrado.");
-          return;
-        }
-
-        const payload = {
-          postalId: postal.id,
-          cityId: postal.city?.id,
-          entityId: postal.city?.entity?.id,
-        };
-
-        await prospectsApi.updateProspectField(prospectId, payload);
-        alert("Código postal y ubicación actualizados correctamente.");
-        onUpdate?.();
-      } catch (error) {
-        console.error("Error al actualizar postal:", error);
-        alert("Error al actualizar el código postal.");
-      } finally {
-        setLoadingPostal(false);
-        setfieldToUpdate({ value: "", currentValue: "", identifier: "" });
+      if (phoneValue.length > 10) {
+        phoneValue = phoneValue.slice(0, 10);
       }
-    };
 
-    return (
-      <input
-        className="inputItemData"
-        placeholder="Código Postal"
-        value={itemToUpdate.value}
-        autoFocus
-        disabled={loadingPostal}
-        onChange={(e) =>
-          setfieldToUpdate({ ...itemToUpdate, value: e.target.value })
-        }
-        onKeyDown={(e) => {
-          if (e.key === "Enter") {
-            e.preventDefault();
-            handlePostalChange(itemToUpdate.value);
-          }
-        }}
-        onBlur={() => handlePostalChange(itemToUpdate.value)}
-      />
-    );
-  }
+      setfieldToUpdate({
+        ...itemToUpdate,
+        value: phoneValue,
+      });
+    } else if (itemToUpdate.identifier === "Correo") {
+      const emailValue = value.toLowerCase().replace(/[^a-z0-9@._-]/g, "");
+
+      setfieldToUpdate({
+        ...itemToUpdate,
+        value: emailValue,
+      });
+    } else {
+      setfieldToUpdate({
+        ...itemToUpdate,
+        value: value,
+      });
+    }
+  };
 
   if (type === "text") {
     const handleConfirmAndSave = (value) => {
@@ -134,19 +136,17 @@ export default function InputField({
     return (
       <input
         className="inputItemData"
-        placeholder={itemToUpdate.identifier}
-        value={itemToUpdate.value}
+        value={itemToUpdate.value || ""}
+        placeholder={itemToUpdate.value ? "" : itemToUpdate.currentValue}
         autoFocus
-        onBlur={() => handleConfirmAndSave(itemToUpdate.value)}
-        onChange={(e) =>
-          setfieldToUpdate({ ...itemToUpdate, value: e.target.value })
-        }
+        onChange={handleInputChange}
         onKeyDown={(e) => {
           if (e.key === "Enter") {
             e.preventDefault();
-            handleConfirmAndSave(itemToUpdate.value);
+            handleConfirmAndSave(e.target.value);
           }
         }}
+        onBlur={(e) => handleConfirmAndSave(e.target.value)}
       />
     );
   } else {
@@ -156,14 +156,16 @@ export default function InputField({
         { label: "Mujer", value: "Mujer" },
       ];
 
+      const selectedOption = genderOptions.find(
+        (opt) => opt.value === itemToUpdate.value
+      );
+
       return (
         <ReactSelect
-          className="reactSelect"
           placeholder="Selecciona un género"
+          className="reactSelect"
           options={genderOptions}
-          value={genderOptions.find(
-            (option) => option.value === itemToUpdate.value
-          )}
+          value={selectedOption}
           onChange={(selectedOption) => {
             const isConfirm = window.confirm("¿Desea guardar los cambios?");
             if (isConfirm) {
@@ -186,40 +188,50 @@ export default function InputField({
           value={EntitiesLocal.find(
             (option) => option.name === itemToUpdate.value
           )}
-          onChange={(selectedOption) => {
+          onChange={async (selectedOption) => {
             const isConfirm = window.confirm("¿Desea guardar los cambios?");
-            if (isConfirm) {
-              handleSave(selectedOption);
-            } else {
-              setfieldToUpdate({ value: "", currentValue: "", identifier: "" });
+            if (!isConfirm) return;
+
+            try {
+              await handleSave(selectedOption);
+              await getCitiesByEntitys(selectedOption.id);
+              setfieldToUpdate({
+                identifier: "Municipio",
+                id: "cityId",
+                value: "",
+                currentValue: "",
+                entityId: selectedOption.id,
+              });
+              toast.success("Estado actualizado. Selecciona un municipio.");
+            } catch (error) {
+              console.error("Error actualizando estado y municipios:", error);
+              toast.error("Error al actualizar.");
             }
           }}
           styles={selectStyle}
         />
       );
-    } else {
-      const options = commonValues[itemToUpdate.id]?.results;
+    }
 
-      if (!options) return <span>Cargando opciones...</span>;
+    if (itemToUpdate.identifier === "Municipio") {
+      if (citiesByEntity.results.length === 0) {
+        return <span>Selecciona primero un estado</span>;
+      }
+
+      const selectedCity = citiesByEntity.results.find(
+        (option) => option.id === itemToUpdate.value
+      );
 
       return (
         <ReactSelect
           className="reactSelect"
-          placeholder="Selecciona una opción"
-          onMenuOpen={() => getCatalogBy(itemToUpdate.id)}
-          options={options}
-          isLoading={commonValues[itemToUpdate?.id]?.isFetching}
+          placeholder="Selecciona un municipio"
+          options={citiesByEntity.results}
           getOptionValue={(option) => option.id}
           getOptionLabel={(option) => option.name}
-          value={
-            options.find(
-              (opt) =>
-                opt.id === itemToUpdate.value ||
-                opt.value === itemToUpdate.value ||
-                opt.name === itemToUpdate.value
-            ) ?? null
-          }
+          value={selectedCity}
           onChange={(selectedOption) => {
+            console.log("Opción seleccionada:", selectedOption);
             const isConfirm = window.confirm("¿Desea guardar los cambios?");
             if (isConfirm) {
               handleSave(selectedOption);
@@ -231,21 +243,65 @@ export default function InputField({
         />
       );
     }
+
+    const options = commonValues[itemToUpdate.id]?.results || [];
+    const optionsWithPlaceholder = [
+      { label: "Selecciona una opción", value: "", isDisabled: true },
+      ...options,
+    ];
+    const selectedOption =
+      options?.find(
+        (opt) =>
+          opt.id === itemToUpdate.value ||
+          opt.value === itemToUpdate.value ||
+          opt.name === itemToUpdate.value
+      ) ??
+      (itemToUpdate.value
+        ? {
+            label: itemToUpdate.value,
+            value: itemToUpdate.value,
+            isDisabled: true,
+          }
+        : null);
+
+    if (!options) return <span>Cargando opciones...</span>;
+
+    return (
+      <ReactSelect
+        placeholder="Selecciona una opcion"
+        className="reactSelect"
+        onMenuOpen={() => getCatalogBy(itemToUpdate.id)}
+        options={optionsWithPlaceholder}
+        value={selectedOption}
+        isLoading={commonValues[itemToUpdate?.id]?.isFetching}
+        getOptionValue={(option) => option.id || option.value}
+        getOptionLabel={(option) => option.name || option.label}
+        onChange={(selectedOption) => {
+          const isConfirm = window.confirm("¿Desea guardar los cambios?");
+          if (isConfirm) {
+            handleSave(selectedOption);
+          } else {
+            setfieldToUpdate({ value: "", currentValue: "", identifier: "" });
+          }
+        }}
+        styles={selectStyle}
+      />
+    );
   }
 }
 
 export const selectStyle = {
   control: (base, state) => ({
     ...base,
-    minHeight: 38,
+    //  minHeight: "38px",
     height: 38,
     fontSize: 15,
     width: "100%",
-    backgroundColor: "#f8fafc",
+    backgroundColor: "#ffffff",
     border: state.isFocused ? "1px solid #1976d2" : "1px solid #dcdcdc",
     borderRadius: 6,
     boxShadow: state.isFocused ? "0 0 0 1px #1976d2" : "none",
-    transition: "border-color 0.2s ease, box-shadow 0.2s ease",
+    //  transition: "border-color 0.2s ease, box-shadow 0.2s ease",
     "&:hover": {
       borderColor: "#1976d2",
     },
@@ -256,7 +312,7 @@ export const selectStyle = {
     margin: 0,
     fontSize: 15,
     fontWeight: 500,
-    color: "#1e293b",
+    //   color: "#1e293b",
     lineHeight: "38px",
   }),
 
@@ -265,17 +321,12 @@ export const selectStyle = {
     margin: 0,
     padding: "6px 10px",
     fontSize: 14,
-    color: "#0f172a",
-    backgroundColor: "#f8fafc",
+    //  color: "#0f172a",
+    //backgroundColor: "#f8fafc",
     border: "none",
     boxShadow: "none",
     fontFamily: "'Inter', sans-serif",
     transition: "all 0.2s ease-in-out",
-
-    "::placeholder": {
-      color: "#94a3b8",
-      fontStyle: "italic",
-    },
   }),
 
   dropdownIndicator: (base) => ({
@@ -297,7 +348,7 @@ export const selectStyle = {
     borderRadius: 6,
     boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)",
     marginTop: 8,
-    zIndex: 999,
+    // zIndex: 999,
   }),
 
   menuList: (base) => ({
