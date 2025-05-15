@@ -38,12 +38,18 @@ class OportunitiesService {
   async getOportunitiesByPhase({}) {
     let params = {
       limit: 5,
-
       order: "-createdAt",
       subquery: 1,
-      where: { iscloseout: false },
+      where: { iscloseout: false, discarted: false },
+      keys: "amount,concept,createdAt,nextpendingat,certainty,lastTracking,lastTrackingcreatedAt",
+      includekeys: {
+        prospect: ["fullname", "email", "phone"],
+        "prospect.clienttype": ["name"],
+        additionaldataoportunity: ["oportunityrouteId"],
+      },
+      include: "prospect,prospect.clienttype,additionaldataoportunity",
     };
-    return await api.get("prospects/oportunitiesbyphases", {
+    return await api.get("playground/oportunities/kanban", {
       params,
     });
   }

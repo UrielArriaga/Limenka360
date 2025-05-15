@@ -39,6 +39,12 @@ export default function Item({ task: prospect, index, actions }) {
                 {/* <span className="product-label">Producto:</span> */}
                 <span className="product-value">{prospect?.product}</span>
               </div>
+
+              <div className="concept-info">
+                <span className="concept-label">Folio:</span>
+                <span className="concept-value">{prospect?.concept}</span>
+              </div>
+
               <div className="amount-info">
                 <span className="amount-label">Monto:</span>
                 <span className="amount-value">
@@ -156,18 +162,21 @@ const ItemProspect = styled.div`
     justify-content: space-between;
     width: 100%;
     height: 100%;
-    gap: 12px;
+
+    /* gap: 12px; */
 
     &__top {
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
+      margin-bottom: 4px;
 
       .fullname {
         font-size: 16px;
         font-weight: 600;
         color: #2a2f3a;
         margin: 0;
+        text-transform: capitalize;
       }
 
       .probability-badge {
@@ -193,8 +202,25 @@ const ItemProspect = styled.div`
     &__center {
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      /* gap: 6px; */
 
+      .concept-info {
+        display: flex;
+        gap: 8px;
+        font-size: 13px;
+
+        .concept-label,
+        .concept-label {
+          color: #757575;
+          font-weight: 500;
+        }
+
+        .concept-value,
+        .concept-value {
+          color: #2a2f3a;
+          font-weight: 600;
+        }
+      }
       .product-info,
       .amount-info {
         display: flex;
