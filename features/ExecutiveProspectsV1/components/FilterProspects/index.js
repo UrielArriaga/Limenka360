@@ -1,38 +1,28 @@
-import { IconButton } from '@material-ui/core';
+import { IconButton } from "@material-ui/core";
 import {
   Add,
-  ArrowDownward,
   ArrowDropDown,
-  ArrowUpward,
   Cached,
   ViewCarousel,
   ViewList,
-} from '@material-ui/icons';
-import { AnimatePresence, motion } from 'framer-motion';
-import React, { useEffect, useRef, useState } from 'react';
-import styled from 'styled-components';
-import SelectOrder from './SelectOrder';
-import FilterAdvanced from './../../../AdvancedFilters/AdvancedFilters';
-import Button from '@material-ui/core/Button';
-import FilterListIcon from '@material-ui/icons/FilterList';
-import { EntitiesLocal } from '../../../../BD/databd';
-import ButtonFilter from '../../../AdvancedFilters/components/common/ButtonFilter';
+  Assessment, // Informe
+  CalendarToday, // Calendario
+  Visibility, // Vista
+} from "@material-ui/icons";
+import { AnimatePresence, motion } from "framer-motion";
+import React, { useEffect, useRef, useState } from "react";
+import styled from "styled-components";
+import SelectOrder from "./SelectOrder";
+import ButtonFilter from "../../../AdvancedFilters/components/common/ButtonFilter";
+import FilterAdvanced from "./../../../AdvancedFilters/AdvancedFilters";
+import { filtersprospects } from "../../constants";
 
-const options = [
-  { name: 'Nombre (ASC)', value: '-name' },
-  { name: 'Nombre (DESC)', value: 'name' },
-  {
-    name: 'Fecha de creación (ASC)',
-    value: '-createdAt',
-  },
-  {
-    name: 'Fecha de creación (DESC)',
-    value: 'createdAt',
-  },
-  {
-    name: 'Fecha de último contacto (ASC)',
-    value: '-lastContact',
-  },
+const viewTypes = [
+  { key: "table", icon: <ViewList titleAccess="Kanban" /> },
+  { key: "kanban", icon: <ViewCarousel titleAccess="Tabla" /> },
+  { key: "calendar", icon: <CalendarToday titleAccess="Calendario" /> },
+  { key: "report", icon: <Assessment titleAccess="Informe" /> },
+  { key: "view", icon: <Visibility titleAccess="Vista" /> },
 ];
 
 export default function FilterProspects({
@@ -41,24 +31,9 @@ export default function FilterProspects({
   setViewType,
 }) {
   const [showOptions, setShowOptions] = useState(false);
-  const [selected, setSelected] = useState('Ordenar por: Nombre');
-  const [sortDirection, setSortDirection] = useState('asc');
-
-  const [showViewOptions, setShowViewOptions] = useState(false);
-  const viewOptions = ['Tabla', 'Kanban'];
-
   const [isOpenFilterAdvanced, setIsOpenFilterAdvanced] = useState(false);
 
   const dropdownRef = useRef();
-
-  const handleSelect = (option) => {
-    setSelected(`Ordenar por: ${option.name}`);
-    setShowOptions(false);
-  };
-
-  const toggleSortDirection = () => {
-    setSortDirection((prev) => (prev === 'asc' ? 'desc' : 'asc'));
-  };
 
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -67,8 +42,8 @@ export default function FilterProspects({
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   const [filters, setFilters] = useState();
@@ -77,63 +52,49 @@ export default function FilterProspects({
 
   return (
     <FilterProspectsStyled ref={dropdownRef}>
-      <div className="menutypes"></div>
-      <ListDropdown />
+      <div className="left-group">
+        <div className="add">
+          <button className="addprospects">
+            <Add /> Nuevo
+          </button>
+        </div>
+        <ListDropdown />
+        <div className="inputSearch">
+          <SearchInput type="text" placeholder="Buscar prospecto..." />
+        </div>
 
-      <div className="inputSearch">
-        <input type="text" placeholder="Buscar" />
+        <ButtonFilter
+          numFilters={filters?.length}
+          onClick={() => setIsOpenFilterAdvanced(true)}
+        />
+        <div className="refetch">
+          <RefetchButton onClick={handleRefetch} title="Refrescar datos">
+            <Cached />
+          </RefetchButton>
+        </div>
       </div>
 
-      <div className="refetech">
-        <button className="refetchBtn" onClick={() => handleRefetch()}>
-          <Cached />
-        </button>
-      </div>
+      <div className="right-group">
+        <div className="viewtype">
+          {viewTypes.map(({ key, icon }) => (
+            <ViewButton
+              key={key}
+              isActive={viewType === key}
+              onClick={() => setViewType(key)}
+            >
+              {icon}
+            </ViewButton>
+          ))}
+        </div>
 
-      <div className="viewtype">
-        <IconButton
-          onClick={() => setViewType('table')}
-          style={{
-            borderRadius: 0,
-            background:
-              viewType === 'table' ? 'rgba(0, 123, 255, 0.04)' : 'none',
-            color: viewType === 'table' ? '#007bff' : 'inherit',
-          }}
-        >
-          <ViewCarousel />
-        </IconButton>
-        <IconButton
-          onClick={() => setViewType('kanban')}
-          style={{
-            borderRadius: 0,
-            borderRadius: 0,
-            background:
-              viewType === 'kanban' ? 'rgba(0, 123, 255, 0.04)' : 'none',
-            color: viewType === 'kanban' ? '#007bff' : 'inherit',
-          }}
-        >
-          <ViewList />
-        </IconButton>
-      </div>
-
-      <ButtonFilter
-        numFilters={filters?.length}
-        onClick={() => setIsOpenFilterAdvanced(true)}
-      />
-
-      <SelectOrder />
-
-      <div className="add">
-        <button className="addprospects">
-          <Add /> Agregar Prospecto
-        </button>
+        <SelectOrder />
       </div>
 
       <FilterAdvanced
         isOpen={isOpenFilterAdvanced}
         TitleFilters="Filtro avanzados prospectos"
         setIsOpen={setIsOpenFilterAdvanced}
-        filtersTypes={filterAdvancedOptionsProspects}
+        filtersTypes={filtersprospects}
         onSave={setFilters}
       />
     </FilterProspectsStyled>
@@ -142,14 +103,23 @@ export default function FilterProspects({
 
 const FilterProspectsStyled = styled.div`
   display: flex;
-  gap: 16px;
+  justify-content: space-between;
   align-items: center;
-  /* padding: 16px; */
-  position: relative;
-  font-family: 'Inter', sans-serif;
-  margin-bottom: 20px;
-  /* height: 50px; */
-  /* border: 1px solid red; */
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 16px;
+
+  .left-group {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .right-group {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
 
   .inputSearch input {
     padding: 10px 14px;
@@ -239,14 +209,16 @@ const FilterProspectsStyled = styled.div`
 
   .viewtype {
     position: relative;
+
+    border-radius: 8px;
   }
 
   .add {
     margin-left: auto;
     .addprospects {
-      padding: 10px 14px;
+      padding: 6px 8px;
       border: none;
-      background: #007bff;
+      background: rgb(66, 136, 211);
       color: white;
       border-radius: 8px;
       cursor: pointer;
@@ -259,23 +231,17 @@ const FilterProspectsStyled = styled.div`
   }
 `;
 
-// import React, { useState, useRef, useEffect } from "react";
-// import styled from "styled-components";
-// import { motion, AnimatePresence } from "framer-motion";
-// import { Add, ArrowDropDown } from "@material-ui/icons";
-// import { FiSearch } from "react-icons/fi";
-
 function ListDropdown() {
   const [open, setOpen] = useState(false);
-  const [query, setQuery] = useState('');
-  const [selected, setSelected] = useState('Todos los prospectos');
+  const [query, setQuery] = useState("");
+  const [selected, setSelected] = useState("Todos los prospectos");
   const dropdownRef = useRef();
 
-  const defaultLists = ['Solution Open Deals', 'My All Deals'];
+  const defaultLists = ["Solution Open Deals", "My All Deals"];
   const myLists = [
-    'Todos los prospectos',
-    'Ultimo seguimiento hace 5 dias',
-    'Prospectos reasignados',
+    "Todos los prospectos",
+    "Ultimo seguimiento hace 5 dias",
+    "Prospectos reasignados",
   ];
 
   const filteredLists = myLists.filter((item) =>
@@ -289,8 +255,8 @@ function ListDropdown() {
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   return (
@@ -365,7 +331,7 @@ function ListDropdown() {
 const DropdownContainer = styled.div`
   position: relative;
   width: 260px;
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
 `;
 
 const DropdownHeader = styled.button`
@@ -460,214 +426,69 @@ const DropdownMenu = styled(motion.div)`
     }
   }
 `;
+const ViewButton = styled(IconButton)`
+  border-radius: 0;
+  /* background: ${({ isActive }) =>
+    isActive ? "rgba(7, 123, 248, 1)" : "none"}; */
+  /* color: ${({ isActive }) => (isActive ? "#007bff" : "inherit")}; */
 
-const AdvancedFiltersButton = styled.button`
-  border-radius: 50%;
+  background: ${({ isActive }) =>
+    isActive ? "rgba(14, 122, 238, 0.4) !important" : "#E5EAED !important"};
+  border-radius: 4px !important;
+  margin-right: 4px !important;
+  padding: 4px !important;
+
+  transition: background 0.2s, color 0.2s;
+
+  &:hover {
+    background: rgba(0, 123, 255, 0.08);
+  }
+`;
+const RefetchButton = styled.button`
+  background: #ffffff;
+  border: 1px solid #ccc;
+  border-radius: 8px;
   padding: 8px;
-  border: none;
-  background-color: #f3f0ff;
   cursor: pointer;
-
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+  transition: all 0.2s ease;
 
-  & svg {
-    color: #862e9c;
+  svg {
+    color: #007bff;
+    font-size: 20px;
+  }
+
+  &:hover {
+    background: #f0f4ff;
+    border-color: #007bff;
+  }
+
+  &:active {
+    transform: scale(0.97);
   }
 `;
-// filtro de
-export const filterAdvancedOptionsProspects = [
-  {
-    label: 'Fecha de creación',
-    value: 'createdAt1',
-    // type: 'date1',
-    custom: true,
-    customOptions: [
-      { value: 'Hoy', label: 'Hoy' },
-      { value: 'Semana', label: 'Semana' },
-      { value: 'Mes', label: 'Mes' },
-      { label: 'Rango', value: 'range', special: 'range' },
-    ],
-    operators: [
-      { label: 'Mayor que', value: 'mayor_que' },
-      { label: 'Menor que', value: 'menor_que' },
-      { label: 'Igual', value: 'igual' },
-    ],
-  },
-  {
-    label: 'Fecha de ultimo seguimiento',
-    value: 'createdAt2',
-    // type: 'date2',
-    custom: true,
-    customOptions: [
-      { value: 'Hoy', label: 'Hoy' },
-      { value: 'Semana', label: 'Semana' },
-      { value: 'Mes', label: 'Mes' },
-      { label: 'Rango', value: 'range', special: 'range' },
-    ],
-    operators: [
-      { label: 'Mayor que', value: 'mayor_que' },
-      { label: 'Menor que', value: 'menor_que' },
-      { label: 'Igual', value: 'igual' },
-    ],
-  },
-  {
-    label: 'Fecha de actualización',
-    value: 'createdAt3',
-    // type: 'date3',
-    custom: true,
-    customOptions: [
-      { value: 'Hoy', label: 'Hoy' },
-      { value: 'Semana', label: 'Semana' },
-      { value: 'Mes', label: 'Mes' },
-      { label: 'Rango', value: 'range', special: 'range' },
-    ],
-    operators: [
-      { label: 'Mayor que', value: 'mayor_que' },
-      { label: 'Menor que', value: 'menor_que' },
-      { label: 'Igual', value: 'igual' },
-    ],
-  },
-  {
-    label: 'Licitante',
-    value: 'bidder',
-    // type: 'bidder',
-    custom: true,
-    customOptions: [
-      { label: 'Licitantes', value: 'true' },
-      { label: 'No Licitantes', value: 'false' },
-    ],
-    operators: [
-      { label: 'Mayor que', value: 'mayor_que' },
-      { label: 'Menor que', value: 'menor_que' },
-      { label: 'Igual', value: 'igual' },
-    ],
-  },
-  {
-    label: 'Zona geografica',
-    value: 'entitiesLocal',
-    // type: 'entitiesLocal',
-    custom: true,
-    customOptions: EntitiesLocal.map((entity) => ({
-      value: entity.id,
-      label: entity.name,
-    })),
-    virtualConfig: {
-      custom: false,
-      label: 'Ciudades',
-      value: 'cities',
-      valuedbIdName: 'id',
-      valuedbFieldName: 'name',
-    },
-    operators: [
-      { label: 'Mayor que', value: 'mayor_que' },
-      { label: 'Menor que', value: 'menor_que' },
-      { label: 'Igual', value: 'igual' },
-    ],
-  },
-  {
-    label: 'Proveedor',
-    value: 'providers',
-    valuedbIdName: 'id',
-    valuedbFieldName: 'fullname',
-    custom: false,
-    customOptions: [],
-    operators: [
-      { label: 'Es igual a', value: 'igual' },
-      { label: 'No es igual a', value: 'no_igual' },
-      { label: 'Contiene', value: 'contiene' },
-    ],
-  },
-  {
-    label: 'Origen',
-    value: 'origins',
-    valuedbIdName: 'id',
-    valuedbFieldName: 'name',
-    custom: false,
-    customOptions: [],
-    operators: [
-      { label: 'Es igual a', value: 'igual' },
-      { label: 'No es igual a', value: 'no_igual' },
-      { label: 'Contiene', value: 'contiene' },
-    ],
-  },
-  {
-    label: 'Categoría de interes',
-    value: 'categories',
-    valuedbIdName: 'id',
-    valuedbFieldName: 'name',
-    custom: false,
-    customOptions: [],
-    operators: [
-      { label: 'Es igual a', value: 'igual' },
-      { label: 'No es igual a', value: 'no_igual' },
-      { label: 'Contiene', value: 'contiene' },
-    ],
-  },
-  {
-    label: 'Fase',
-    value: 'phases',
-    valuedbIdName: 'id',
-    valuedbFieldName: 'name',
-    custom: false,
-    customOptions: [],
-    operators: [
-      { label: 'Es igual a', value: 'igual' },
-      { label: 'No es igual a', value: 'no_igual' },
-      { label: 'Contiene', value: 'contiene' },
-    ],
-  },
-  // {
-  //   label: 'Compañias',
-  //   value: 'clientsCompanies',
-  //   valuedbIdName: 'id',
-  //   valuedbFieldName: 'companyname',
-  //   custom: false,
-  //   customOptions: [],
-  //   operators: [
-  //     { label: 'Es igual a', value: 'igual' },
-  //     { label: 'No es igual a', value: 'no_igual' },
-  //     { label: 'Contiene', value: 'contiene' },
-  //   ],
-  // },
-  {
-    label: 'Tipo de clientes',
-    value: 'clientTypes',
-    valuedbIdName: 'id',
-    valuedbFieldName: 'name',
-    custom: false,
-    customOptions: [],
-    operators: [
-      { label: 'Es igual a', value: 'igual' },
-      { label: 'No es igual a', value: 'no_igual' },
-      { label: 'Contiene', value: 'contiene' },
-    ],
-  },
-  {
-    label: 'Especialidades',
-    value: 'specialties',
-    valuedbIdName: 'id',
-    valuedbFieldName: 'name',
-    custom: false,
-    customOptions: [],
-    operators: [
-      { label: 'Es igual a', value: 'igual' },
-      { label: 'No es igual a', value: 'no_igual' },
-      { label: 'Contiene', value: 'contiene' },
-    ],
-  },
-  {
-    label: 'Canales',
-    value: 'channels',
-    valuedbIdName: 'id',
-    valuedbFieldName: 'name',
-    custom: false,
-    customOptions: [],
-    operators: [
-      { label: 'Es igual a', value: 'igual' },
-      { label: 'No es igual a', value: 'no_igual' },
-      { label: 'Contiene', value: 'contiene' },
-    ],
-  },
-];
+
+const SearchInput = styled.input`
+  padding: 10px 14px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 14px;
+  width: 320px;
+  height: 40px;
+  background: #fff;
+  outline: none;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+
+  &::placeholder {
+    color: #888;
+  }
+
+  &:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.15);
+  }
+`;

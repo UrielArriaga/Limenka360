@@ -37,7 +37,7 @@ export default function Column({
       {
         root: observerRootElement,
         rootMargin: "0px",
-        threshold: 0.5,
+        threshold: 0.9,
       }
     );
 
@@ -72,7 +72,7 @@ export default function Column({
             }}
           >
             <h3 style={{ textTransform: "capitalize", margin: 0 }}>
-              {column.title} ({column.total}){/* {column.id} */}
+              {column.name} ({column.total}){/* {column.id} */}
               {/* <pre>{JSON.stringify(column, null, 2)}</pre> */}
               {/* Use tasks.length here, show 0 if no tasks */}
             </h3>

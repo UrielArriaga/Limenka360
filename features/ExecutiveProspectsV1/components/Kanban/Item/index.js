@@ -80,27 +80,6 @@ const Item = forwardRef(({ task: prospect, index, actions }, externalRef) => {
     setOpenSendWhatsapp(true);
   };
 
-  // Segumiento con pendiente
-
-  const [showFormPending, setShowFormPending] = useState(false);
-  const [pendingType, setPendingType] = useState(null);
-  const [pendingDate, setPendingDate] = useState("");
-
-  const pendingTypes = [
-    { value: "call", label: "Llamada", icon: <PhoneIcon /> },
-    { value: "whatsapp", label: "WhatsApp", icon: <WhatsAppIcon /> },
-    { value: "email", label: "Email", icon: <EmailIcon /> },
-    { value: "meeting", label: "Reunión", icon: <GroupIcon /> },
-    { value: "other", label: "Otro", icon: <EventIcon /> },
-  ];
-
-  const quickDates = [
-    { value: "1h", label: "1 hora", icon: <AccessTimeIcon /> },
-    { value: "1d", label: "1 día", icon: <TodayIcon /> },
-    { value: "3d", label: "3 días", icon: <DateRangeIcon /> },
-    { value: "5d", label: "5 días", icon: <DateRangeIcon /> },
-  ];
-
   return (
     <Draggable draggableId={prospect.id} index={index}>
       {(provided) => (
@@ -131,7 +110,7 @@ const Item = forwardRef(({ task: prospect, index, actions }, externalRef) => {
                 className="probability-badge"
                 certainty={prospect?.certainty}
               >
-                {prospect?.clienttype?.name || "N/A"}
+                {prospect?.["clienttype.name"] || "N/A"}
               </span>
             </div>
 
@@ -146,8 +125,6 @@ const Item = forwardRef(({ task: prospect, index, actions }, externalRef) => {
                 Últ. seguimiento:{" "}
                 <span>
                   {cutString(prospect.lastTracking?.observations, 80)}
-                  {/* {prospect.lastTrackig?.observations} */}
-                  {/* <pre>{JSON.stringify(prospect?.lastTracking, null, 2)}</pre> */}
                 </span>
               </div>
               <div className="last-tracking">
@@ -163,15 +140,14 @@ const Item = forwardRef(({ task: prospect, index, actions }, externalRef) => {
                 </span>
               </div>
 
-              {/* <div className="datecontainer">
-                <span className="createdAt">
-                  <Schedule /> {dayjs(prospect.createdAt).format("DD/MM/YYYY")}
-                </span>
-              </div> */}
-
               <div className="datecontainer">
                 <span className="createdAt">
-                  <Schedule /> {dayjs(prospect.createdAt).format("DD/MM/YYYY")}
+                  <Schedule />{" "}
+                  {prospect?.nextpendingat === null ||
+                  prospect?.nextpendingat === "" ||
+                  prospect?.nextpendingat === undefined
+                    ? "No hay pendiente"
+                    : dayjs(prospect.nextpendingat).format("DD/MM/YYYY")}
                 </span>
               </div>
             </div>

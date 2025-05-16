@@ -1,12 +1,12 @@
-import styled from 'styled-components';
-import FilterListIcon from '@material-ui/icons/FilterList';
+import styled from "styled-components";
+import FilterListIcon from "@material-ui/icons/FilterList";
 
 const AdvancedFiltersButton = styled.button`
   position: relative;
   border-radius: 50%;
   padding: 8px;
   border: none;
-  background-color: #f3f0ff;
+  background-color: rgb(245, 243, 243);
   cursor: pointer;
 
   display: flex;
@@ -16,16 +16,16 @@ const AdvancedFiltersButton = styled.button`
   transition: all 200ms ease-in;
 
   &:hover {
-    background-color: #e5dbff;
+    background-color: rgb(230, 230, 230);
   }
 
   & svg {
-    color: #862e9c;
+    color: #39b8df;
   }
 `;
 
 const NumFiltersApply = styled.span`
-  color: #862e9c;
+  color: #39b8df;
   font-size: 12px;
   font-weight: 700;
   border: none;

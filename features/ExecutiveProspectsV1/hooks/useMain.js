@@ -1,15 +1,19 @@
-import React, { useEffect, useState } from "react";
-import { api } from "../../../services/api";
+import { useEffect, useState } from "react";
 import ProspectsService from "../service";
-import { is } from "date-fns/locale";
 
-const initialState = {
+const initialKanbanState = {
   columns: {},
   columnOrder: [],
   isFetching: false,
 };
 
-const initialDataSet = {
+const initialTableState = {
+  results: [],
+  count: 0,
+  isFetching: false,
+};
+
+const initialCalendarState = {
   results: [],
   count: 0,
   isFetching: false,
@@ -17,6 +21,7 @@ const initialDataSet = {
 
 export default function useMain(viewType) {
   const service = new ProspectsService();
+
   const [flagToRefetch, setFlagToRefetch] = useState(false);
 
   const [modalViews, setModalViews] = useState({
@@ -26,6 +31,97 @@ export default function useMain(viewType) {
     movePhase: false,
   });
 
+  const [data, setData] = useState(initialKanbanState);
+  const [dataSet, setDataSet] = useState(initialTableState);
+  const [dataCalendar, setDataCalendar] = useState(initialCalendarState);
+
+  const [prospectSelected, setProspectSelected] = useState(null);
+
+  console.log(viewType);
+  const viewFetchers = {
+    kanban: async () => {
+      setData((prev) => ({ ...prev, isFetching: true }));
+      try {
+        const response = await service.getProspectsByPhases({});
+        setData({
+          columns: response.data?.columns,
+          columnOrder: response.data?.columnsOrder,
+          isFetching: false,
+        });
+      } catch (error) {
+        console.error("Error fetching kanban:", error);
+        setData((prev) => ({ ...prev, isFetching: false }));
+      }
+    },
+    table: async () => {
+      setDataSet((prev) => ({ ...prev, isFetching: true }));
+      try {
+        const response = await service.getProspects({});
+        setDataSet({
+          results: service.mapToNormalizeProspects(response.data?.results),
+          count: response.data?.count,
+          isFetching: false,
+        });
+      } catch (error) {
+        console.error("Error fetching table:", error);
+        setDataSet((prev) => ({ ...prev, isFetching: false }));
+      }
+    },
+    calendar: async () => {
+      console.log("im here");
+      setDataCalendar((prev) => ({ ...prev, isFetching: true }));
+      try {
+        const response = await service.getProspectsPendings({});
+        setDataCalendar({
+          results: response.data?.results,
+          // results: service.normalizeProspectsPendings(response.data?.results),
+          count: response.data?.count,
+          isFetching: false,
+        });
+      } catch (error) {
+        console.error("Error fetching calendar:", error);
+        setDataCalendar((prev) => ({ ...prev, isFetching: false }));
+      }
+    },
+  };
+
+  const handleInfiniteScroll = async (phaseId) => {
+    const column = data.columns[phaseId];
+    if (!column || column.items.length >= column.total || column.isFetching)
+      return;
+
+    setData((prev) => ({ ...prev, isFetching: true }));
+
+    try {
+      const response = await service.getProspectsByPhase({
+        phaseId,
+        page: column.page + 1,
+      });
+
+      setData((prev) => ({
+        ...prev,
+        columns: {
+          ...prev.columns,
+          [phaseId]: {
+            ...column,
+            page: response.data?.page + 1,
+            total: response.data?.total,
+            items: [
+              ...column.items,
+              ...service.mapToNormalizeProspects(response.data?.results),
+            ],
+          },
+        },
+        isFetching: false,
+      }));
+    } catch (error) {
+      console.error("Error on scroll:", error);
+      setData((prev) => ({ ...prev, isFetching: false }));
+    }
+  };
+
+  const handleRefetch = () => setFlagToRefetch((prev) => !prev);
+
   const handleToggleModal = (modalName) => {
     setModalViews((prev) => ({
       ...prev,
@@ -33,241 +129,92 @@ export default function useMain(viewType) {
     }));
   };
 
-  const [data, setData] = useState(initialState);
-
-  const [dataSet, setDataSet] = useState(initialDataSet);
-
-  const [oportunityData, setOportunityData] = useState(null);
-
-  // * Prospecto Data
-  const [prospectSelected, setProspectSelected] = useState(null);
-
-  //* PRospecto
-
-  // * EFFECTO PRINICIPAL QUE TRAE LOS PROSPECTOS
-
-  useEffect(() => {
-    if (viewType === "kanban") {
-      fetchDataByPhases();
-    }
-    if (viewType === "table") {
-      fetchDataByTable();
-    }
-  }, [flagToRefetch, viewType]);
-
-  // *¨PETICIONES PARA TIPOS DE VISTA
-
-  const fetchDataByPhases = async () => {
-    setData((prev) => ({ ...prev, isFetching: true }));
-    try {
-      const response = await service.getProspectsByPhases({});
-
-      setData((prev) => ({
-        ...prev,
-        columns: response.data?.columns,
-        columnOrder: response.data?.columnsOrder,
-        isFetching: false,
-      }));
-
-      console.log(data);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-      setData((prev) => ({ ...prev, isFetching: false }));
-    }
+  const reorderColumns = (source, destination, draggableId) => {
+    const newOrder = Array.from(data.columnOrder);
+    newOrder.splice(source.index, 1);
+    newOrder.splice(destination.index, 0, draggableId);
+    setData((prev) => ({ ...prev, columnOrder: newOrder }));
   };
 
-  const fetchDataByTable = async () => {
-    setDataSet((prev) => ({ ...prev, isFetching: true }));
-    try {
-      const response = await service.getProspects({});
+  const reorderItemsWithinColumn = (columnId, sourceIndex, destIndex) => {
+    const items = Array.from(data.columns[columnId].items);
+    const [moved] = items.splice(sourceIndex, 1);
+    items.splice(destIndex, 0, moved);
 
-      setDataSet((prev) => ({
-        ...prev,
-        results: service.mapToNormalizeProspects(response.data?.results),
-        count: response.data?.count,
-        isFetching: false,
-      }));
-
-      console.log(data);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-      setData((prev) => ({ ...prev, isFetching: false }));
-    }
+    setData((prev) => ({
+      ...prev,
+      columns: {
+        ...prev.columns,
+        [columnId]: { ...prev.columns[columnId], items },
+      },
+    }));
   };
 
-  const handleInfiniteScroll = async (phaseId) => {
-    let column = data.columns[phaseId];
+  const moveItemBetweenColumns = (source, destination) => {
+    const startItems = Array.from(data.columns[source.droppableId].items);
+    const [moved] = startItems.splice(source.index, 1);
+    const endItems = Array.from(data.columns[destination.droppableId].items);
+    endItems.splice(destination.index, 0, moved);
 
-    console.log(column);
-    if (column.items.length >= column.total || column.isFetching) return;
-
-    setData((prev) => ({ ...prev, isFetching: true }));
-    try {
-      const response = await service.getProspectsByPhase({
-        phaseId,
-        page: column.page + 1,
-      });
-
-      let newData = {
-        ...data,
-        columns: {
-          ...data.columns,
-          [phaseId]: {
-            ...data.columns[phaseId],
-            page: response.data?.page + 1,
-            total: response.data?.total,
-            items: [
-              ...data.columns[phaseId].items,
-              ...service.mapToNormalizeProspects(response.data?.results),
-            ],
-          },
+    setData((prev) => ({
+      ...prev,
+      columns: {
+        ...prev.columns,
+        [source.droppableId]: {
+          ...prev.columns[source.droppableId],
+          items: startItems,
         },
-      };
-
-      setData((prev) => ({
-        ...prev,
-        columns: {
-          ...prev.columns,
-          [phaseId]: {
-            ...prev.columns[phaseId],
-            page: column.page + 1,
-            items: [
-              ...prev.columns[phaseId].items,
-              ...service.mapToNormalizeProspects(response.data?.results),
-            ],
-          },
+        [destination.droppableId]: {
+          ...prev.columns[destination.droppableId],
+          items: endItems,
         },
-        isFetching: false,
-      }));
-
-      console.log(newData);
-
-      console.log(data);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-      setData((prev) => ({ ...prev, isFetching: false }));
-    }
+      },
+    }));
   };
-
-  const handleRefetch = () => setFlagToRefetch((prev) => !prev);
 
   const onDragEnd = (result) => {
     const { destination, source, draggableId, type } = result;
-
-    console.log(result);
-
     if (!destination) return;
-    const startColumnId = source.droppableId;
-    const endColumnId = destination.droppableId;
-
-    console.log("Drag Result:");
-    console.log(`  Draggable ID: ${result.draggableId}`);
-    console.log(`  Source:`);
-    console.log(`    Droppable ID: ${source.droppableId}`);
-    console.log(`    Index: ${source.index}`);
-    if (destination) {
-      console.log(`  Destination:`);
-      console.log(`    Droppable ID: ${destination.droppableId}`);
-      console.log(`    Index: ${destination.index}`);
-    } else {
-      console.log("  Destination: None");
-    }
 
     if (type === "column") {
-      const newColumnOrder = Array.from(data.columnOrder);
-      newColumnOrder.splice(source.index, 1);
-      newColumnOrder.splice(destination.index, 0, draggableId);
-
-      setData((prev) => ({
-        ...prev,
-        columnOrder: newColumnOrder,
-      }));
+      return reorderColumns(source, destination, draggableId);
     }
 
     if (type === "item") {
-      if (startColumnId === "convert-zone") {
-        handleToggleModal("newOportunity");
-        // setShowDragAreaOportunity(false);
-      }
-
-      if (startColumnId === endColumnId) {
-        const newColumnItems = Array.from(data.columns[startColumnId].items);
-        const [movedItem] = newColumnItems.splice(source.index, 1);
-        newColumnItems.splice(destination.index, 0, movedItem);
-
-        const updatedColumns = {
-          ...data.columns,
-          [startColumnId]: {
-            ...data.columns[startColumnId],
-            items: newColumnItems,
-          },
-        };
-
-        setData((prev) => ({
-          ...prev,
-          columns: updatedColumns,
-        }));
+      if (source.droppableId === destination.droppableId) {
+        return reorderItemsWithinColumn(
+          source.droppableId,
+          source.index,
+          destination.index
+        );
       } else {
-        console.log("move between columns");
         handleToggleModal("modalPhase");
-
-        const startColumnItems = Array.from(data.columns[startColumnId].items);
-        const [movedItem] = startColumnItems.splice(source.index, 1);
-
-        const endColumnItems = Array.from(data.columns[endColumnId].items);
-        endColumnItems.splice(destination.index, 0, movedItem);
-
-        const updatedColumns = {
-          ...data.columns,
-          [startColumnId]: {
-            ...data.columns[startColumnId],
-            items: startColumnItems,
-          },
-          [endColumnId]: {
-            ...data.columns[endColumnId],
-            items: endColumnItems,
-          },
-        };
-
-        setData((prev) => ({
-          ...prev,
-          columns: updatedColumns,
-        }));
-        return;
+        return moveItemBetweenColumns(source, destination);
       }
     }
-
-    if (destination.droppableId === "convert-zone") {
-      console.log("object");
-    }
-    // setShowDragAreaOportunity(false);
   };
 
-  const onDragStart = (result) => {
-    const { source } = result;
-    const { droppableId } = source;
-
-    // setShowDragAreaOportunity(true);
-  };
+  const onDragStart = (result) => {};
 
   const handleOnClickProspects = (item) => {
     setProspectSelected(item);
     handleToggleModal("preview");
   };
+
   const handleOnClickNewOportunity = () => {
     handleToggleModal("newOportunity");
   };
+
   const handleOnClickLimiBotChat = (item) => {
     setProspectSelected(item);
     handleToggleModal("limiBotChat");
   };
 
-  const handleNewTracking = async (data) => {};
-
   return {
     prospectSelected,
     data,
     dataSet,
+    dataCalendar,
     onDragEnd,
     onDragStart,
     handleRefetch,
@@ -280,6 +227,46 @@ export default function useMain(viewType) {
       handleOnClickProspects,
       handleOnClickNewOportunity,
       handleOnClickLimiBotChat,
+    },
+    tableData: {
+      heads: [
+        {
+          headText: "Fecha de Creacion",
+          headNormalize: "createdAt",
+          orderby: "-createdAt",
+        },
+        {
+          headText: "Nombre del prospecto",
+          headNormalize: "fullname",
+          orderby: "-createdAt",
+        },
+        { headText: "Correo", headNormalize: "email", orderby: "-createdAt" },
+        {
+          headText: "Telefono",
+          headNormalize: "phone",
+          orderby: "-createdAt",
+        },
+        {
+          headText: "Fase",
+          headNormalize: "phase",
+          orderby: "-createdAt",
+        },
+        {
+          headText: "Producto de interes",
+          headNormalize: "product",
+          orderby: "-createdAt",
+        },
+        {
+          headText: "ultimo seguimiento",
+          headNormalize: "lastTrackingcreatedAt",
+          orderby: "-createdAt",
+        },
+        {
+          headText: "Proximo pendiente",
+          headNormalize: "nextpendingat",
+          orderby: "-createdAt",
+        },
+      ],
     },
   };
 }

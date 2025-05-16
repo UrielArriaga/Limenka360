@@ -2,14 +2,33 @@ import styled, { css } from "styled-components";
 
 // * Styles for custom table
 
+// export const tableHeadTypeDefault = css`
+//   background-color: rgb(221, 230, 240);
+//   color: rgb(101, 101, 101);
+//   &:hover {
+//     /* background-color: #ffcccb; */
+//     /* color: #000; */
+//     font-weight: bold;
+//     transition: background-color 0.3s ease, color 0.3s ease;
+//   }
+// `;
+
 export const tableHeadTypeDefault = css`
-  background-color: rgb(221, 230, 240);
-  color: rgb(101, 101, 101);
+  background-color: #f5f7fa; /* gris muy claro tipo CRM */
+  color: #4a4a4a; /* gris oscuro legible */
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 12px;
+  border-bottom: 1px solid #dfe3e8;
+
+  th,
+  .tableHead {
+    padding: 10px 14px;
+  }
+
   &:hover {
-    /* background-color: #ffcccb; */
-    /* color: #000; */
-    font-weight: bold;
-    transition: background-color 0.3s ease, color 0.3s ease;
+    background-color: #eaeff5;
+    transition: background-color 0.3s ease;
   }
 `;
 
@@ -24,6 +43,43 @@ export const tableRowTypeBorder = css`
   border-bottom: 1px solid ${(props) => props.styles?.borderColor};
   font-size: 12px;
   font-weight: normal;
+`;
+
+export const tableRowTypeDefault = css`
+  font-size: 13px;
+  background-color: #ffffff;
+  transition: background-color 0.2s ease;
+  border-bottom: 1px solid #ececec;
+
+  &:nth-child(even) {
+    background-color: #f9fbfc; /* zebra stripe */
+  }
+
+  &:hover {
+    background-color: #eef5ff;
+  }
+
+  &.tableRow--highlighted {
+    background-color: #dbeaff;
+  }
+
+  .tableData {
+    padding: 10px 14px;
+    color: #333;
+  }
+
+  .tableDataId {
+    /* padding: 10px 14px;
+    color: #007bff;
+    cursor: pointer; */
+    font-weight: bold;
+    text-transform: capitalize;
+
+    &:hover {
+      text-decoration: underline;
+      color: #0056b3;
+    }
+  }
 `;
 
 // * Styles for custom table
@@ -157,6 +213,8 @@ export const Table = styled.table`
 
     ${({ styles }) => styles?.typeTable === "border" && tableRowTypeBorder}
 
+    ${({ styles }) => styles?.typeTable === "default" && tableRowTypeDefault};
+
     &:nth-child(even) {
       background-color: ${(props) => props.styles?.nthChild};
     }
@@ -172,7 +230,6 @@ export const Table = styled.table`
 
     .tableDataId {
       padding: 8px;
-      /* color: grey; */
       cursor: pointer;
       &:hover {
         text-decoration: underline;

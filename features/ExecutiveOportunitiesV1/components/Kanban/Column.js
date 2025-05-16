@@ -21,7 +21,9 @@ export default function Column({ column, tasks, index, actions }) {
               marginBottom: 10,
             }}
           >
-            <h3 style={{ textTransform: "capitalize" }}>{column.title}</h3>
+            <h3 style={{ textTransform: "capitalize" }}>
+              {column.name}({column.total})
+            </h3>
           </div>
           <Droppable droppableId={column.id} type="item">
             {(provided) => (
