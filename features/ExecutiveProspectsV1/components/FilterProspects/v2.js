@@ -8,11 +8,11 @@ import {
   ViewList,
   ArrowUpward,
   ArrowDownward,
-} from "@material-ui/icons";
-import React, { useState, useRef, useEffect } from "react";
-import styled from "styled-components";
-import { motion, AnimatePresence } from "framer-motion";
-import { IconButton } from "@material-ui/core";
+} from '@material-ui/icons';
+import React, { useState, useRef, useEffect } from 'react';
+import styled from 'styled-components';
+import { motion, AnimatePresence } from 'framer-motion';
+import { IconButton } from '@material-ui/core';
 
 export default function FilterProspects({
   handleRefetch,
@@ -20,22 +20,22 @@ export default function FilterProspects({
   setViewType,
 }) {
   const [showOptions, setShowOptions] = useState(false);
-  const [selected, setSelected] = useState("Ordenar por: Nombre");
-  const [sortDirection, setSortDirection] = useState("asc");
+  const [selected, setSelected] = useState('Ordenar por: Nombre');
+  const [sortDirection, setSortDirection] = useState('asc');
 
   const [showViewOptions, setShowViewOptions] = useState(false);
-  const viewOptions = ["Tabla", "Kanban"];
+  const viewOptions = ['Tabla', 'Kanban'];
 
   const dropdownRef = useRef();
 
   const options = [
-    "Nombre",
-    "Correo",
-    "Teléfono",
-    "Fecha de creación",
-    "Último contacto",
-    "Fuente",
-    "Estado",
+    'Nombre',
+    'Correo',
+    'Teléfono',
+    'Fecha de creación',
+    'Último contacto',
+    'Fuente',
+    'Estado',
   ];
 
   const handleSelect = (option) => {
@@ -44,7 +44,7 @@ export default function FilterProspects({
   };
 
   const toggleSortDirection = () => {
-    setSortDirection((prev) => (prev === "asc" ? "desc" : "asc"));
+    setSortDirection((prev) => (prev === 'asc' ? 'desc' : 'asc'));
   };
 
   useEffect(() => {
@@ -54,8 +54,8 @@ export default function FilterProspects({
       }
     };
 
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   return (
@@ -75,25 +75,25 @@ export default function FilterProspects({
 
       <div className="viewtype">
         <IconButton
-          onClick={() => setViewType("table")}
+          onClick={() => setViewType('table')}
           style={{
             borderRadius: 0,
             background:
-              viewType === "table" ? "rgba(0, 123, 255, 0.04)" : "none",
-            color: viewType === "table" ? "#007bff" : "inherit",
+              viewType === 'table' ? 'rgba(0, 123, 255, 0.04)' : 'none',
+            color: viewType === 'table' ? '#007bff' : 'inherit',
           }}
         >
           <ViewCarousel />
         </IconButton>
 
         <IconButton
-          onClick={() => setViewType("kanban")}
+          onClick={() => setViewType('kanban')}
           style={{
             borderRadius: 0,
             borderRadius: 0,
             background:
-              viewType === "kanban" ? "rgba(0, 123, 255, 0.04)" : "none",
-            color: viewType === "kanban" ? "#007bff" : "inherit",
+              viewType === 'kanban' ? 'rgba(0, 123, 255, 0.04)' : 'none',
+            color: viewType === 'kanban' ? '#007bff' : 'inherit',
           }}
         >
           <ViewList />
@@ -145,7 +145,7 @@ export default function FilterProspects({
         </button>
 
         <button className="sortDirectionBtn" onClick={toggleSortDirection}>
-          {sortDirection === "asc" ? <ArrowUpward /> : <ArrowDownward />}
+          {sortDirection === 'asc' ? <ArrowUpward /> : <ArrowDownward />}
         </button>
 
         <AnimatePresence>
@@ -186,7 +186,7 @@ const FilterProspectsStyled = styled.div`
   align-items: center;
   /* padding: 16px; */
   position: relative;
-  font-family: "Inter", sans-serif;
+  font-family: 'Inter', sans-serif;
   margin-bottom: 20px;
   /* height: 50px; */
   /* border: 1px solid red; */
@@ -307,20 +307,20 @@ const FilterProspectsStyled = styled.div`
 
 function ListDropdown() {
   const [open, setOpen] = useState(false);
-  const [query, setQuery] = useState("");
-  const [selected, setSelected] = useState("All Deals");
+  const [query, setQuery] = useState('');
+  const [selected, setSelected] = useState('All Deals');
   const dropdownRef = useRef();
 
-  const defaultLists = ["Solution Open Deals", "My All Deals"];
+  const defaultLists = ['Solution Open Deals', 'My All Deals'];
   const myLists = [
-    "Security Solutions",
-    "Closed Opps",
-    "My Security Solutions",
-    "Inside Sales",
-    "Open Opps",
-    "Open Opportunities",
-    "Solution Open Deals",
-    "Open Deals - Solution",
+    'Security Solutions',
+    'Closed Opps',
+    'My Security Solutions',
+    'Inside Sales',
+    'Open Opps',
+    'Open Opportunities',
+    'Solution Open Deals',
+    'Open Deals - Solution',
   ];
 
   const filteredLists = myLists.filter((item) =>
@@ -334,8 +334,8 @@ function ListDropdown() {
       }
     };
 
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   return (
@@ -410,7 +410,7 @@ function ListDropdown() {
 const DropdownContainer = styled.div`
   position: relative;
   width: 260px;
-  font-family: "Inter", sans-serif;
+  font-family: 'Inter', sans-serif;
 `;
 
 const DropdownHeader = styled.button`

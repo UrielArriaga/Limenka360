@@ -1,4 +1,4 @@
-import { IconButton } from "@material-ui/core";
+import { IconButton } from '@material-ui/core';
 import {
   Add,
   ArrowDownward,
@@ -7,26 +7,31 @@ import {
   Cached,
   ViewCarousel,
   ViewList,
-} from "@material-ui/icons";
-import { AnimatePresence, motion } from "framer-motion";
-import React, { useEffect, useRef, useState } from "react";
-import styled from "styled-components";
-import SelectOrder from "./SelectOrder";
+} from '@material-ui/icons';
+import { AnimatePresence, motion } from 'framer-motion';
+import React, { useEffect, useRef, useState } from 'react';
+import styled from 'styled-components';
+import SelectOrder from './SelectOrder';
+import FilterAdvanced from './../../../AdvancedFilters/AdvancedFilters';
+import Button from '@material-ui/core/Button';
+import FilterListIcon from '@material-ui/icons/FilterList';
+import { EntitiesLocal } from '../../../../BD/databd';
+import ButtonFilter from '../../../AdvancedFilters/components/common/ButtonFilter';
 
 const options = [
-  { name: "Nombre (ASC)", value: "-name" },
-  { name: "Nombre (DESC)", value: "name" },
+  { name: 'Nombre (ASC)', value: '-name' },
+  { name: 'Nombre (DESC)', value: 'name' },
   {
-    name: "Fecha de creación (ASC)",
-    value: "-createdAt",
+    name: 'Fecha de creación (ASC)',
+    value: '-createdAt',
   },
   {
-    name: "Fecha de creación (DESC)",
-    value: "createdAt",
+    name: 'Fecha de creación (DESC)',
+    value: 'createdAt',
   },
   {
-    name: "Fecha de último contacto (ASC)",
-    value: "-lastContact",
+    name: 'Fecha de último contacto (ASC)',
+    value: '-lastContact',
   },
 ];
 
@@ -36,11 +41,13 @@ export default function FilterProspects({
   setViewType,
 }) {
   const [showOptions, setShowOptions] = useState(false);
-  const [selected, setSelected] = useState("Ordenar por: Nombre");
-  const [sortDirection, setSortDirection] = useState("asc");
+  const [selected, setSelected] = useState('Ordenar por: Nombre');
+  const [sortDirection, setSortDirection] = useState('asc');
 
   const [showViewOptions, setShowViewOptions] = useState(false);
-  const viewOptions = ["Tabla", "Kanban"];
+  const viewOptions = ['Tabla', 'Kanban'];
+
+  const [isOpenFilterAdvanced, setIsOpenFilterAdvanced] = useState(false);
 
   const dropdownRef = useRef();
 
@@ -50,7 +57,7 @@ export default function FilterProspects({
   };
 
   const toggleSortDirection = () => {
-    setSortDirection((prev) => (prev === "asc" ? "desc" : "asc"));
+    setSortDirection((prev) => (prev === 'asc' ? 'desc' : 'asc'));
   };
 
   useEffect(() => {
@@ -60,9 +67,13 @@ export default function FilterProspects({
       }
     };
 
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
+  const [filters, setFilters] = useState();
+
+  console.log(filters);
 
   return (
     <FilterProspectsStyled ref={dropdownRef}>
@@ -81,30 +92,34 @@ export default function FilterProspects({
 
       <div className="viewtype">
         <IconButton
-          onClick={() => setViewType("table")}
+          onClick={() => setViewType('table')}
           style={{
             borderRadius: 0,
             background:
-              viewType === "table" ? "rgba(0, 123, 255, 0.04)" : "none",
-            color: viewType === "table" ? "#007bff" : "inherit",
+              viewType === 'table' ? 'rgba(0, 123, 255, 0.04)' : 'none',
+            color: viewType === 'table' ? '#007bff' : 'inherit',
           }}
         >
           <ViewCarousel />
         </IconButton>
-
         <IconButton
-          onClick={() => setViewType("kanban")}
+          onClick={() => setViewType('kanban')}
           style={{
             borderRadius: 0,
             borderRadius: 0,
             background:
-              viewType === "kanban" ? "rgba(0, 123, 255, 0.04)" : "none",
-            color: viewType === "kanban" ? "#007bff" : "inherit",
+              viewType === 'kanban' ? 'rgba(0, 123, 255, 0.04)' : 'none',
+            color: viewType === 'kanban' ? '#007bff' : 'inherit',
           }}
         >
           <ViewList />
         </IconButton>
       </div>
+
+      <ButtonFilter
+        numFilters={filters?.length}
+        onClick={() => setIsOpenFilterAdvanced(true)}
+      />
 
       <SelectOrder />
 
@@ -113,6 +128,14 @@ export default function FilterProspects({
           <Add /> Agregar Prospecto
         </button>
       </div>
+
+      <FilterAdvanced
+        isOpen={isOpenFilterAdvanced}
+        TitleFilters="Filtro avanzados prospectos"
+        setIsOpen={setIsOpenFilterAdvanced}
+        filtersTypes={filterAdvancedOptionsProspects}
+        onSave={setFilters}
+      />
     </FilterProspectsStyled>
   );
 }
@@ -123,7 +146,7 @@ const FilterProspectsStyled = styled.div`
   align-items: center;
   /* padding: 16px; */
   position: relative;
-  font-family: "Inter", sans-serif;
+  font-family: 'Inter', sans-serif;
   margin-bottom: 20px;
   /* height: 50px; */
   /* border: 1px solid red; */
@@ -244,15 +267,15 @@ const FilterProspectsStyled = styled.div`
 
 function ListDropdown() {
   const [open, setOpen] = useState(false);
-  const [query, setQuery] = useState("");
-  const [selected, setSelected] = useState("Todos los prospectos");
+  const [query, setQuery] = useState('');
+  const [selected, setSelected] = useState('Todos los prospectos');
   const dropdownRef = useRef();
 
-  const defaultLists = ["Solution Open Deals", "My All Deals"];
+  const defaultLists = ['Solution Open Deals', 'My All Deals'];
   const myLists = [
-    "Todos los prospectos",
-    "Ultimo seguimiento hace 5 dias",
-    "Prospectos reasignados",
+    'Todos los prospectos',
+    'Ultimo seguimiento hace 5 dias',
+    'Prospectos reasignados',
   ];
 
   const filteredLists = myLists.filter((item) =>
@@ -266,8 +289,8 @@ function ListDropdown() {
       }
     };
 
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   return (
@@ -342,7 +365,7 @@ function ListDropdown() {
 const DropdownContainer = styled.div`
   position: relative;
   width: 260px;
-  font-family: "Inter", sans-serif;
+  font-family: 'Inter', sans-serif;
 `;
 
 const DropdownHeader = styled.button`
@@ -437,3 +460,214 @@ const DropdownMenu = styled(motion.div)`
     }
   }
 `;
+
+const AdvancedFiltersButton = styled.button`
+  border-radius: 50%;
+  padding: 8px;
+  border: none;
+  background-color: #f3f0ff;
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  & svg {
+    color: #862e9c;
+  }
+`;
+// filtro de
+export const filterAdvancedOptionsProspects = [
+  {
+    label: 'Fecha de creación',
+    value: 'createdAt1',
+    // type: 'date1',
+    custom: true,
+    customOptions: [
+      { value: 'Hoy', label: 'Hoy' },
+      { value: 'Semana', label: 'Semana' },
+      { value: 'Mes', label: 'Mes' },
+      { label: 'Rango', value: 'range', special: 'range' },
+    ],
+    operators: [
+      { label: 'Mayor que', value: 'mayor_que' },
+      { label: 'Menor que', value: 'menor_que' },
+      { label: 'Igual', value: 'igual' },
+    ],
+  },
+  {
+    label: 'Fecha de ultimo seguimiento',
+    value: 'createdAt2',
+    // type: 'date2',
+    custom: true,
+    customOptions: [
+      { value: 'Hoy', label: 'Hoy' },
+      { value: 'Semana', label: 'Semana' },
+      { value: 'Mes', label: 'Mes' },
+      { label: 'Rango', value: 'range', special: 'range' },
+    ],
+    operators: [
+      { label: 'Mayor que', value: 'mayor_que' },
+      { label: 'Menor que', value: 'menor_que' },
+      { label: 'Igual', value: 'igual' },
+    ],
+  },
+  {
+    label: 'Fecha de actualización',
+    value: 'createdAt3',
+    // type: 'date3',
+    custom: true,
+    customOptions: [
+      { value: 'Hoy', label: 'Hoy' },
+      { value: 'Semana', label: 'Semana' },
+      { value: 'Mes', label: 'Mes' },
+      { label: 'Rango', value: 'range', special: 'range' },
+    ],
+    operators: [
+      { label: 'Mayor que', value: 'mayor_que' },
+      { label: 'Menor que', value: 'menor_que' },
+      { label: 'Igual', value: 'igual' },
+    ],
+  },
+  {
+    label: 'Licitante',
+    value: 'bidder',
+    // type: 'bidder',
+    custom: true,
+    customOptions: [
+      { label: 'Licitantes', value: 'true' },
+      { label: 'No Licitantes', value: 'false' },
+    ],
+    operators: [
+      { label: 'Mayor que', value: 'mayor_que' },
+      { label: 'Menor que', value: 'menor_que' },
+      { label: 'Igual', value: 'igual' },
+    ],
+  },
+  {
+    label: 'Zona geografica',
+    value: 'entitiesLocal',
+    // type: 'entitiesLocal',
+    custom: true,
+    customOptions: EntitiesLocal.map((entity) => ({
+      value: entity.id,
+      label: entity.name,
+    })),
+    virtualConfig: {
+      custom: false,
+      label: 'Ciudades',
+      value: 'cities',
+      valuedbIdName: 'id',
+      valuedbFieldName: 'name',
+    },
+    operators: [
+      { label: 'Mayor que', value: 'mayor_que' },
+      { label: 'Menor que', value: 'menor_que' },
+      { label: 'Igual', value: 'igual' },
+    ],
+  },
+  {
+    label: 'Proveedor',
+    value: 'providers',
+    valuedbIdName: 'id',
+    valuedbFieldName: 'fullname',
+    custom: false,
+    customOptions: [],
+    operators: [
+      { label: 'Es igual a', value: 'igual' },
+      { label: 'No es igual a', value: 'no_igual' },
+      { label: 'Contiene', value: 'contiene' },
+    ],
+  },
+  {
+    label: 'Origen',
+    value: 'origins',
+    valuedbIdName: 'id',
+    valuedbFieldName: 'name',
+    custom: false,
+    customOptions: [],
+    operators: [
+      { label: 'Es igual a', value: 'igual' },
+      { label: 'No es igual a', value: 'no_igual' },
+      { label: 'Contiene', value: 'contiene' },
+    ],
+  },
+  {
+    label: 'Categoría de interes',
+    value: 'categories',
+    valuedbIdName: 'id',
+    valuedbFieldName: 'name',
+    custom: false,
+    customOptions: [],
+    operators: [
+      { label: 'Es igual a', value: 'igual' },
+      { label: 'No es igual a', value: 'no_igual' },
+      { label: 'Contiene', value: 'contiene' },
+    ],
+  },
+  {
+    label: 'Fase',
+    value: 'phases',
+    valuedbIdName: 'id',
+    valuedbFieldName: 'name',
+    custom: false,
+    customOptions: [],
+    operators: [
+      { label: 'Es igual a', value: 'igual' },
+      { label: 'No es igual a', value: 'no_igual' },
+      { label: 'Contiene', value: 'contiene' },
+    ],
+  },
+  // {
+  //   label: 'Compañias',
+  //   value: 'clientsCompanies',
+  //   valuedbIdName: 'id',
+  //   valuedbFieldName: 'companyname',
+  //   custom: false,
+  //   customOptions: [],
+  //   operators: [
+  //     { label: 'Es igual a', value: 'igual' },
+  //     { label: 'No es igual a', value: 'no_igual' },
+  //     { label: 'Contiene', value: 'contiene' },
+  //   ],
+  // },
+  {
+    label: 'Tipo de clientes',
+    value: 'clientTypes',
+    valuedbIdName: 'id',
+    valuedbFieldName: 'name',
+    custom: false,
+    customOptions: [],
+    operators: [
+      { label: 'Es igual a', value: 'igual' },
+      { label: 'No es igual a', value: 'no_igual' },
+      { label: 'Contiene', value: 'contiene' },
+    ],
+  },
+  {
+    label: 'Especialidades',
+    value: 'specialties',
+    valuedbIdName: 'id',
+    valuedbFieldName: 'name',
+    custom: false,
+    customOptions: [],
+    operators: [
+      { label: 'Es igual a', value: 'igual' },
+      { label: 'No es igual a', value: 'no_igual' },
+      { label: 'Contiene', value: 'contiene' },
+    ],
+  },
+  {
+    label: 'Canales',
+    value: 'channels',
+    valuedbIdName: 'id',
+    valuedbFieldName: 'name',
+    custom: false,
+    customOptions: [],
+    operators: [
+      { label: 'Es igual a', value: 'igual' },
+      { label: 'No es igual a', value: 'no_igual' },
+      { label: 'Contiene', value: 'contiene' },
+    ],
+  },
+];
