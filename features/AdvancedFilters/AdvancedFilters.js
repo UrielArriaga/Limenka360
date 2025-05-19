@@ -11,6 +11,8 @@ import AppButton from './components/common/Button';
 
 import TableFilters from './components/TableFilters/TableFilters';
 import { ProviderFilter, useFilter } from './context/contextFilter';
+import { buildWhereFromFilters } from './utils/utils';
+import { filter } from 'jszip';
 
 const FilterOptions = styled.div`
   display: flex;
@@ -46,6 +48,7 @@ const Indicator = styled.div`
 `;
 
 function AdvancedFiltersApp({
+  idFilter,
   filtersTypes = [],
   TitleFilters,
   isOpen,
@@ -62,11 +65,22 @@ function AdvancedFiltersApp({
     triggerHydrationFilters,
     allFiltersWereFilled,
     confirmFilters,
+    setIdFilter,
   } = useFilter();
 
   useEffect(() => {
     if (!confirmFilters) return;
     if (allFiltersWereFilled) onSave(filters);
+
+    console.log(buildWhereFromFilters(filters));
+
+    //   console.log()
+    //  filters.map((filter) => {}
+
+    //   return {
+    //     filter.filterVa
+    //   }
+    // }));
   }, [filters]);
 
   const handleClose = () => {
@@ -85,9 +99,15 @@ function AdvancedFiltersApp({
 
   const isWithinLimitOfFilters = filters.length < optionsFilterType.length;
 
+  // Set inial data
   useEffect(() => {
     setOptionsFilterType(filtersTypes);
+    setIdFilter(idFilter);
   }, []);
+
+  // validations
+  if (!idFilter)
+    throw new Error('A filter must be have a idFilter, please provide it');
 
   return (
     <ModalFilters open={isOpen} onClose={handleClose}>
@@ -159,6 +179,7 @@ function AdvancedFiltersApp({
  * @returns {JSX.Element}
  */
 const AdvancedFilters = ({
+  idFilter = null,
   filtersTypes = [],
   TitleFilters,
   isOpen,
@@ -168,6 +189,7 @@ const AdvancedFilters = ({
   return (
     <ProviderFilter>
       <AdvancedFiltersApp
+        idFilter={idFilter}
         isOpen={isOpen}
         setIsOpen={setIsOpen}
         TitleFilters={TitleFilters}

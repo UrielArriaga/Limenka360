@@ -1,4 +1,4 @@
-import { IconButton } from "@material-ui/core";
+import { IconButton } from '@material-ui/core';
 import {
   Add,
   ArrowDropDown,
@@ -8,21 +8,21 @@ import {
   Assessment, // Informe
   CalendarToday, // Calendario
   Visibility, // Vista
-} from "@material-ui/icons";
-import { AnimatePresence, motion } from "framer-motion";
-import React, { useEffect, useRef, useState } from "react";
-import styled from "styled-components";
-import SelectOrder from "./SelectOrder";
-import ButtonFilter from "../../../AdvancedFilters/components/common/ButtonFilter";
-import FilterAdvanced from "./../../../AdvancedFilters/AdvancedFilters";
-import { filtersprospects } from "../../constants";
+} from '@material-ui/icons';
+import { AnimatePresence, motion } from 'framer-motion';
+import React, { useEffect, useRef, useState } from 'react';
+import styled from 'styled-components';
+import SelectOrder from './SelectOrder';
+import ButtonFilter from '../../../AdvancedFilters/components/common/ButtonFilter';
+import FilterAdvanced from './../../../AdvancedFilters/AdvancedFilters';
+import { filtersprospects } from '../../constants';
 
 const viewTypes = [
-  { key: "table", icon: <ViewList titleAccess="Kanban" /> },
-  { key: "kanban", icon: <ViewCarousel titleAccess="Tabla" /> },
-  { key: "calendar", icon: <CalendarToday titleAccess="Calendario" /> },
-  { key: "report", icon: <Assessment titleAccess="Informe" /> },
-  { key: "view", icon: <Visibility titleAccess="Vista" /> },
+  { key: 'table', icon: <ViewList titleAccess="Kanban" /> },
+  { key: 'kanban', icon: <ViewCarousel titleAccess="Tabla" /> },
+  { key: 'calendar', icon: <CalendarToday titleAccess="Calendario" /> },
+  { key: 'report', icon: <Assessment titleAccess="Informe" /> },
+  { key: 'view', icon: <Visibility titleAccess="Vista" /> },
 ];
 
 export default function FilterProspects({
@@ -42,8 +42,8 @@ export default function FilterProspects({
       }
     };
 
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   const [filters, setFilters] = useState();
@@ -91,6 +91,7 @@ export default function FilterProspects({
       </div>
 
       <FilterAdvanced
+        idFilter="prospects"
         isOpen={isOpenFilterAdvanced}
         TitleFilters="Filtro avanzados prospectos"
         setIsOpen={setIsOpenFilterAdvanced}
@@ -233,15 +234,15 @@ const FilterProspectsStyled = styled.div`
 
 function ListDropdown() {
   const [open, setOpen] = useState(false);
-  const [query, setQuery] = useState("");
-  const [selected, setSelected] = useState("Todos los prospectos");
+  const [query, setQuery] = useState('');
+  const [selected, setSelected] = useState('Todos los prospectos');
   const dropdownRef = useRef();
 
-  const defaultLists = ["Solution Open Deals", "My All Deals"];
+  const defaultLists = ['Solution Open Deals', 'My All Deals'];
   const myLists = [
-    "Todos los prospectos",
-    "Ultimo seguimiento hace 5 dias",
-    "Prospectos reasignados",
+    'Todos los prospectos',
+    'Ultimo seguimiento hace 5 dias',
+    'Prospectos reasignados',
   ];
 
   const filteredLists = myLists.filter((item) =>
@@ -255,8 +256,8 @@ function ListDropdown() {
       }
     };
 
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   return (
@@ -331,7 +332,7 @@ function ListDropdown() {
 const DropdownContainer = styled.div`
   position: relative;
   width: 260px;
-  font-family: "Inter", sans-serif;
+  font-family: 'Inter', sans-serif;
 `;
 
 const DropdownHeader = styled.button`
@@ -429,11 +430,11 @@ const DropdownMenu = styled(motion.div)`
 const ViewButton = styled(IconButton)`
   border-radius: 0;
   /* background: ${({ isActive }) =>
-    isActive ? "rgba(7, 123, 248, 1)" : "none"}; */
-  /* color: ${({ isActive }) => (isActive ? "#007bff" : "inherit")}; */
+    isActive ? 'rgba(7, 123, 248, 1)' : 'none'}; */
+  /* color: ${({ isActive }) => (isActive ? '#007bff' : 'inherit')}; */
 
   background: ${({ isActive }) =>
-    isActive ? "rgba(14, 122, 238, 0.4) !important" : "#E5EAED !important"};
+    isActive ? 'rgba(14, 122, 238, 0.4) !important' : '#E5EAED !important'};
   border-radius: 4px !important;
   margin-right: 4px !important;
   padding: 4px !important;

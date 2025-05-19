@@ -8,7 +8,13 @@ export const ProviderFilter = ({ children }) => {
   const [typeFiltersUsed, setTypeFiltersUsed] = useState([]);
   const [optionsFilterType, setOptionsFilterType] = useState([]);
   const [optionsFilterTypeSelected, setOptionsFilterTypeSelected] = useState();
-  const [storedFilters, setStoredFilters] = useLocalStorage('filters', []);
+
+  const [idFilter, setIdFilter] = useState('');
+  const [storedFilters, setStoredFilters] = useLocalStorage(idFilter, []);
+  // const [storedFilters, setStoredFilters] = useLocalStorage(
+  //   `filters-${idFilter}`,
+  //   []
+  // );
 
   const [confirmFilters, setConfirmFilters] = useState(false);
   const [hydrateFilters, setHydrateFilters] = useState(false);
@@ -50,7 +56,7 @@ export const ProviderFilter = ({ children }) => {
       setFilters(storedFilters);
       setConfirmFilters(true);
     }
-  }, []);
+  }, [1]);
 
   useEffect(() => {
     if (confirmFilters) {
@@ -202,6 +208,7 @@ export const ProviderFilter = ({ children }) => {
         handleDeleteAllFilters,
         hydrateFilters,
         triggerHydrationFilters,
+        setIdFilter,
       }}
     >
       {children}
