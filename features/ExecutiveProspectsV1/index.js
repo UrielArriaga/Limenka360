@@ -87,7 +87,9 @@ export default function ExecutivesProspectsV1() {
       </div>
     ),
     calendar: <CalendarView data={dataCalendar} actions={actionsItem} />,
-    report: <ReportView />,
+    report: (
+      <ReportView viewTypePage={viewType} setViewTypePage={setViewType} />
+    ),
     view: <div style={{ padding: "2rem" }}>tambien</div>,
   };
 
