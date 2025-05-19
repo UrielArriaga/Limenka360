@@ -464,10 +464,11 @@ const Item = forwardRef(({ task: prospect, index, actions }, externalRef) => {
                   <textarea
                     rows={4}
                     placeholder="Mensaje de WhatsApp"
+                    value={msj}
                     onChange={(e) => setMsj(e.target.value)}
                   />
 
-                  <div className="flex-end">
+                  <div style={{ display: "flex", justifyContent: "flex-end" }}>
                     <div onClick={handleBotClick} style={{ cursor: "pointer" }}>
                       <LimiBotAnimation height="30px" width="30px" />
                     </div>
