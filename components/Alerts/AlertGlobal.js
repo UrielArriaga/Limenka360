@@ -47,7 +47,11 @@ const AlertGlobal = ({ message, severity, show, type }) => {
             variant="filled"
             severity={severity}
             action={
-              <Button color="inherit" size="small" onClick={() => handleAction()}>
+              <Button
+                color="inherit"
+                size="small"
+                onClick={() => handleAction()}
+              >
                 No volver a mostrar
               </Button>
             }

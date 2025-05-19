@@ -1,10 +1,10 @@
 import { AddAlert, AttachMoney, Schedule, WhatsApp } from "@material-ui/icons";
-import React, { forwardRef, useState } from "react";
+import React, { forwardRef, useState, useEffect } from "react";
 import Select from "react-select";
 import { Popover, Tooltip } from "@material-ui/core";
 import styled from "styled-components";
 import { Menu, MenuItem } from "@material-ui/core";
-
+import { api } from "../../../../services/api";
 import { Draggable } from "react-beautiful-dnd";
 import useGlobalCommons from "../../../../hooks/useGlobalCommons";
 import { useSelector } from "react-redux";
@@ -29,7 +29,8 @@ const Item = forwardRef(({ task: prospect, index, actions }, externalRef) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [openScheduleModal, setOpenScheduleModal] = useState(false);
   const [openSendWhatsapp, setOpenSendWhatsapp] = useState(false);
-
+  const [idTemplate, setIdTemplate] = useState(null);
+  const [msj, setMsj] = useState("");
   const [scheduleAnchorEl, setScheduleAnchorEl] = useState(null);
   const [whatsappAnchorEl, setWhatsappAnchorEl] = useState(null);
 
@@ -74,6 +75,8 @@ const Item = forwardRef(({ task: prospect, index, actions }, externalRef) => {
     event.stopPropagation();
     setWhatsappAnchorEl(event.currentTarget);
     setOpenSendWhatsapp(true);
+    setMsj(""); // Limpiar mensaje al abrir
+    setIdTemplate(null); // Limpiar ID de plantilla
   };
 
   // Segumiento con pendiente
@@ -96,7 +99,25 @@ const Item = forwardRef(({ task: prospect, index, actions }, externalRef) => {
     { value: "3d", label: "3 días", icon: <DateRangeIcon /> },
     { value: "5d", label: "5 días", icon: <DateRangeIcon /> },
   ];
+  useEffect(() => {
+    if (!idTemplate) return;
 
+    const getTemplate = () => {
+      setMsj("Cargando Plantilla...");
+      api
+        .put(`templates/replace/${prospect?.id}`, { template: idTemplate })
+        .then((res) => {
+          console.log("Respuesta de API:", res);
+          setMsj(res.data.message);
+        })
+
+        .catch((err) => {
+          console.log(err);
+          setMsj("Error al obtener mensaje, recarga la plantilla.");
+        });
+    };
+    getTemplate();
+  }, [idTemplate]);
   return (
     <Draggable draggableId={prospect.id} index={index}>
       {(provided) => (
@@ -406,12 +427,25 @@ const Item = forwardRef(({ task: prospect, index, actions }, externalRef) => {
                     options={common.templateswp?.results}
                     getOptionLabel={(option) => option.description}
                     getOptionValue={(option) => option.id}
+                    onChange={(selectedOption) => {
+                      if (selectedOption?.message) {
+                        setMsj(selectedOption.message); // Si ya trae el mensaje
+                      } else {
+                        setMsj("Cargando plantilla...");
+                      }
+                      setIdTemplate(selectedOption.id); // Esto dispara el useEffect
+                    }}
                     menuPosition="fixed"
                   />
                 </div>
                 <div className="input-field">
                   <label>Mensaje</label>
-                  <textarea rows={4} placeholder="Mensaje de WhatsApp" />
+                  <textarea
+                    rows={4}
+                    placeholder="Mensaje de WhatsApp"
+                    value={msj}
+                    onChange={(e) => setMsj(e.target.value)}
+                  />
 
                   <div className="flex-end">
                     <LimiBotAnimation height="30px" width="30px" />

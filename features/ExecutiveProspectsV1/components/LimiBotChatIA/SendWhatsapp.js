@@ -1,7 +1,13 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 
-import { AssignmentTurnedIn, CalendarToday, Call, Email, WhatsApp } from "@material-ui/icons";
+import {
+  AssignmentTurnedIn,
+  CalendarToday,
+  Call,
+  Email,
+  WhatsApp,
+} from "@material-ui/icons";
 import dayjs from "dayjs";
 import { IconButton, Tooltip } from "@material-ui/core";
 import { colors } from "../../../../styles/global.styles";
@@ -106,10 +112,19 @@ const AddTrackingStyled = styled.div`
     margin-bottom: 10px;
     /* height: 30px; */
 
-    border: ${props => (props.isFocused ? `1px solid ${colors.primaryColor}` : `1px solid #9e9e9e`)};
-    /* ${props => (props.isFocused ? "border: 1px solid #3aade6;" : "border: 1px solid red")} */
+    border: ${(props) =>
+      props.isFocused
+        ? `1px solid ${colors.primaryColor}`
+        : `1px solid #9e9e9e`};
+    /* ${(props) =>
+      props.isFocused
+        ? "border: 1px solid #3aade6;"
+        : "border: 1px solid red"} */
 
-    /* ${props => (props.isFocused ? "border: 1px solid #3aade6;" : `border: 1px solid #fafafa`)} */
+    /* ${(props) =>
+      props.isFocused
+        ? "border: 1px solid #3aade6;"
+        : `border: 1px solid #fafafa`} */
 
     textarea {
       width: 100%;
@@ -143,7 +158,7 @@ const AddTrackingStyled = styled.div`
     flex-direction: column;
     margin-bottom: 10px;
 
-    ${props => (props.isFocused ? "display: flex;" : "display: none;")}
+    ${(props) => (props.isFocused ? "display: flex;" : "display: none;")}
     .row {
       display: flex;
       align-items: center;
@@ -180,7 +195,7 @@ const AddTrackingStyled = styled.div`
   }
 
   .actions {
-    /* ${props => (props.isFocused ? "display: flex;" : "display: none;")} */
+    /* ${(props) => (props.isFocused ? "display: flex;" : "display: none;")} */
 
     display: flex;
     justify-content: flex-end;

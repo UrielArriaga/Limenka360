@@ -6,22 +6,34 @@ import Select from "react-select";
 import useGlobalCommons from "../../../../../hooks/useGlobalCommons";
 import { commonSelector } from "../../../../../redux/slices/commonSlice";
 import { useSelector } from "react-redux";
+
 import { pendingTypes, quickDates } from "./contants";
 import { Event } from "@material-ui/icons";
 import dayjs from "dayjs";
 import { motion } from "framer-motion";
+import { userSelector } from "../../../../../redux/slices/userSlice";
+import { api } from "../../../../../services/api";
+
 export default function PopoverTracking({
   open,
   onClose,
   setOpenScheduleModal,
   anchorEl,
-  handlSaveTracking,
+  prospect,
 }) {
   const { getCatalogBy } = useGlobalCommons();
   const common = useSelector(commonSelector);
+  const { id_user } = useSelector(userSelector);
+  const [selectedAction, setSelectedAction] = useState(null);
+  const [description, setDescription] = useState("");
+  const [reason, setReason] = useState("");
+  const [phase, setPhase] = useState(null);
+  const [pendingPriority, setPendingPriority] = useState(1); // Valor por defecto: Media (1)
+
   const [showFormPending, setShowFormPending] = useState(false);
   const [pendingType, setPendingType] = useState(null);
   const [pendingDate, setPendingDate] = useState("");
+  const [pendingNotes, setPendingNotes] = useState("");
 
   const handleQuickDate = (type) => {
     const now = dayjs();
@@ -46,8 +58,12 @@ export default function PopoverTracking({
 
     setPendingDate(newDate.format("YYYY-MM-DDTHH:mm"));
   };
-
-  const skipWeekends = (date, dayjs) => {
+  const prioritys = [
+    { name: "Baja", priority: 0 },
+    { name: "Media", priority: 1 },
+    { name: "Alta", priority: 2 },
+  ];
+  const skipWeekends = (date) => {
     let adjustedDate = dayjs(date);
     const dayOfWeek = adjustedDate.day();
 
@@ -60,8 +76,45 @@ export default function PopoverTracking({
     return adjustedDate;
   };
 
-  const formatDateForInput = (date) => {
-    return date.toISOString().slice(0, 16);
+  const handleSave = async () => {
+    const trackingData = {
+      prospectId: prospect.id,
+      status: "1", // Asumiendo que siempre es 2 ahora (ajústalo si cambia)
+      //oportunityId: prospect.oportunityId || "", // Asume que viene en el prospect
+      actionId: selectedAction?.id,
+      reason,
+      observations: description,
+      phaseId: prospect.phaseId || null,
+      createdbyId: id_user,
+      url: "",
+      pendingdata:
+        showFormPending && pendingDate && pendingType
+          ? {
+              date_from: dayjs(pendingDate).toISOString(),
+              description: pendingNotes || "Sin notas",
+              subject: "Sin asunto", // Modifica si tienes campo "asunto"
+              place: "No definido", // Modifica si tienes campo "lugar"
+              priority: pendingPriority.toString(),
+              // pendingstypeId: pendingType.value,
+              zone: "GMT-06:00",
+              remember: true,
+              remember_by: "correo",
+              notify: true,
+              notify_by: "correo",
+            }
+          : {},
+    };
+
+    try {
+      const res = await api.post("trackings/trackingandpending", trackingData);
+      console.log("Seguimiento y pendiente creados:", res.data);
+      onClose();
+    } catch (err) {
+      console.error(
+        "Error al crear seguimiento y pendiente:",
+        err.response?.data || err.message
+      );
+    }
   };
 
   return (
@@ -85,19 +138,27 @@ export default function PopoverTracking({
 
         <div className="inputs">
           <div className="input-field">
-            <label>Accion</label>
+            <label>Acción</label>
             <Select
               onMenuOpen={() => getCatalogBy("actions")}
               placeholder="Selecciona una opción"
+              value={selectedAction}
+              onChange={setSelectedAction}
               options={common.actions?.results}
               getOptionLabel={(option) => option.name}
               getOptionValue={(option) => option.id}
               menuPosition="fixed"
             />
           </div>
+
           <div className="input-field">
             <label>Descripción</label>
-            <textarea rows={4} placeholder="Descripción del seguimiento" />
+            <textarea
+              rows={4}
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder="Descripción del seguimiento"
+            />
           </div>
         </div>
 
@@ -123,6 +184,19 @@ export default function PopoverTracking({
             animate="visible"
             className="addpending"
           >
+            {/* Nueva sección para la prioridad */}
+            <div className="input-field">
+              <label>Prioridad</label>
+              <Select
+                options={prioritys}
+                getOptionLabel={(option) => option.name}
+                getOptionValue={(option) => option.priority}
+                value={prioritys.find((p) => p.priority === pendingPriority)}
+                onChange={(selected) => setPendingPriority(selected.priority)}
+                placeholder="Selecciona prioridad"
+              />
+            </div>
+
             <div className="quick-actions">
               {pendingTypes.map((type) => (
                 <button
@@ -131,6 +205,7 @@ export default function PopoverTracking({
                     pendingType?.value === type.value ? "active" : ""
                   }`}
                   onClick={() => setPendingType(type)}
+                  type="button"
                 >
                   {type.icon}
                   <span>{type.label}</span>
@@ -165,6 +240,8 @@ export default function PopoverTracking({
               <label>Notas del pendiente</label>
               <textarea
                 rows={3}
+                value={pendingNotes}
+                onChange={(e) => setPendingNotes(e.target.value)}
                 placeholder="Escribe aquí las notas importantes del pendiente..."
               />
             </div>
@@ -172,20 +249,10 @@ export default function PopoverTracking({
         )}
 
         <div className="actions">
-          <button
-            className="cancel"
-            onClick={() => {
-              onClose();
-            }}
-          >
+          <button className="cancel" onClick={onClose}>
             Cancelar
           </button>
-          <button
-            className="save"
-            onClick={() => {
-              onClose();
-            }}
-          >
+          <button className="save" onClick={handleSave}>
             Guardar
           </button>
         </div>
