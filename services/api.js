@@ -1,15 +1,15 @@
 import axios from "axios";
-export const ISPRODUCTION = "true";
+export const ISPRODUCTION = "false";
 // export const REDIRECT_URL = process.env.REDIRECT_URL;
 
 export const URL =
   ISPRODUCTION === "true"
-    ? "https://crm-jobs-backend.onrender.com"
+    ? "https://whale-app-yrs6o.ondigitalocean.app/"
     : "http://localhost:5000/";
 
 export const URLSOCKET =
   ISPRODUCTION === "true"
-    ? "https://crm-jobs-backend.onrender.com"
+    ? "https://whale-app-yrs6o.ondigitalocean.app/"
     : "https://apidev.limenka360.com/";
 
 export const PRODUCTIONMODE = ISPRODUCTION === "true" ? true : false;
