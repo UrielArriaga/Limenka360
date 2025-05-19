@@ -1,10 +1,12 @@
 import { AddAlert, AttachMoney, Schedule, WhatsApp } from "@material-ui/icons";
 import React, { forwardRef, useState } from "react";
+import InsertEmoticonIcon from "@material-ui/icons/InsertEmoticon";
+
 import Select from "react-select";
 import { Popover, Tooltip } from "@material-ui/core";
 import styled from "styled-components";
 import { Menu, MenuItem } from "@material-ui/core";
-
+import { api } from "../../../../../services/api";
 import { Draggable } from "react-beautiful-dnd";
 import { useSelector } from "react-redux";
 import dayjs from "dayjs";
@@ -31,8 +33,11 @@ const Item = forwardRef(({ task: prospect, index, actions }, externalRef) => {
   const { getCatalogBy } = useGlobalCommons();
   const common = useSelector(commonSelector);
   const [anchorEl, setAnchorEl] = useState(null);
+  const [botAnchorEl, setBotAnchorEl] = useState(null);
   const [openScheduleModal, setOpenScheduleModal] = useState(false);
   const [openSendWhatsapp, setOpenSendWhatsapp] = useState(false);
+  const [idTemplate, setIdTemplate] = useState(null);
+  const [msj, setMsj] = useState("");
 
   const [scheduleAnchorEl, setScheduleAnchorEl] = useState(null);
   const [whatsappAnchorEl, setWhatsappAnchorEl] = useState(null);
@@ -78,7 +83,57 @@ const Item = forwardRef(({ task: prospect, index, actions }, externalRef) => {
     event.stopPropagation();
     setWhatsappAnchorEl(event.currentTarget);
     setOpenSendWhatsapp(true);
+    setMsj("");
+    setIdTemplate(null);
   };
+  const handleBotClick = (event) => {
+    event.stopPropagation();
+    setBotAnchorEl(event.currentTarget);
+  };
+
+  const handleBotMenuClose = () => {
+    setBotAnchorEl(null);
+  };
+
+  // Segumiento con pendiente
+
+  const [showFormPending, setShowFormPending] = useState(false);
+  const [pendingType, setPendingType] = useState(null);
+  const [pendingDate, setPendingDate] = useState("");
+
+  const pendingTypes = [
+    { value: "call", label: "Llamada", icon: <PhoneIcon /> },
+    { value: "whatsapp", label: "WhatsApp", icon: <WhatsAppIcon /> },
+    { value: "email", label: "Email", icon: <EmailIcon /> },
+    { value: "meeting", label: "Reunión", icon: <GroupIcon /> },
+    { value: "other", label: "Otro", icon: <EventIcon /> },
+  ];
+
+  const quickDates = [
+    { value: "1h", label: "1 hora", icon: <AccessTimeIcon /> },
+    { value: "1d", label: "1 día", icon: <TodayIcon /> },
+    { value: "3d", label: "3 días", icon: <DateRangeIcon /> },
+    { value: "5d", label: "5 días", icon: <DateRangeIcon /> },
+  ];
+  useEffect(() => {
+    if (!idTemplate) return;
+
+    const getTemplate = () => {
+      setMsj("Cargando Plantilla...");
+      api
+        .put(`templates/replace/${prospect?.id}`, { template: idTemplate })
+        .then((res) => {
+          console.log("Respuesta de API:", res);
+          setMsj(res.data.message);
+        })
+
+        .catch((err) => {
+          console.log(err);
+          setMsj("Error al obtener mensaje, recarga la plantilla.");
+        });
+    };
+    getTemplate();
+  }, [idTemplate]);
 
   return (
     <Draggable draggableId={prospect.id} index={index}>
@@ -238,6 +293,7 @@ const Item = forwardRef(({ task: prospect, index, actions }, externalRef) => {
             open={openScheduleModal}
             anchorEl={scheduleAnchorEl}
             onClose={() => setOpenScheduleModal(false)}
+            prospect={prospect}
           />
           {/* <Popover
             open={openScheduleModal}
@@ -392,15 +448,29 @@ const Item = forwardRef(({ task: prospect, index, actions }, externalRef) => {
                     options={common.templateswp?.results}
                     getOptionLabel={(option) => option.description}
                     getOptionValue={(option) => option.id}
+                    onChange={(selectedOption) => {
+                      if (selectedOption?.message) {
+                        setMsj(selectedOption.message);
+                      } else {
+                        setMsj("Cargando plantilla...");
+                      }
+                      setIdTemplate(selectedOption.id);
+                    }}
                     menuPosition="fixed"
                   />
                 </div>
                 <div className="input-field">
                   <label>Mensaje</label>
-                  <textarea rows={4} placeholder="Mensaje de WhatsApp" />
+                  <textarea
+                    rows={4}
+                    placeholder="Mensaje de WhatsApp"
+                    onChange={(e) => setMsj(e.target.value)}
+                  />
 
                   <div className="flex-end">
-                    <LimiBotAnimation height="30px" width="30px" />
+                    <div onClick={handleBotClick} style={{ cursor: "pointer" }}>
+                      <LimiBotAnimation height="30px" width="30px" />
+                    </div>
                   </div>
                 </div>
               </div>
@@ -425,6 +495,96 @@ const Item = forwardRef(({ task: prospect, index, actions }, externalRef) => {
               </div>
             </WhatsappModal>
           </Popover>
+          <Menu
+            anchorEl={botAnchorEl}
+            open={Boolean(botAnchorEl)}
+            onClose={handleBotMenuClose}
+            anchorOrigin={{ vertical: "center", horizontal: "left" }}
+            transformOrigin={{ vertical: "center", horizontal: "right" }}
+            PaperProps={{
+              style: {
+                width: "220px",
+                padding: "8px",
+                borderRadius: "8px",
+              },
+            }}
+          >
+            <div
+              style={{ display: "flex", flexDirection: "column", gap: "8px" }}
+            >
+              <div
+                onClick={handleBotMenuClose}
+                style={{
+                  padding: "8px 12px",
+                  borderRadius: "6px",
+                  cursor: "pointer",
+                  transition: "background 0.2s",
+                }}
+                onMouseEnter={(e) =>
+                  (e.currentTarget.style.background = "#f5f5f5")
+                }
+                onMouseLeave={(e) =>
+                  (e.currentTarget.style.background = "transparent")
+                }
+              >
+                ✨ Reducir el mensaje.
+              </div>
+
+              <div
+                onClick={handleBotMenuClose}
+                style={{
+                  padding: "8px 12px",
+                  borderRadius: "6px",
+                  cursor: "pointer",
+                  transition: "background 0.2s",
+                }}
+                onMouseEnter={(e) =>
+                  (e.currentTarget.style.background = "#f5f5f5")
+                }
+                onMouseLeave={(e) =>
+                  (e.currentTarget.style.background = "transparent")
+                }
+              >
+                💬 Ampliar el mensaje.
+              </div>
+
+              <div
+                onClick={handleBotMenuClose}
+                style={{
+                  padding: "8px 12px",
+                  borderRadius: "6px",
+                  cursor: "pointer",
+                  transition: "background 0.2s",
+                }}
+                onMouseEnter={(e) =>
+                  (e.currentTarget.style.background = "#f5f5f5")
+                }
+                onMouseLeave={(e) =>
+                  (e.currentTarget.style.background = "transparent")
+                }
+              >
+                💼 Hacer más formal el mensaje.
+              </div>
+
+              <div
+                onClick={handleBotMenuClose}
+                style={{
+                  padding: "8px 12px",
+                  borderRadius: "6px",
+                  cursor: "pointer",
+                  transition: "background 0.2s",
+                }}
+                onMouseEnter={(e) =>
+                  (e.currentTarget.style.background = "#f5f5f5")
+                }
+                onMouseLeave={(e) =>
+                  (e.currentTarget.style.background = "transparent")
+                }
+              >
+                😊 Hacer más casual el mensaje .
+              </div>
+            </div>
+          </Menu>
         </ItemProspect>
       )}
     </Draggable>

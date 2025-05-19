@@ -2,405 +2,504 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { api } from "../../services/api";
 import RequestCommon from "../../services/request_Common";
 import dayjs from "dayjs";
-export const getPhasesCommon = createAsyncThunk("common/getphases", async (payload, thunkAPI) => {
-  const { params } = payload;
-  try {
-    let response = await api.get("phases", { params });
-    let data = response.data;
-    return data;
-  } catch (error) {
-    console.log(error);
-    return thunkAPI.rejectWithValue(e.response.data);
+export const getPhasesCommon = createAsyncThunk(
+  "common/getphases",
+  async (payload, thunkAPI) => {
+    const { params } = payload;
+    try {
+      let response = await api.get("phases", { params });
+      let data = response.data;
+      return data;
+    } catch (error) {
+      console.log(error);
+      return thunkAPI.rejectWithValue(e.response.data);
+    }
   }
-});
-export const getCities = createAsyncThunk("common/getcities", async (payload, thunkAPI) => {
-  const { params } = payload;
-  try {
-    let response = await api.get("cities", { params });
-    let data = response.data;
-    return data;
-  } catch (error) {
-    console.log(error);
-    return thunkAPI.rejectWithValue(e.response.data);
+);
+export const getCities = createAsyncThunk(
+  "common/getcities",
+  async (payload, thunkAPI) => {
+    const { params } = payload;
+    try {
+      let response = await api.get("cities", { params });
+      let data = response.data;
+      return data;
+    } catch (error) {
+      console.log(error);
+      return thunkAPI.rejectWithValue(e.response.data);
+    }
   }
-});
+);
 
-export const getActionsCommon = createAsyncThunk("common/getactions", async (payload, thunkAPI) => {
-  const { params } = payload;
-  try {
-    let response = await api.get("actions", { params });
-    let data = response.data;
-    return data;
-  } catch (error) {
-    console.log(error);
-    return thunkAPI.rejectWithValue(e.response.data);
+export const getActionsCommon = createAsyncThunk(
+  "common/getactions",
+  async (payload, thunkAPI) => {
+    const { params } = payload;
+    try {
+      let response = await api.get("actions", { params });
+      let data = response.data;
+      return data;
+    } catch (error) {
+      console.log(error);
+      return thunkAPI.rejectWithValue(e.response.data);
+    }
   }
-});
+);
 
-export const getEntities = createAsyncThunk("common/getentities", async (payload, thunkAPI) => {
-  const { params } = payload;
-  try {
-    let response = await api.get("entities", { params });
-    let data = response.data;
-    return data;
-  } catch (error) {
-    console.log(error);
-    return thunkAPI.rejectWithValue(e.response.data);
+export const getEntities = createAsyncThunk(
+  "common/getentities",
+  async (payload, thunkAPI) => {
+    const { params } = payload;
+    try {
+      let response = await api.get("entities", { params });
+      let data = response.data;
+      return data;
+    } catch (error) {
+      console.log(error);
+      return thunkAPI.rejectWithValue(e.response.data);
+    }
   }
-});
+);
 
-export const getClientTypesCommon = createAsyncThunk("common/getclienttypes", async (payload, thunkAPI) => {
-  const { params } = payload;
+export const getClientTypesCommon = createAsyncThunk(
+  "common/getclienttypes",
+  async (payload, thunkAPI) => {
+    const { params } = payload;
 
-  try {
-    let response = await api.get("clienttypes", { params });
-    let data = response.data;
-    return data;
-  } catch (error) {
-    console.log(error);
-    return thunkAPI.rejectWithValue(e.response.data);
+    try {
+      let response = await api.get("clienttypes", { params });
+      let data = response.data;
+      return data;
+    } catch (error) {
+      console.log(error);
+      return thunkAPI.rejectWithValue(e.response.data);
+    }
   }
-});
+);
 
-export const getOriginsCommon = createAsyncThunk("common/getorigins", async (payload, thunkAPI) => {
-  const { params } = payload;
+export const getOriginsCommon = createAsyncThunk(
+  "common/getorigins",
+  async (payload, thunkAPI) => {
+    const { params } = payload;
 
-  let defaultParams = {
-    limit: 100,
-    count: "1",
-    order: "-createdAt",
-  };
+    let defaultParams = {
+      limit: 100,
+      count: "1",
+      order: "-createdAt",
+    };
 
-  try {
-    let response = await api.get(`origins`, { params });
-    let data = response.data;
-    return data;
-  } catch (error) {
-    console.log(error);
-    return thunkAPI.rejectWithValue(e.response.data);
+    try {
+      let response = await api.get(`origins`, { params });
+      let data = response.data;
+      return data;
+    } catch (error) {
+      console.log(error);
+      return thunkAPI.rejectWithValue(e.response.data);
+    }
   }
-});
+);
 
-export const getLabelsProspect = createAsyncThunk("common/getlabelsprospect", async (payload, thunkAPI) => {
-  const { params } = payload;
-  try {
-    let response = await api.get(`labels`, { params });
-    let data = response.data;
-    return data;
-  } catch (error) {
-    console.log(error);
-    return thunkAPI.rejectWithValue(e.response.data);
+export const getLabelsProspect = createAsyncThunk(
+  "common/getlabelsprospect",
+  async (payload, thunkAPI) => {
+    const { params } = payload;
+    try {
+      let response = await api.get(`labels`, { params });
+      let data = response.data;
+      return data;
+    } catch (error) {
+      console.log(error);
+      return thunkAPI.rejectWithValue(e.response.data);
+    }
   }
-});
-export const getGoalNames = createAsyncThunk("common/getgoalnames", async (payload, thunkAPI) => {
-  const { params } = payload;
-  try {
-    let response = await api.get(`goalnames`, { params });
-    let data = response.data;
-    return data;
-  } catch (error) {
-    console.log(error);
-    return thunkAPI.rejectWithValue(e.response.data);
+);
+export const getGoalNames = createAsyncThunk(
+  "common/getgoalnames",
+  async (payload, thunkAPI) => {
+    const { params } = payload;
+    try {
+      let response = await api.get(`goalnames`, { params });
+      let data = response.data;
+      return data;
+    } catch (error) {
+      console.log(error);
+      return thunkAPI.rejectWithValue(e.response.data);
+    }
   }
-});
+);
 
-export const getGoalTypes = createAsyncThunk("common/getgoaltypes", async (payload, thunkAPI) => {
-  const { params } = payload;
-  try {
-    let response = await api.get(`goaltypes`, { params });
-    let data = response.data;
-    return data;
-  } catch (error) {
-    console.log(error);
-    return thunkAPI.rejectWithValue(e.response.data);
+export const getGoalTypes = createAsyncThunk(
+  "common/getgoaltypes",
+  async (payload, thunkAPI) => {
+    const { params } = payload;
+    try {
+      let response = await api.get(`goaltypes`, { params });
+      let data = response.data;
+      return data;
+    } catch (error) {
+      console.log(error);
+      return thunkAPI.rejectWithValue(e.response.data);
+    }
   }
-});
+);
 
-export const getChannelsCommon = createAsyncThunk("common/getChannels", async (payload, thunkAPI) => {
-  const { params } = payload;
-  try {
-    let response = await api.get(`channels`, { params });
-    let data = response.data;
-    return data;
-  } catch (error) {
-    console.log(error);
-    return thunkAPI.rejectWithValue(e.response.data);
+export const getChannelsCommon = createAsyncThunk(
+  "common/getChannels",
+  async (payload, thunkAPI) => {
+    const { params } = payload;
+    try {
+      let response = await api.get(`channels`, { params });
+      let data = response.data;
+      return data;
+    } catch (error) {
+      console.log(error);
+      return thunkAPI.rejectWithValue(e.response.data);
+    }
   }
-});
+);
 
-export const getSpecialtiesCommon = createAsyncThunk("common/getspecialties", async (payload, thunkAPI) => {
-  const { params } = payload;
-  try {
-    let response = await api.get(`specialties`, { params });
-    let data = response.data;
-    return data;
-  } catch (error) {
-    console.log(error);
-    return thunkAPI.rejectWithValue(e.response.data);
+export const getSpecialtiesCommon = createAsyncThunk(
+  "common/getspecialties",
+  async (payload, thunkAPI) => {
+    const { params } = payload;
+    try {
+      let response = await api.get(`specialties`, { params });
+      let data = response.data;
+      return data;
+    } catch (error) {
+      console.log(error);
+      return thunkAPI.rejectWithValue(e.response.data);
+    }
   }
-});
+);
 
-export const getCategoriesCommon = createAsyncThunk("common/getcategories", async (payload, thunkAPI) => {
-  const { params } = payload;
-  try {
-    let response = await api.get(`categories`, { params });
-    let data = response.data;
-    return data;
-  } catch (error) {
-    console.log(error);
-    return thunkAPI.rejectWithValue(e.response.data);
+export const getCategoriesCommon = createAsyncThunk(
+  "common/getcategories",
+  async (payload, thunkAPI) => {
+    const { params } = payload;
+    try {
+      let response = await api.get(`categories`, { params });
+      let data = response.data;
+      return data;
+    } catch (error) {
+      console.log(error);
+      return thunkAPI.rejectWithValue(e.response.data);
+    }
   }
-});
+);
 
-export const getUsersCommon = createAsyncThunk("common/getusers", async (payload, thunkAPI) => {
-  const { params } = payload;
-  try {
-    let response = await api.get(`ejecutives`, { params });
-    let data = response.data;
-    return data;
-  } catch (error) {
-    console.log(error);
-    return thunkAPI.rejectWithValue(e.response.data);
+export const getUsersCommon = createAsyncThunk(
+  "common/getusers",
+  async (payload, thunkAPI) => {
+    const { params } = payload;
+    try {
+      let response = await api.get(`ejecutives`, { params });
+      let data = response.data;
+      return data;
+    } catch (error) {
+      console.log(error);
+      return thunkAPI.rejectWithValue(e.response.data);
+    }
   }
-});
+);
 
-export const getClientsCompany = createAsyncThunk("common/getClientsCompanies", async (payload, thunkAPI) => {
-  const { params } = payload;
-  try {
-    let response = await api.get(`clientscompanies`, { params });
-    let data = response.data;
-    return data;
-  } catch (error) {
-    console.log(error);
-    return thunkAPI.rejectWithValue(e.response.data);
+export const getClientsCompany = createAsyncThunk(
+  "common/getClientsCompanies",
+  async (payload, thunkAPI) => {
+    const { params } = payload;
+    try {
+      let response = await api.get(`clientscompanies`, { params });
+      let data = response.data;
+      return data;
+    } catch (error) {
+      console.log(error);
+      return thunkAPI.rejectWithValue(e.response.data);
+    }
   }
-});
+);
 
-export const getDiscardReasons = createAsyncThunk("common/getdiscardreasons", async (payload, thunkAPI) => {
-  const { params } = payload;
-  try {
-    let response = await api.get(`reasons`, { params });
-    let data = response.data;
-    return data;
-  } catch (error) {
-    console.log(error);
-    return thunkAPI.rejectWithValue(e.response.data);
+export const getDiscardReasons = createAsyncThunk(
+  "common/getdiscardreasons",
+  async (payload, thunkAPI) => {
+    const { params } = payload;
+    try {
+      let response = await api.get(`reasons`, { params });
+      let data = response.data;
+      return data;
+    } catch (error) {
+      console.log(error);
+      return thunkAPI.rejectWithValue(e.response.data);
+    }
   }
-});
+);
 
-export const getProductsCommon = createAsyncThunk("common/getProductsCommon", async (payload, thunkAPI) => {
-  const { params } = payload;
-  try {
-    let product = await api.get(`products`, { params });
-    let data = product.data;
-    return data;
-  } catch (error) {
-    console.log(error);
-    return thunkAPI.rejectWithValue(e.response.data);
+export const getProductsCommon = createAsyncThunk(
+  "common/getProductsCommon",
+  async (payload, thunkAPI) => {
+    const { params } = payload;
+    try {
+      let product = await api.get(`products`, { params });
+      let data = product.data;
+      return data;
+    } catch (error) {
+      console.log(error);
+      return thunkAPI.rejectWithValue(e.response.data);
+    }
   }
-});
+);
 
-export const getActivitiesCommon = createAsyncThunk("common/getActivities", async (payload, thunkAPI) => {
-  const { params = {} } = payload;
-  try {
-    let activies = await api.get(`activities?include=ejecutive`, { params });
-    let data = activies.data;
-    return data;
-  } catch (error) {
-    console.log(error);
-    return thunkAPI.rejectWithValue(error.response.data);
+export const getActivitiesCommon = createAsyncThunk(
+  "common/getActivities",
+  async (payload, thunkAPI) => {
+    const { params = {} } = payload;
+    try {
+      let activies = await api.get(`activities?include=ejecutive`, { params });
+      let data = activies.data;
+      return data;
+    } catch (error) {
+      console.log(error);
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
   }
-});
-export const getGroupsCommon = createAsyncThunk("common/getGroupsCommon", async (payload, thunkAPI) => {
-  const { params = {} } = payload;
-  try {
-    let groups = await api.get(`groups`, { params });
-    let data = groups.data;
-    return data;
-  } catch (error) {
-    console.log(error);
-    return thunkAPI.rejectWithValue(error.response.data);
+);
+export const getGroupsCommon = createAsyncThunk(
+  "common/getGroupsCommon",
+  async (payload, thunkAPI) => {
+    const { params = {} } = payload;
+    try {
+      let groups = await api.get(`groups`, { params });
+      let data = groups.data;
+      return data;
+    } catch (error) {
+      console.log(error);
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
   }
-});
-export const getCfdisCommon = createAsyncThunk("common/getCfdisCommon", async (payload, thunkAPI) => {
-  const { params = {} } = payload;
-  try {
-    let cfdis = await api.get(`cfdi`, { params });
-    let data = cfdis.data;
-    return data;
-  } catch (error) {
-    console.log(error);
-    return thunkAPI.rejectWithValue(error.response.data);
+);
+export const getCfdisCommon = createAsyncThunk(
+  "common/getCfdisCommon",
+  async (payload, thunkAPI) => {
+    const { params = {} } = payload;
+    try {
+      let cfdis = await api.get(`cfdi`, { params });
+      let data = cfdis.data;
+      return data;
+    } catch (error) {
+      console.log(error);
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
   }
-});
+);
 
-export const getpaymentways = createAsyncThunk("common/getpaymentways", async (payload, thunkAPI) => {
-  const { params = {} } = payload;
-  try {
-    let paymentways = await api.get(`paymentways`, { params });
-    let data = paymentways.data;
-    return data;
-  } catch (error) {
-    console.log(error);
-    return thunkAPI.rejectWithValue(error.response.data);
+export const getpaymentways = createAsyncThunk(
+  "common/getpaymentways",
+  async (payload, thunkAPI) => {
+    const { params = {} } = payload;
+    try {
+      let paymentways = await api.get(`paymentways`, { params });
+      let data = paymentways.data;
+      return data;
+    } catch (error) {
+      console.log(error);
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
   }
-});
-export const getpaymentmethods = createAsyncThunk("common/getpaymentmethods", async (payload, thunkAPI) => {
-  const { params = {} } = payload;
-  try {
-    let paymentmethod = await api.get(`paymentmethods`, { params });
-    let data = paymentmethod.data;
+);
+export const getpaymentmethods = createAsyncThunk(
+  "common/getpaymentmethods",
+  async (payload, thunkAPI) => {
+    const { params = {} } = payload;
+    try {
+      let paymentmethod = await api.get(`paymentmethods`, { params });
+      let data = paymentmethod.data;
 
-    return data;
-  } catch (error) {
-    console.log(error);
-    return thunkAPI.rejectWithValue(error.response.data);
+      return data;
+    } catch (error) {
+      console.log(error);
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
   }
-});
+);
 
 // pendingstypes
-export const getPendingsTypes = createAsyncThunk("common/getpendingstypes", async (payload, thunkAPI) => {
-  const { params = {} } = payload;
-  try {
-    let pendingstypes = await api.get(`pendingstypes`, { params });
-    let data = pendingstypes.data;
+export const getPendingsTypes = createAsyncThunk(
+  "common/getpendingstypes",
+  async (payload, thunkAPI) => {
+    const { params = {} } = payload;
+    try {
+      let pendingstypes = await api.get(`pendingstypes`, { params });
+      let data = pendingstypes.data;
 
-    return data;
-  } catch (error) {
-    console.log(error);
-    return thunkAPI.rejectWithValue(error.response.data);
+      return data;
+    } catch (error) {
+      console.log(error);
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
   }
-});
-export const gettaxregimens = createAsyncThunk("common/gettaxregimens", async (payload, thunkAPI) => {
-  const { params = {} } = payload;
-  try {
-    let taxRegimes = await api.get(`taxregimes`, { params });
-    let data = taxRegimes.data;
+);
+export const gettaxregimens = createAsyncThunk(
+  "common/gettaxregimens",
+  async (payload, thunkAPI) => {
+    const { params = {} } = payload;
+    try {
+      let taxRegimes = await api.get(`taxregimes`, { params });
+      let data = taxRegimes.data;
 
-    return data;
-  } catch (error) {
-    console.log(error);
-    return thunkAPI.rejectWithValue(error.response.data);
+      return data;
+    } catch (error) {
+      console.log(error);
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
   }
-});
-export const getpaymentAccount = createAsyncThunk("common/getpaymentAccount", async (payload, thunkAPI) => {
-  const { params = {} } = payload;
-  try {
-    let paymentsacounts = await api.get(`paymentsacounts`, { params });
-    let data = paymentsacounts.data;
+);
+export const getpaymentAccount = createAsyncThunk(
+  "common/getpaymentAccount",
+  async (payload, thunkAPI) => {
+    const { params = {} } = payload;
+    try {
+      let paymentsacounts = await api.get(`paymentsacounts`, { params });
+      let data = paymentsacounts.data;
 
-    return data;
-  } catch (error) {
-    console.log(error);
-    return thunkAPI.rejectWithValue(error.response.data);
+      return data;
+    } catch (error) {
+      console.log(error);
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
   }
-});
+);
 
-export const getTypeSales = createAsyncThunk("common/getTypeSales", async (payload, thunkAPI) => {
-  const { params = {} } = payload;
-  try {
-    let paymentsacounts = await api.get(`typesales`, { params });
-    let data = paymentsacounts.data;
+export const getTypeSales = createAsyncThunk(
+  "common/getTypeSales",
+  async (payload, thunkAPI) => {
+    const { params = {} } = payload;
+    try {
+      let paymentsacounts = await api.get(`typesales`, { params });
+      let data = paymentsacounts.data;
 
-    return data;
-  } catch (error) {
-    console.log(error);
-    return thunkAPI.rejectWithValue(error.response.data);
+      return data;
+    } catch (error) {
+      console.log(error);
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
   }
-});
+);
 
-export const getDiscardReasonsOrders = createAsyncThunk("common/getDiscardReasonsOrders", async (payload, thunkAPI) => {
-  const { params = {} } = payload;
-  try {
-    let response = await api.get(`orderreasons`, { params });
-    let data = response.data;
-    return data;
-  } catch (error) {
-    console.log(error);
-    return thunkAPI.rejectWithValue(e.response.data);
+export const getDiscardReasonsOrders = createAsyncThunk(
+  "common/getDiscardReasonsOrders",
+  async (payload, thunkAPI) => {
+    const { params = {} } = payload;
+    try {
+      let response = await api.get(`orderreasons`, { params });
+      let data = response.data;
+      return data;
+    } catch (error) {
+      console.log(error);
+      return thunkAPI.rejectWithValue(e.response.data);
+    }
   }
-});
-export const getshippingtypes = createAsyncThunk("common/getshippingtypes", async (payload, thunkAPI) => {
-  const { params = {} } = payload;
-  try {
-    let response = await api.get(`shippingtypes`, { params });
-    let data = response.data;
-    return data;
-  } catch (error) {
-    console.log(error);
-    return thunkAPI.rejectWithValue(e.response.data);
+);
+export const getshippingtypes = createAsyncThunk(
+  "common/getshippingtypes",
+  async (payload, thunkAPI) => {
+    const { params = {} } = payload;
+    try {
+      let response = await api.get(`shippingtypes`, { params });
+      let data = response.data;
+      return data;
+    } catch (error) {
+      console.log(error);
+      return thunkAPI.rejectWithValue(e.response.data);
+    }
   }
-});
-export const getOrdersStatus = createAsyncThunk("common/getOrdersStatus", async (payload, thunkAPI) => {
-  const { params = {} } = payload;
-  try {
-    let response = await api.get(`orderstatus`, { params });
-    let data = response.data;
-    return data;
-  } catch (error) {
-    console.log(error);
-    return thunkAPI.rejectWithValue(e.response.data);
+);
+export const getOrdersStatus = createAsyncThunk(
+  "common/getOrdersStatus",
+  async (payload, thunkAPI) => {
+    const { params = {} } = payload;
+    try {
+      let response = await api.get(`orderstatus`, { params });
+      let data = response.data;
+      return data;
+    } catch (error) {
+      console.log(error);
+      return thunkAPI.rejectWithValue(e.response.data);
+    }
   }
-});
-export const getfileTypes = createAsyncThunk("common/getfileTypes", async (payload, thunkAPI) => {
-  const { params = {} } = payload;
-  try {
-    let filetypes = await api.get(`filetypes`, { params });
-    let data = filetypes.data;
-    return data;
-  } catch (error) {
-    console.log(error);
-    return thunkAPI.rejectWithValue(error.response.data);
+);
+export const getfileTypes = createAsyncThunk(
+  "common/getfileTypes",
+  async (payload, thunkAPI) => {
+    const { params = {} } = payload;
+    try {
+      let filetypes = await api.get(`filetypes`, { params });
+      let data = filetypes.data;
+      return data;
+    } catch (error) {
+      console.log(error);
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
   }
-});
+);
 
-export const getConcepts = createAsyncThunk("common/getConcepts", async (payload, thunkAPI) => {
-  const { params = {} } = payload;
-  try {
-    let concept = await api.get("oportunities", { params });
-    let data = concept.data;
-    return data;
-  } catch (error) {
-    console.log(error);
-    return thunkAPI.rejectWithValue(error.response.data);
+export const getConcepts = createAsyncThunk(
+  "common/getConcepts",
+  async (payload, thunkAPI) => {
+    const { params = {} } = payload;
+    try {
+      let concept = await api.get("oportunities", { params });
+      let data = concept.data;
+      return data;
+    } catch (error) {
+      console.log(error);
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
   }
-});
+);
 
-export const getBrandsCommon = createAsyncThunk("common/getBrands", async (payload, thunkAPI) => {
-  const { params = {} } = payload;
-  try {
-    let brands = await api.get("brands", { params });
-    let data = brands.data;
-    return data;
-  } catch (error) {
-    console.log(error);
-    return thunkAPI.rejectWithValue(error.response.data);
+export const getBrandsCommon = createAsyncThunk(
+  "common/getBrands",
+  async (payload, thunkAPI) => {
+    const { params = {} } = payload;
+    try {
+      let brands = await api.get("brands", { params });
+      let data = brands.data;
+      return data;
+    } catch (error) {
+      console.log(error);
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
   }
-});
+);
 
-export const getTypeProductsCommon = createAsyncThunk("common/getTypeProducts", async (payload, thunkAPI) => {
-  const { params = {} } = payload;
-  try {
-    let typeProducts = await api.get("productstypes", { params });
-    let data = typeProducts.data;
-    return data;
-  } catch (error) {
-    console.log(error);
-    return thunkAPI.rejectWithValue(error.response.data);
+export const getTypeProductsCommon = createAsyncThunk(
+  "common/getTypeProducts",
+  async (payload, thunkAPI) => {
+    const { params = {} } = payload;
+    try {
+      let typeProducts = await api.get("productstypes", { params });
+      let data = typeProducts.data;
+      return data;
+    } catch (error) {
+      console.log(error);
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
   }
-});
+);
 
-export const getRejectedReasonsCommon = createAsyncThunk("common/getRejectedReasons", async (payload, thunkAPI) => {
-  const { params = {} } = payload;
-  try {
-    let rejectedReasons = await api.get("rejected", { params });
-    let data = rejectedReasons.data;
-    return data;
-  } catch (error) {
-    console.log(error);
-    return thunkAPI.rejectWithValue(error.response.data);
+export const getRejectedReasonsCommon = createAsyncThunk(
+  "common/getRejectedReasons",
+  async (payload, thunkAPI) => {
+    const { params = {} } = payload;
+    try {
+      let rejectedReasons = await api.get("rejected", { params });
+      let data = rejectedReasons.data;
+      return data;
+    } catch (error) {
+      console.log(error);
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
   }
-});
+);
 export const getImportantResasonCommon = createAsyncThunk(
   "common/getImportantResasonCommon",
   async (payload, thunkAPI) => {
@@ -416,207 +515,258 @@ export const getImportantResasonCommon = createAsyncThunk(
   }
 );
 
-export const getTemplatesWp = createAsyncThunk("common/getTemplatesWp", async (payload, thunkAPI) => {
-  const { params = {} } = payload;
+export const getTemplatesWp = createAsyncThunk(
+  "common/getTemplatesWp",
+  async (payload, thunkAPI) => {
+    const { params = {} } = payload;
 
-  try {
-    let templates = await api.get("templates", { params });
-    let data = templates.data;
-    return data;
-  } catch (error) {
-    console.log(error);
-    return thunkAPI.rejectWithValue(error.response.data);
+    try {
+      let templates = await api.get("templates", { params });
+      let data = templates.data;
+      return data;
+    } catch (error) {
+      console.log(error);
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
   }
-});
+);
 
-export const getProductsTypes = createAsyncThunk("common/getproductstypes", async (payload, thunkAPI) => {
-  const { params } = payload;
-  try {
-    let response = await api.get(`productstypes`, { params });
-    let data = response.data;
-    return data;
-  } catch (error) {
-    console.log(error);
-    return thunkAPI.rejectWithValue(e.response.data);
+export const getProductsTypes = createAsyncThunk(
+  "common/getproductstypes",
+  async (payload, thunkAPI) => {
+    const { params } = payload;
+    try {
+      let response = await api.get(`productstypes`, { params });
+      let data = response.data;
+      return data;
+    } catch (error) {
+      console.log(error);
+      return thunkAPI.rejectWithValue(e.response.data);
+    }
   }
-});
-export const getBrands = createAsyncThunk("common/getbrands", async (payload, thunkAPI) => {
-  const { params } = payload;
-  try {
-    let response = await api.get(`brands`, { params });
-    let data = response.data;
-    return data;
-  } catch (error) {
-    console.log(error);
-    return thunkAPI.rejectWithValue(e.response.data);
+);
+export const getBrands = createAsyncThunk(
+  "common/getbrands",
+  async (payload, thunkAPI) => {
+    const { params } = payload;
+    try {
+      let response = await api.get(`brands`, { params });
+      let data = response.data;
+      return data;
+    } catch (error) {
+      console.log(error);
+      return thunkAPI.rejectWithValue(e.response.data);
+    }
   }
-});
+);
 
-export const getpaymentperiods = createAsyncThunk("common/getpaymentperiods", async (payload, thunkAPI) => {
-  const { params = {} } = payload;
-  try {
-    let paymentperiods = await api.get(`paymentperiods`, { params });
-    let data = paymentperiods.data;
+export const getpaymentperiods = createAsyncThunk(
+  "common/getpaymentperiods",
+  async (payload, thunkAPI) => {
+    const { params = {} } = payload;
+    try {
+      let paymentperiods = await api.get(`paymentperiods`, { params });
+      let data = paymentperiods.data;
 
-    return data;
-  } catch (error) {
-    console.log(error);
-    return thunkAPI.rejectWithValue(error.response.data);
+      return data;
+    } catch (error) {
+      console.log(error);
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
   }
-});
+);
 
-export const getWarehousesStatus = createAsyncThunk("common/getwarehousesstatus", async (payload, thunkAPI) => {
-  const { params = {} } = payload;
-  try {
-    let warehouses = await api.get("warehousesstatus", { params });
-    let data = warehouses.data;
-    return data;
-  } catch (error) {
-    console.log(error);
-    return thunkAPI.rejectWithValue(error.response.data);
+export const getWarehousesStatus = createAsyncThunk(
+  "common/getwarehousesstatus",
+  async (payload, thunkAPI) => {
+    const { params = {} } = payload;
+    try {
+      let warehouses = await api.get("warehousesstatus", { params });
+      let data = warehouses.data;
+      return data;
+    } catch (error) {
+      console.log(error);
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
   }
-});
+);
 
-export const getTaxInformations = createAsyncThunk("common/gettaxinformations", async (payload, thunkAPI) => {
-  const { params = {} } = payload;
-  try {
-    let tax = await api.get("taxinformation", { params });
-    let data = tax.data;
-    return data;
-  } catch (error) {
-    console.log(error);
-    return thunkAPI.rejectWithValue(error.response.data);
+export const getTaxInformations = createAsyncThunk(
+  "common/gettaxinformations",
+  async (payload, thunkAPI) => {
+    const { params = {} } = payload;
+    try {
+      let tax = await api.get("taxinformation", { params });
+      let data = tax.data;
+      return data;
+    } catch (error) {
+      console.log(error);
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
   }
-});
+);
 
-export const getProviders = createAsyncThunk("common/getproviders", async (payload, thunkAPI) => {
-  const { params = {} } = payload;
-  try {
-    let providers = await api.get("providers", { params });
-    let data = providers.data;
-    return data;
-  } catch (error) {
-    console.log(error);
-    return thunkAPI.rejectWithValue(error.response.data);
+export const getProviders = createAsyncThunk(
+  "common/getproviders",
+  async (payload, thunkAPI) => {
+    const { params = {} } = payload;
+    try {
+      let providers = await api.get("providers", { params });
+      let data = providers.data;
+      return data;
+    } catch (error) {
+      console.log(error);
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
   }
-});
-export const getStatuspoo = createAsyncThunk("common/getStatuspoo", async (payload, thunkAPI) => {
-  const { params = {} } = payload;
-  try {
-    let status = await api.get("statuspoo", { params });
-    let data = status.data;
+);
+export const getStatuspoo = createAsyncThunk(
+  "common/getStatuspoo",
+  async (payload, thunkAPI) => {
+    const { params = {} } = payload;
+    try {
+      let status = await api.get("statuspoo", { params });
+      let data = status.data;
 
-    return data;
-  } catch (error) {
-    console.log(error);
-    return thunkAPI.rejectWithValue(error.response.data);
+      return data;
+    } catch (error) {
+      console.log(error);
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
   }
-});
+);
 
-export const getDrivers = createAsyncThunk("common/getDrivers", async (payload, thunkAPI) => {
-  const { params = {} } = payload;
-  try {
-    let drivers = await api.get("drivers", { params });
-    let data = drivers.data;
-    return data;
-  } catch (error) {
-    console.log(error);
-    return thunkAPI.rejectWithValue(error.response.data);
+export const getDrivers = createAsyncThunk(
+  "common/getDrivers",
+  async (payload, thunkAPI) => {
+    const { params = {} } = payload;
+    try {
+      let drivers = await api.get("drivers", { params });
+      let data = drivers.data;
+      return data;
+    } catch (error) {
+      console.log(error);
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
   }
-});
-export const getTransportunits = createAsyncThunk("common/getTransportunits", async (payload, thunkAPI) => {
-  const { params = {} } = payload;
-  try {
-    let transportunits = await api.get("transportunits", { params });
-    let data = transportunits.data;
-    return data;
-  } catch (error) {
-    console.log(error);
-    return thunkAPI.rejectWithValue(error.response.data);
+);
+export const getTransportunits = createAsyncThunk(
+  "common/getTransportunits",
+  async (payload, thunkAPI) => {
+    const { params = {} } = payload;
+    try {
+      let transportunits = await api.get("transportunits", { params });
+      let data = transportunits.data;
+      return data;
+    } catch (error) {
+      console.log(error);
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
   }
-});
+);
 
-export const getOrderRejectedReasons = createAsyncThunk("common/getorderrejected", async (payload, thunkAPI) => {
-  const { params = {} } = payload;
-  try {
-    let orderrejected = await api.get("orderrejected", { params });
-    let data = orderrejected.data;
-    return data;
-  } catch (error) {
-    console.log(error);
-    return thunkAPI.rejectWithValue(error.response.data);
+export const getOrderRejectedReasons = createAsyncThunk(
+  "common/getorderrejected",
+  async (payload, thunkAPI) => {
+    const { params = {} } = payload;
+    try {
+      let orderrejected = await api.get("orderrejected", { params });
+      let data = orderrejected.data;
+      return data;
+    } catch (error) {
+      console.log(error);
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
   }
-});
+);
 
-export const getDeliveryTimes = createAsyncThunk("common/getDeliveryTimes", async (payload, thunkAPI) => {
-  const { params = {} } = payload;
-  try {
-    let deliverytimes = await api.get(`deliverytimes`, { params });
-    let data = deliverytimes.data;
-    return data;
-  } catch (error) {
-    console.log(error);
-    return thunkAPI.rejectWithValue(error.response.data);
+export const getDeliveryTimes = createAsyncThunk(
+  "common/getDeliveryTimes",
+  async (payload, thunkAPI) => {
+    const { params = {} } = payload;
+    try {
+      let deliverytimes = await api.get(`deliverytimes`, { params });
+      let data = deliverytimes.data;
+      return data;
+    } catch (error) {
+      console.log(error);
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
   }
-});
-export const getWareHouses = createAsyncThunk("common/getWareHouses", async (payload, thunkAPI) => {
-  const { params = {} } = payload;
-  try {
-    let warehouses = await api.get(`warehouses`, { params });
-    let data = warehouses.data;
-    return data;
-  } catch (error) {
-    console.log(error);
-    return thunkAPI.rejectWithValue(error.response.data);
+);
+export const getWareHouses = createAsyncThunk(
+  "common/getWareHouses",
+  async (payload, thunkAPI) => {
+    const { params = {} } = payload;
+    try {
+      let warehouses = await api.get(`warehouses`, { params });
+      let data = warehouses.data;
+      return data;
+    } catch (error) {
+      console.log(error);
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
   }
-});
-export const getTypesEntries = createAsyncThunk("common/getTypesEntries", async (payload, thunkAPI) => {
-  const { params = {} } = payload;
-  try {
-    let typesentries = await api.get(`typesentries`, { params });
-    let data = typesentries.data;
-    return data;
-  } catch (error) {
-    console.log(error);
-    return thunkAPI.rejectWithValue(error.response.data);
+);
+export const getTypesEntries = createAsyncThunk(
+  "common/getTypesEntries",
+  async (payload, thunkAPI) => {
+    const { params = {} } = payload;
+    try {
+      let typesentries = await api.get(`typesentries`, { params });
+      let data = typesentries.data;
+      return data;
+    } catch (error) {
+      console.log(error);
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
   }
-});
+);
 
-export const getNotifications = createAsyncThunk("common/getNotificationsNews", async (payload, thunkAPI) => {
-  const { params = {} } = payload;
-  try {
-    let notifications = await api.get(`notifications`, { params });
-    let data = notifications.data;
-    return data;
-  } catch (error) {
-    console.log(error);
-    return thunkAPI.rejectWithValue(error.response.data);
+export const getNotifications = createAsyncThunk(
+  "common/getNotificationsNews",
+  async (payload, thunkAPI) => {
+    const { params = {} } = payload;
+    try {
+      let notifications = await api.get(`notifications`, { params });
+      let data = notifications.data;
+      return data;
+    } catch (error) {
+      console.log(error);
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
   }
-});
-export const getOrderReturn = createAsyncThunk("common/getOrderReturn", async (payload, thunkAPI) => {
-  const { params = {} } = payload;
-  try {
-    let typereturns = await api.get("typereturns", { params });
-    let data = typereturns.data;
-    console.log("ksdjfkdfdf", data);
-    return data;
-  } catch (error) {
-    console.log(error);
-    return thunkAPI.rejectWithValue(error.response.data);
+);
+export const getOrderReturn = createAsyncThunk(
+  "common/getOrderReturn",
+  async (payload, thunkAPI) => {
+    const { params = {} } = payload;
+    try {
+      let typereturns = await api.get("typereturns", { params });
+      let data = typereturns.data;
+      console.log("ksdjfkdfdf", data);
+      return data;
+    } catch (error) {
+      console.log(error);
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
   }
-});
+);
 
-export const getReasonWarranties = createAsyncThunk("common/getReasonWarranties", async (payload, thunkAPI) => {
-  const { params = {} } = payload;
-  try {
-    let reasons = await api.get(`reasonwarranties`, { params });
-    let data = reasons.data;
-    return data;
-  } catch (error) {
-    console.log(error);
-    return thunkAPI.rejectWithValue(error.response.data);
+export const getReasonWarranties = createAsyncThunk(
+  "common/getReasonWarranties",
+  async (payload, thunkAPI) => {
+    const { params = {} } = payload;
+    try {
+      let reasons = await api.get(`reasonwarranties`, { params });
+      let data = reasons.data;
+      return data;
+    } catch (error) {
+      console.log(error);
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
   }
-});
+);
 
 export const commonSlice = createSlice({
   name: "common",
@@ -934,9 +1084,24 @@ export const commonSlice = createSlice({
       { label: "Rango", value: "range", startRange: "", finishRange: "" },
     ],
     daysFilter: [
-      { label: "Hoy", value: [dayjs().startOf("day").format(), dayjs().endOf("day").format()] },
-      { label: "Semana Actual", value: [dayjs().startOf("week").format(), dayjs().endOf("week").format()] },
-      { label: "Mes Actual", value: [dayjs().startOf("month").format(), dayjs().endOf("month").format()] },
+      {
+        label: "Hoy",
+        value: [dayjs().startOf("day").format(), dayjs().endOf("day").format()],
+      },
+      {
+        label: "Semana Actual",
+        value: [
+          dayjs().startOf("week").format(),
+          dayjs().endOf("week").format(),
+        ],
+      },
+      {
+        label: "Mes Actual",
+        value: [
+          dayjs().startOf("month").format(),
+          dayjs().endOf("month").format(),
+        ],
+      },
       { label: "Rango", value: "range" },
     ],
     filtersCertainty: [
@@ -954,10 +1119,20 @@ export const commonSlice = createSlice({
     optionIsClient: [{ label: "Mostrar", value: true, type: "Clientes" }],
     filterRejected: [{ label: "Mostrar", value: true, type: "Rechazadas" }],
     filterDescarted: [{ label: "Mostrar", value: true, type: "Descartados" }],
-    filterBill: [{ label: "Mostrar pedidos con Factura", value: true, type: "Factura" }],
+    filterBill: [
+      { label: "Mostrar pedidos con Factura", value: true, type: "Factura" },
+    ],
     filterVerified: [
-      { label: "Mostrar pedidos Verificados", value: true, type: "Verificados" },
-      { label: "Mostrar pedidos No Verificados", value: false, type: "Verificados" },
+      {
+        label: "Mostrar pedidos Verificados",
+        value: true,
+        type: "Verificados",
+      },
+      {
+        label: "Mostrar pedidos No Verificados",
+        value: false,
+        type: "Verificados",
+      },
     ],
     filterImportant: [{ label: "Mostrar", value: true, type: "Importantes" }],
     datesStatusOrder: [
@@ -986,25 +1161,35 @@ export const commonSlice = createSlice({
   reducers: {
     AddCommentToOrder: (state, action) => {
       const dataNotifications = action.payload;
-      state.notifications.results = [...state.notifications.results, dataNotifications];
+      state.notifications.results = [
+        ...state.notifications.results,
+        dataNotifications,
+      ];
     },
     RemoveNotification: (state, action) => {
       const dataNotifications = action.payload;
-      state.notifications.results = state.notifications.results.filter(item => item.id != dataNotifications.id);
+      state.notifications.results = state.notifications.results.filter(
+        (item) => item.id != dataNotifications.id
+      );
     },
     UpdateNotification: (state, action) => {
       const dataNotifications = action.payload;
       state.notifications.results = [
-        ...state.notifications.results.filter(item => item.id != dataNotifications.id),
+        ...state.notifications.results.filter(
+          (item) => item.id != dataNotifications.id
+        ),
         dataNotifications,
       ];
     },
-    hideNotification: state => {
+    hideNotification: (state) => {
       state.notifications.show = false;
     },
     AddMultipleNotifications: (state, action) => {
       const data = action.payload;
-      state.notifications.results = [...state.notifications.results, ...data.datax];
+      state.notifications.results = [
+        ...state.notifications.results,
+        ...data.datax,
+      ];
     },
   },
   extraReducers: {
@@ -1706,10 +1891,15 @@ export const commonSlice = createSlice({
 });
 
 // export const { clearState, changeStatus } = commonSlice.actions;
-export const { AddCommentToOrder, RemoveNotification, UpdateNotification, hideNotification, AddMultipleNotifications } =
-  commonSlice.actions;
+export const {
+  AddCommentToOrder,
+  RemoveNotification,
+  UpdateNotification,
+  hideNotification,
+  AddMultipleNotifications,
+} = commonSlice.actions;
 
-export const commonSelector = state => state.common;
+export const commonSelector = (state) => state.common;
 
 // getRejectReasons "rejected"
 // getDiscartReasons "reasons"
