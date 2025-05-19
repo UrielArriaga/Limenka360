@@ -85,6 +85,23 @@ export default function useMain(viewType) {
     },
   };
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        let fn = viewFetchers[viewType];
+        if (!fn) {
+          console.error("Invalid view type:", viewType);
+          return;
+        }
+        await fn();
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, [flagToRefetch, viewType]);
+
   const handleInfiniteScroll = async (phaseId) => {
     const column = data.columns[phaseId];
     if (!column || column.items.length >= column.total || column.isFetching)

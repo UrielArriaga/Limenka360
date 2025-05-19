@@ -62,13 +62,6 @@ export default function LimenkaCalendar() {
           setIsOpenCalendar(!isOpenCalendar);
         }}
       />
-
-      {/* <Calendar
-        open={isOpenCalendar}
-        toogle={() => {
-          setIsOpenCalendar(!isOpenCalendar);
-        }}
-      /> */}
     </LimenkaCalendarStyled>
   );
 }
@@ -83,7 +76,7 @@ const LimenkaCalendarStyled = styled.div`
   .calendarbutton {
     background-color: #39b8df;
     color: white;
-    padding: 10px 4px;
+    padding: 34px 2px;
     writing-mode: vertical-rl;
     transform: rotate(180deg);
     text-align: center;
@@ -92,8 +85,6 @@ const LimenkaCalendarStyled = styled.div`
     display: flex;
     align-items: center;
 
-    /* Trapecio usando clip-path */
-    /* clip-path: polygon(0 0, 100% 10%, 100% 90%, 0% 100%); */
     transition: background-color 0.3s ease;
 
     &:hover {
@@ -106,7 +97,6 @@ const LimenkaCalendarStyled = styled.div`
 
     .iconrotate {
       transform: rotate(180deg);
-      /* margin-right: 10px; */
     }
   }
 `;

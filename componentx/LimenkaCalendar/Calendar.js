@@ -1,5 +1,8 @@
-import { Dialog, Drawer } from "@material-ui/core";
+import { Drawer } from "@material-ui/core";
 import React from "react";
+import styled from "styled-components";
+import NewCalendarPendings from "../../features/CalendarPendings/CalendarPendings";
+
 export default function Calendar({ open, toogle }) {
   return (
     <CalendarStyled anchor="right" open={open} onClose={toogle}>
@@ -15,8 +18,7 @@ export default function Calendar({ open, toogle }) {
     </CalendarStyled>
   );
 }
-import styled from "styled-components";
-import NewCalendarPendings from "../../features/CalendarPendings/CalendarPendings";
+
 const CalendarStyled = styled(Drawer)`
   width: 90% !important;
   .MuiDrawer-paper {

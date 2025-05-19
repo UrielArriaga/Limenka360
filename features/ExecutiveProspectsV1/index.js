@@ -93,11 +93,13 @@ export default function ExecutivesProspectsV1() {
 
   return (
     <ExecutiveProspectsStyled>
-      <FilterProspects
-        viewType={viewType}
-        setViewType={setViewType}
-        handleRefetch={handleRefetch}
-      />
+      {viewType !== "report" && (
+        <FilterProspects
+          viewType={viewType}
+          setViewType={setViewType}
+          handleRefetch={handleRefetch}
+        />
+      )}
 
       <Suspense
         fallback={<div style={{ padding: "1rem" }}>Cargando vista...</div>}

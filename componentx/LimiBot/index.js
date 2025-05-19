@@ -271,7 +271,7 @@ const ChatBot = ({
           </LottiContainer>
         )}
       </AnimatePresence>
-
+      {/* 
       <button
         style={{
           marginTop: 1000,
@@ -281,7 +281,7 @@ const ChatBot = ({
         }}
       >
         click me{" "}
-      </button>
+      </button> */}
     </ChatContainer>
   );
 };

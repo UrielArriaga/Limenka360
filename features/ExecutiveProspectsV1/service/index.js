@@ -111,6 +111,14 @@ class ProspectsService {
       params,
     });
   }
+  async getReportByClientType({}) {
+    let params = {};
+    return await api.get("playground/reports/prs/clienttypes", {
+      params,
+    });
+  }
+
+  // * Finaliza reportes
 
   mapToNormalizeProspects(items = []) {
     return items?.map((item) => this.normalizeProspects(item));

@@ -1,30 +1,29 @@
-import React, { useEffect, useRef, useState } from "react";
-import styled from "styled-components";
+import { IconButton } from "@material-ui/core";
 import {
   Add,
   ArrowDropDown,
-  Cached,
+  Assessment,
+  CalendarToday,
   ViewCarousel,
   ViewList,
-  Assessment, // Informe
-  CalendarToday, // Calendario
-  Visibility, // Vista
+  Visibility,
 } from "@material-ui/icons";
-import { IconButton } from "@material-ui/core";
+import React, { useEffect, useRef, useState } from "react";
+import styled from "styled-components";
 
 import { AnimatePresence, motion } from "framer-motion";
 
 import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
+  ArcElement,
   BarElement,
+  CategoryScale,
+  Chart as ChartJS,
+  Legend,
+  LinearScale,
   LineElement,
   PointElement,
-  ArcElement,
-  Tooltip,
-  Legend,
   Title,
+  Tooltip,
 } from "chart.js";
 import { Bar, Line, Pie } from "react-chartjs-2";
 import useReports from "../../hooks/useReports";
@@ -70,6 +69,29 @@ const viewTypes = [
   { key: "pie", icon: <ViewCarousel titleAccess="Tabla" /> },
 ];
 
+const viewTypesPage = [
+  { key: "table", icon: <ViewList titleAccess="Kanban" /> },
+  { key: "kanban", icon: <ViewCarousel titleAccess="Tabla" /> },
+  { key: "calendar", icon: <CalendarToday titleAccess="Calendario" /> },
+  { key: "report", icon: <Assessment titleAccess="Informe" /> },
+  { key: "view", icon: <Visibility titleAccess="Vista" /> },
+];
+
+const reportTypes = [
+  {
+    label: "Prospectos por entidad",
+    value: "prospectsentities",
+  },
+  {
+    label: "Pendientes Completos",
+    value: "pendingsversus",
+  },
+  {
+    label: "Prospectos por tipo de cliente",
+    value: "prospectsclienttype",
+  },
+];
+
 export default function ReportView() {
   const { dataChart, viewType, setViewType, setReportType, reportType } =
     useReports();
@@ -81,17 +103,37 @@ export default function ReportView() {
   return (
     <ReportViewStyled>
       <div className="reportview-header">
-        <ListDropdown setValue={setReportType} value={reportType} />
-        <div className="viewtype">
-          {viewTypes.map(({ key, icon }) => (
-            <ViewButton
-              key={key}
-              isActive={viewType === key}
-              onClick={() => setViewType(key)}
-            >
-              {icon}
-            </ViewButton>
-          ))}
+        <div className="left-controls">
+          <ListDropdown
+            options={reportTypes}
+            setValue={setReportType}
+            value={reportType}
+          />
+          <div className="viewtype">
+            {viewTypes.map(({ key, icon }) => (
+              <ViewButton
+                key={key}
+                isActive={viewType === key}
+                onClick={() => setViewType(key)}
+              >
+                {icon}
+              </ViewButton>
+            ))}
+          </div>
+        </div>
+
+        <div className="right-button">
+          <div className="viewtype">
+            {viewTypesPage.map(({ key, icon }) => (
+              <ViewButton
+                key={key}
+                isActive={viewType === key}
+                onClick={() => setViewType(key)}
+              >
+                {icon}
+              </ViewButton>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -105,13 +147,29 @@ export default function ReportView() {
 const ReportViewStyled = styled.div`
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 200px); /* Fijo en pantalla completa */
+  height: calc(100vh - 200px);
 
   .reportview-header {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     border-radius: 8px;
     margin-bottom: 20px;
+  }
+
+  .left-controls {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .viewtype {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .right-button {
+    /* Opcional para estilo */
   }
 
   .contentchart {
@@ -120,7 +178,7 @@ const ReportViewStyled = styled.div`
     padding: 20px;
     border-radius: 8px;
     background-color: #fff;
-    /* box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.08); */
+
     overflow: auto;
     flex: 1;
     height: 100%;
@@ -130,8 +188,7 @@ const ReportViewStyled = styled.div`
 
 const ViewButton = styled(IconButton)`
   border-radius: 0;
-  /* background: ${({ isActive }) =>
-    isActive ? "rgba(7, 123, 248, 1)" : "none"}; */
+
   background: ${({ isActive }) =>
     isActive ? "rgba(14, 122, 238, 0.4) !important" : "#E5EAED !important"};
   border-radius: 4px !important;
@@ -145,17 +202,14 @@ const ViewButton = styled(IconButton)`
   }
 `;
 
-function ListDropdown({ setValue, value }) {
+function ListDropdown({ setValue, value, options = [] }) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [selected, setSelected] = useState("Todos los prospectos");
   const dropdownRef = useRef();
 
-  const defaultLists = ["Solution Open Deals", "My All Deals"];
-  const myLists = ["prospectsentities", "pendingsversus"];
-
-  const filteredLists = myLists.filter((item) =>
-    item.toLowerCase().includes(query.toLowerCase())
+  const filteredLists = options.filter((item) =>
+    item?.label.toLowerCase().includes(query.toLowerCase())
   );
 
   useEffect(() => {
@@ -172,7 +226,7 @@ function ListDropdown({ setValue, value }) {
   return (
     <DropdownContainer ref={dropdownRef}>
       <DropdownHeader onClick={() => setOpen(!open)}>
-        <span>{selected}</span>
+        <span>{selected?.label}</span>
         <ArrowDropDown />
       </DropdownHeader>
 
@@ -223,12 +277,12 @@ function ListDropdown({ setValue, value }) {
                   key={i}
                   className="item"
                   onClick={() => {
-                    setValue(item);
+                    setValue(item?.value);
                     setSelected(item);
                     setOpen(false);
                   }}
                 >
-                  {item}
+                  {item?.label}
                 </div>
               ))}
             </div>
@@ -264,7 +318,6 @@ const DropdownHeader = styled.button`
   height: 40px;
 
   &:hover {
-    /* background: #f5f5f5; */
   }
 `;
 
