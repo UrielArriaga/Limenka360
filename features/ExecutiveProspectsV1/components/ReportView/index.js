@@ -92,7 +92,7 @@ const reportTypes = [
   },
 ];
 
-export default function ReportView() {
+export default function ReportView({ setViewTypePage, viewTypePage }) {
   const { dataChart, viewType, setViewType, setReportType, reportType } =
     useReports();
 
@@ -127,8 +127,8 @@ export default function ReportView() {
             {viewTypesPage.map(({ key, icon }) => (
               <ViewButton
                 key={key}
-                isActive={viewType === key}
-                onClick={() => setViewType(key)}
+                isActive={viewTypePage === key}
+                onClick={() => setViewTypePage(key)}
               >
                 {icon}
               </ViewButton>
@@ -226,7 +226,7 @@ function ListDropdown({ setValue, value, options = [] }) {
   return (
     <DropdownContainer ref={dropdownRef}>
       <DropdownHeader onClick={() => setOpen(!open)}>
-        <span>{selected?.label}</span>
+        {selected?.label ? selected?.label : "Selecciona un acceso rapido"}
         <ArrowDropDown />
       </DropdownHeader>
 

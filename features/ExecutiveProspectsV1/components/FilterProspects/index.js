@@ -48,7 +48,7 @@ export default function FilterProspects({
 
   const [filters, setFilters] = useState();
 
-  console.log(filters);
+  // console.log(filters);
 
   return (
     <FilterProspectsStyled ref={dropdownRef}>
