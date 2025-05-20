@@ -10,9 +10,6 @@ import { api } from "../../../../../services/api";
 import { Draggable } from "react-beautiful-dnd";
 import { useSelector } from "react-redux";
 import dayjs from "dayjs";
-// import { commonSelector } from "../../../../redux/slices/commonSlice";
-// import useGlobalCommons from "../../../../hooks/useGlobalCommons";
-// import LimiBotAnimation from "../../../../componentx/LimiBotAnimation";
 
 import {
   Phone as PhoneIcon,
@@ -95,7 +92,7 @@ const Item = forwardRef(({ task: prospect, index, actions }, externalRef) => {
     setBotAnchorEl(null);
   };
 
-  // Segumiento con pendiente
+  const handleOnClickTypeMessage = (type) => {};
 
   const [showFormPending, setShowFormPending] = useState(false);
   const [pendingType, setPendingType] = useState(null);
@@ -214,7 +211,7 @@ const Item = forwardRef(({ task: prospect, index, actions }, externalRef) => {
               arrow
               onClick={(e) => {
                 console.log("adssa");
-                actions.onClickNewOportunity(prospect);
+                actions.handleOnClickNewOportunity(prospect);
                 e.stopPropagation();
                 return;
               }}
@@ -295,129 +292,6 @@ const Item = forwardRef(({ task: prospect, index, actions }, externalRef) => {
             onClose={() => setOpenScheduleModal(false)}
             prospect={prospect}
           />
-          {/* <Popover
-            open={openScheduleModal}
-            anchorEl={scheduleAnchorEl}
-            onClose={() => {
-              setOpenScheduleModal(false);
-            }}
-            anchorOrigin={{
-              vertical: "bottom",
-              horizontal: "right",
-            }}
-            transformOrigin={{
-              vertical: "top",
-              horizontal: "left",
-            }}
-          >
-            <ScheduleModal>
-              <div className="title">
-                <h3>Agregar seguimiento</h3>
-              </div>
-
-              <div className="inputs">
-                <div className="input-field">
-                  <label>Accion</label>
-                  <Select
-                    onMenuOpen={() => getCatalogBy("actions")}
-                    placeholder="Selecciona una opción"
-                    options={common.actions?.results}
-                    getOptionLabel={(option) => option.name}
-                    getOptionValue={(option) => option.id}
-                    menuPosition="fixed"
-                  />
-                </div>
-                <div className="input-field">
-                  <label>Descripción</label>
-                  <textarea
-                    rows={4}
-                    placeholder="Descripción del seguimiento"
-                  />
-                </div>
-              </div>
-
-              <div className="input-check">
-                <label>
-                  <input
-                    className="checkbox"
-                    type="checkbox"
-                    checked={showFormPending}
-                    onChange={(e) => setShowFormPending(e.target.checked)}
-                  />
-                  Agregar pendiente
-                </label>
-              </div>
-
-              {showFormPending && (
-                <div className="addpending">
-                  <div className="quick-actions">
-                    {pendingTypes.map((type) => (
-                      <button
-                        key={type.value}
-                        className={`quick-action-btn ${
-                          pendingType?.value === type.value ? "active" : ""
-                        }`}
-                        onClick={() => setPendingType(type)}
-                      >
-                        {type.icon}
-                        <span>{type.label}</span>
-                      </button>
-                    ))}
-                  </div>
-                  <div className="input-field">
-                    <label>Fecha del pendiente</label>
-                    <div className="quick-dates">
-                      {quickDates.map((date) => (
-                        <button
-                          key={date.value}
-                          className="quick-date-btn"
-                          onClick={() => handleQuickDate(date.value)}
-                          type="button"
-                        >
-                          {date.icon}
-                          <span>{date.label}</span>
-                        </button>
-                      ))}
-                    </div>
-                    <div className="date-input">
-                      <EventIcon className="date-icon" />
-                      <input
-                        type="datetime-local"
-                        value={pendingDate}
-                        onChange={(e) => setPendingDate(e.target.value)}
-                      />
-                    </div>
-                  </div>
-                  <div className="input-field">
-                    <label>Notas del pendiente</label>
-                    <textarea
-                      rows={3}
-                      placeholder="Escribe aquí las notas importantes del pendiente..."
-                    />
-                  </div>
-                </div>
-              )}
-
-              <div className="actions">
-                <button
-                  className="cancel"
-                  onClick={() => {
-                    setOpenScheduleModal(false);
-                  }}
-                >
-                  Cancelar
-                </button>
-                <button
-                  className="save"
-                  onClick={() => {
-                    setOpenScheduleModal(false);
-                  }}
-                >
-                  Guardar
-                </button>
-              </div>
-            </ScheduleModal>
-          </Popover> */}
 
           <Popover
             open={openSendWhatsapp}
