@@ -2,7 +2,7 @@ import { Popover } from "@material-ui/core";
 import React, { useState } from "react";
 import styled from "styled-components";
 import Select from "react-select";
-
+import { toast } from "react-toastify";
 import useGlobalCommons from "../../../../../hooks/useGlobalCommons";
 import { commonSelector } from "../../../../../redux/slices/commonSlice";
 import { useSelector } from "react-redux";
@@ -28,7 +28,7 @@ export default function PopoverTracking({
   const [description, setDescription] = useState("");
   const [reason, setReason] = useState("");
   const [phase, setPhase] = useState(null);
-  const [pendingPriority, setPendingPriority] = useState(1); // Valor por defecto: Media (1)
+  const [pendingPriority, setPendingPriority] = useState(1);
 
   const [showFormPending, setShowFormPending] = useState(false);
   const [pendingType, setPendingType] = useState(null);
@@ -42,6 +42,17 @@ export default function PopoverTracking({
     tarea: "62dUf2tKTw0k9q0WrC5uvf8m",
     automatizacion: "62dUf2tKTw0k9q0WrC5uv3e3",
     whatsapp: "62dUf2tKTw0k9q0WrC5uv45e",
+  };
+  const resetForm = () => {
+    setSelectedAction(null);
+    setDescription("");
+    setReason("");
+    setPhase(null);
+    setPendingPriority(1);
+    setShowFormPending(false);
+    setPendingType(null);
+    setPendingDate("");
+    setPendingNotes("");
   };
 
   const handleQuickDate = (type) => {
@@ -119,8 +130,10 @@ export default function PopoverTracking({
 
     try {
       const res = await api.post("trackings/trackingandpending", trackingData);
+      toast.success("¡Seguimiento y pendiente creados exitosamente!");
       console.log("Seguimiento y pendiente creados:", res.data);
       onClose();
+      resetForm();
     } catch (err) {
       console.error(
         "Error al crear seguimiento y pendiente:",
@@ -261,7 +274,13 @@ export default function PopoverTracking({
         )}
 
         <div className="actions">
-          <button className="cancel" onClick={onClose}>
+          <button
+            className="cancel"
+            onClick={() => {
+              resetForm();
+              onClose();
+            }}
+          >
             Cancelar
           </button>
           <button className="save" onClick={handleSave}>

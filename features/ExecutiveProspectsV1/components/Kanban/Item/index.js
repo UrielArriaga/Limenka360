@@ -26,9 +26,18 @@ import useGlobalCommons from "../../../../../hooks/useGlobalCommons";
 import LimiBotAnimation from "../../../../../componentx/LimiBotAnimation";
 import PopoverTracking from "./PopoverTracking";
 import LimiBotService from "../../../../../services/limibotService";
-
+import { userSelector } from "../../../../../redux/slices/userSlice";
 const Item = forwardRef(({ task: prospect, index, actions }, externalRef) => {
   const { getCatalogBy } = useGlobalCommons();
+  const pendingTypeIdMap = {
+    recordatorio: "62dlUPgKjOpCoDH6wU0sG9rp",
+    visita: "62dN6LUisuI0rTZm1p5l5Lcp",
+    cita: "62dp9dPnCtgdfTodXAUuzr1N",
+    llamada: "62dQiGAWr0P53bbpmnYtXmd5",
+    tarea: "62dUf2tKTw0k9q0WrC5uvf8m",
+    automatizacion: "62dUf2tKTw0k9q0WrC5uv3e3",
+    whatsapp: "62dUf2tKTw0k9q0WrC5uv45e",
+  };
 
   const serviceLimi = new LimiBotService();
   const common = useSelector(commonSelector);
@@ -38,7 +47,7 @@ const Item = forwardRef(({ task: prospect, index, actions }, externalRef) => {
   const [openSendWhatsapp, setOpenSendWhatsapp] = useState(false);
   const [idTemplate, setIdTemplate] = useState(null);
   const [msj, setMsj] = useState("");
-
+  const { id_user } = useSelector(userSelector);
   const [scheduleAnchorEl, setScheduleAnchorEl] = useState(null);
   const [whatsappAnchorEl, setWhatsappAnchorEl] = useState(null);
 
@@ -61,9 +70,40 @@ const Item = forwardRef(({ task: prospect, index, actions }, externalRef) => {
     setAnchorEl(null);
   };
 
-  const handlePendingOption = (option) => {
-    console.log("Agregar pendiente:", option);
+  const handlePendingOption = async (option) => {
     handleCloseMenu();
+
+    if (option === "recordatorio-24h") {
+      const now = dayjs();
+      const reminderTime = now.add(1, "day");
+
+      const newPending = {
+        prospectId: "ioynubwNrd07TMyG2zsNk3Rs",
+        date_from: "2025-05-22T21:17:37.567Z",
+        description: "",
+        subject: "",
+        place: "",
+        priority: 2,
+        pendingstypeId: "62dlUPgKjOpCoDH6wU0sG9rp",
+        status: 1,
+        zone: "",
+        remember: true,
+        ejecutiveId: "YNQHRt32OCbt0shXa0yOa51t",
+        remember_by: "correo",
+        notify: true,
+        notify_by: "correo",
+      };
+
+      try {
+        const { data } = await api.post("pendings", newPending);
+        console.log("Pendiente creado:", data);
+      } catch (error) {
+        console.error(
+          " Error al crear pendiente:",
+          error.response?.data || error.message
+        );
+      }
+    }
   };
 
   const cutString = (str = "", len = 40) => {
@@ -288,7 +328,7 @@ const Item = forwardRef(({ task: prospect, index, actions }, externalRef) => {
               <CustomMenuItem
                 icon={Schedule}
                 label="Recordar cotización (en 24 horas)"
-                onClick={() => handlePendingOption("2d")}
+                onClick={() => handlePendingOption("recordatorio-24h")}
               />
               <CustomMenuItem
                 icon={Schedule}
