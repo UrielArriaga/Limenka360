@@ -82,7 +82,7 @@ const Message = styled(motion.div)`
   line-height: 1.4;
   ${({ sender }) =>
     sender === "user"
-      ? `background-color: #3f51b5; color: white; margin-left: auto; border-bottom-right-radius: 4px;`
+      ? `background-color:rgb(178, 178, 178); color: white; margin-left: auto; border-bottom-right-radius: 4px;`
       : `background-color: white; color: #333; margin-right: auto; border-bottom-left-radius: 4px; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);`}
 `;
 

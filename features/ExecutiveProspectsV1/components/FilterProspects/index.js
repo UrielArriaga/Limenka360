@@ -7,7 +7,8 @@ import {
   ViewList,
   Assessment, // Informe
   CalendarToday, // Calendario
-  Visibility, // Vista
+  Visibility,
+  Clear, // Vista
 } from "@material-ui/icons";
 import { AnimatePresence, motion } from "framer-motion";
 import React, { useEffect, useRef, useState } from "react";
@@ -29,6 +30,9 @@ export default function FilterProspects({
   handleRefetch,
   viewType,
   setViewType,
+  inputStates,
+  filters,
+  setFilters,
 }) {
   const [showOptions, setShowOptions] = useState(false);
   const [isOpenFilterAdvanced, setIsOpenFilterAdvanced] = useState(false);
@@ -46,8 +50,6 @@ export default function FilterProspects({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const [filters, setFilters] = useState();
-
   console.log(filters);
 
   return (
@@ -60,7 +62,25 @@ export default function FilterProspects({
         </div>
         <ListDropdown />
         <div className="inputSearch">
-          <SearchInput type="text" placeholder="Buscar prospecto..." />
+          <SearchInput
+            value={inputStates.keyword}
+            onChange={(e) => inputStates.handleOnChangeKeyword(e)}
+            onKeyDown={(e) => inputStates.handleOnEnterInput(e)}
+            type="text"
+            placeholder="Buscar prospecto..."
+          />
+
+          {inputStates.keyword?.length > 0 && (
+            <IconButton
+              size="small"
+              onClick={() =>
+                inputStates.handleOnChangeKeyword({ target: { value: "" } })
+              }
+              style={{ position: "absolute", right: "5px" }}
+            >
+              <Clear fontSize="small" />
+            </IconButton>
+          )}
         </div>
 
         <ButtonFilter
@@ -119,6 +139,12 @@ const FilterProspectsStyled = styled.div`
     display: flex;
     align-items: center;
     gap: 16px;
+  }
+
+  .inputSearch {
+    position: relative;
+    display: flex;
+    align-items: center;
   }
 
   .inputSearch input {
@@ -482,7 +508,7 @@ const SearchInput = styled.input`
   outline: none;
   transition: all 0.2s ease;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
-
+  position: relative;
   &::placeholder {
     color: #888;
   }

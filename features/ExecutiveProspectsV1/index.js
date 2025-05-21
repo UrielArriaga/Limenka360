@@ -12,6 +12,11 @@ import { ExecutiveProspectsStyled } from "./styled";
 import ReportView from "./components/ReportView";
 import CalendarView from "./components/CalendarView";
 import useReports from "./hooks/useReports";
+import { IconButton } from "@material-ui/core";
+import { CalendarToday, Dock, Email, WhatsApp } from "@material-ui/icons";
+import styled from "styled-components";
+import PopoverTracking from "./components/Kanban/Item/PopoverTracking";
+import useItemActions from "./hooks/useItemActions";
 
 export default function ExecutivesProspectsV1() {
   const [viewType, setViewType] = useState("kanban");
@@ -27,9 +32,16 @@ export default function ExecutivesProspectsV1() {
     onDragEnd,
     onDragStart,
     prospectSelected,
+    inputStates,
+    filters,
+    setFilters,
   } = useMain(viewType);
 
   const [openLimiBotChat, setOpenLimiBotChat] = useState(false);
+
+  const { tracking, itemValue } = useItemActions();
+
+  console.log(itemValue);
 
   const toogleLimiBotChat = (item) => setOpenLimiBotChat(!openLimiBotChat);
 
@@ -43,32 +55,67 @@ export default function ExecutivesProspectsV1() {
         customColumns={{
           phase: {
             columname: "phase",
-            component: (item) => {
-              return (
-                <div
-                  className="TableName"
-                  style={{
-                    color: item?.phasecolor,
-                    borderRadius: "5px",
-                    padding: "0.5rem",
+            component: (item) => (
+              <StyledCell color={item?.phasecolor}>
+                <StyledText onClick={() => console.log(item)}>
+                  {item.phase}
+                </StyledText>
+              </StyledCell>
+            ),
+          },
+
+          email: {
+            columname: "email",
+            component: (item) => (
+              <StyledCell color={item?.phonecolor}>
+                <StyledText onClick={() => console.log(item)}>
+                  {item.email}
+                </StyledText>
+                {item?.email !== "Sin telefono" && (
+                  <IconButton>
+                    <Email />
+                  </IconButton>
+                )}
+              </StyledCell>
+            ),
+          },
+
+          phone: {
+            columname: "phone",
+            component: (item) => (
+              <StyledCell color={item?.phonecolor}>
+                <StyledText
+                  onClick={() => {
+                    actionsItem.handleOnClickProspects(item);
+                    console.log(item);
                   }}
                 >
-                  <p
-                    className="name"
-                    style={{
-                      // color: "#034D6F",
-                      fontWeight: "bold",
-                      // backgroundColor: item?.phasecolor,
-                    }}
-                    onClick={() => {
-                      console.log(item);
-                    }}
-                  >
-                    {item.phase}
-                  </p>
-                </div>
-              );
-            },
+                  {item.phone}
+                </StyledText>
+                {item?.phone !== "Sin telefono" && (
+                  <IconButton>
+                    <WhatsApp />
+                  </IconButton>
+                )}
+              </StyledCell>
+            ),
+          },
+
+          lastTrackingcreatedAt: {
+            columname: "lastTrackingcreatedAt",
+            component: (item) => (
+              <StyledCell color={item?.phonecolor}>
+                <StyledText onClick={() => console.log(item)}>
+                  {item.lastTrackingcreatedAt}
+                </StyledText>
+
+                {item?.phone !== "Sin telefono" && (
+                  <IconButton onClick={(e) => tracking.handleOpen(e, item)}>
+                    <Dock />
+                  </IconButton>
+                )}
+              </StyledCell>
+            ),
           },
         }}
       />
@@ -100,6 +147,9 @@ export default function ExecutivesProspectsV1() {
           viewType={viewType}
           setViewType={setViewType}
           handleRefetch={handleRefetch}
+          inputStates={inputStates}
+          setFilters={setFilters}
+          filters={filters}
         />
       )}
 
@@ -131,6 +181,29 @@ export default function ExecutivesProspectsV1() {
         open={modalActions.modalViews.modalPhase}
         toggleModal={() => modalActions.handleToggleModal("modalPhase")}
       />
+
+      <PopoverTracking
+        open={tracking.open}
+        anchorEl={tracking.anchorEl}
+        onClose={tracking.handleClose}
+        handleOpen={tracking.handleOpen}
+        prospectSelected={prospectSelected}
+      />
     </ExecutiveProspectsStyled>
   );
 }
+
+const StyledCell = styled.div`
+  border-radius: 5px;
+  padding: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: ${(props) => props.color || "#000"};
+`;
+
+const StyledText = styled.p`
+  font-weight: bold;
+  margin: 0;
+  cursor: pointer;
+`;

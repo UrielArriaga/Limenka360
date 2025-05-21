@@ -22,6 +22,8 @@ const initialCalendarState = {
 export default function useMain(viewType) {
   const service = new ProspectsService();
 
+  const [filters, setFilters] = useState([]);
+
   const [flagToRefetch, setFlagToRefetch] = useState(false);
 
   const [modalViews, setModalViews] = useState({
@@ -31,6 +33,7 @@ export default function useMain(viewType) {
     movePhase: false,
   });
 
+  const [keyword, setKeyword] = useState("");
   const [data, setData] = useState(initialKanbanState);
   const [dataSet, setDataSet] = useState(initialTableState);
   const [dataCalendar, setDataCalendar] = useState(initialCalendarState);
@@ -227,6 +230,22 @@ export default function useMain(viewType) {
     handleToggleModal("limiBotChat");
   };
 
+  const handleOnChangeKeyword = (e) => {
+    setKeyword(e.target.value);
+  };
+
+  const handleOnCleanKeyword = () => {
+    setKeyword("");
+  };
+
+  const handleOnEnterInput = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+
+      alert("Enter key pressed");
+    }
+  };
+
   return {
     prospectSelected,
     data,
@@ -285,5 +304,13 @@ export default function useMain(viewType) {
         },
       ],
     },
+    inputStates: {
+      keyword,
+      handleOnChangeKeyword,
+      handleOnCleanKeyword,
+      handleOnEnterInput,
+    },
+    filters,
+    setFilters,
   };
 }

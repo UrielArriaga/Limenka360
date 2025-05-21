@@ -8,4 +8,4 @@ class LimiBotService {
   }
 }
 
-export default new LimiBotService();
+export default LimiBotService;
