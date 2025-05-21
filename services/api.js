@@ -1,5 +1,5 @@
 import axios from "axios";
-export const ISPRODUCTION = "false";
+export const ISPRODUCTION = "true";
 // export const REDIRECT_URL = process.env.REDIRECT_URL;
 
 export const URL =

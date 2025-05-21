@@ -34,6 +34,15 @@ export default function PopoverTracking({
   const [pendingType, setPendingType] = useState(null);
   const [pendingDate, setPendingDate] = useState("");
   const [pendingNotes, setPendingNotes] = useState("");
+  const pendingTypeIdMap = {
+    recordatorio: "62dlUPgKjOpCoDH6wU0sG9rp",
+    visita: "62dN6LUisuI0rTZm1p5l5Lcp",
+    cita: "62dp9dPnCtgdfTodXAUuzr1N",
+    llamada: "62dQiGAWr0P53bbpmnYtXmd5",
+    tarea: "62dUf2tKTw0k9q0WrC5uvf8m",
+    automatizacion: "62dUf2tKTw0k9q0WrC5uv3e3",
+    whatsapp: "62dUf2tKTw0k9q0WrC5uv45e",
+  };
 
   const handleQuickDate = (type) => {
     const now = dayjs();
@@ -79,8 +88,8 @@ export default function PopoverTracking({
   const handleSave = async () => {
     const trackingData = {
       prospectId: prospect.id,
-      status: "1", // Asumiendo que siempre es 2 ahora (ajústalo si cambia)
-      //oportunityId: prospect.oportunityId || "", // Asume que viene en el prospect
+      status: "1",
+      //oportunityId: prospect.oportunityId || "",
       actionId: selectedAction?.id,
       reason,
       observations: description,
@@ -91,12 +100,15 @@ export default function PopoverTracking({
         showFormPending && pendingDate && pendingType
           ? {
               date_from: dayjs(pendingDate).toISOString(),
-              description: pendingNotes || "Sin notas",
-              subject: "Sin asunto", // Modifica si tienes campo "asunto"
-              place: "No definido", // Modifica si tienes campo "lugar"
+              description: pendingNotes,
+              subject: "",
+              place: "",
               priority: pendingPriority.toString(),
-              // pendingstypeId: pendingType.value,
-              zone: "GMT-06:00",
+              pendingstypeId: pendingType
+                ? pendingTypeIdMap[pendingType.value]
+                : null,
+
+              zone: "",
               remember: true,
               remember_by: "correo",
               notify: true,

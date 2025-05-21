@@ -26,7 +26,7 @@ import SendWhatsapp from "./SendWhatsapp";
 import ProductsOportunities from "./ProductsOportunities";
 import ProductsOportunitiesTable from "./ProductsOportunitiesTable";
 import useTrackings from "../../../ExecutiveProspectsV2/hooks/useTrackings";
-import usePending from "../../../ExecutiveProspectsV2/hooks/usePending";
+import usePending from "../../hooks/usePending";
 import EditProspectDrawer from "../DrawerEditProspect";
 import useOpportunityProducts from "../../hooks/useOpportunityProducts";
 import useQuotePDF from "../../hooks/useQuotePDF";
@@ -55,7 +55,7 @@ export default function ModalPreview({
   const { trackingData, refetchTrackings, setTrackingData } =
     useTrackings(prospectSelected);
 
-  const { pendingsData } = usePending(prospectSelected?.id);
+  const { pendingsData, setPendingsData } = usePending(prospectSelected);
 
   const {
     products,
@@ -101,7 +101,7 @@ export default function ModalPreview({
     handleCloseForecastModal,
   } = useForecast(prospectSelected);
   let trackings = trackingData.results || [];
-
+  let pendings = pendingsData.results || [];
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
   };
@@ -110,6 +110,7 @@ export default function ModalPreview({
   const toggleEditDrawer = (open) => () => {
     setEditDrawerOpen(open);
   };
+  console.log("pendingsData en el padre:", pendingsData);
 
   return (
     <ModalPreviewStyled
@@ -161,12 +162,20 @@ export default function ModalPreview({
                   setProspectSelected={setProspectSelected}
                   onTrackingCreated={refetchTrackings}
                   setTrackingData={setTrackingData}
+                  // setPendingsData={setPendingsData}
                 />
-                <AddPending
-                  pendingsData={pendingsData}
-                  prospectSelected={prospectSelected}
-                />
-                <LineTimePendings pendingsData={pendingsData} />
+                {showAction === "whatsapp" && (
+                  <>
+                    <SendWhatsapp onCancel={() => handleOnCancel()} />
+                    <LineTimePendings pendingsData={pendingsData} />
+                  </>
+                )}
+                {showAction === null && (
+                  <>
+                    <AddPending />
+                    <LineTimePendings pendingsData={pendingsData} />
+                  </>
+                )}
               </Grid>
 
               <Grid item md={6} xs={12}>

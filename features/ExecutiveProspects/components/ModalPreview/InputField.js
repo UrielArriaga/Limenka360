@@ -41,6 +41,7 @@ export default function InputField({
   const prospectsApi = new ProspectsApi();
   const [hasSaved, setHasSaved] = useState(false);
   const [citiesByEntity, setCitiesByEntity] = useState({ results: [] });
+  const [menuIsOpen, setMenuIsOpen] = useState(false);
 
   const getCitiesByEntitys = async (entityId) => {
     try {
@@ -92,6 +93,7 @@ export default function InputField({
       setHasSaved(false);
     }
   };
+
   const handleInputChange = (e) => {
     const { value } = e.target;
 
@@ -123,7 +125,13 @@ export default function InputField({
 
   if (type === "text") {
     const handleConfirmAndSave = (value) => {
-      if (hasSaved || value === itemToUpdate.currentValue) return;
+      if (value === itemToUpdate.currentValue) {
+        setfieldToUpdate({ value: "", currentValue: "", identifier: "" });
+        return;
+      }
+
+      if (hasSaved) return;
+
       const isConfirm = window.confirm("¿Desea guardar los cambios?");
       if (isConfirm) {
         setHasSaved(true);
@@ -161,55 +169,84 @@ export default function InputField({
       );
 
       return (
-        <ReactSelect
-          placeholder="Selecciona un género"
-          className="reactSelect"
-          options={genderOptions}
-          value={selectedOption}
-          onChange={(selectedOption) => {
-            const isConfirm = window.confirm("¿Desea guardar los cambios?");
-            if (isConfirm) {
-              handleSave(selectedOption);
-            } else {
+        <div
+          onMouseLeave={() => {
+            if (!hasSaved) {
               setfieldToUpdate({ value: "", currentValue: "", identifier: "" });
             }
           }}
-          styles={selectStyle}
-        />
+        >
+          <ReactSelect
+            placeholder="Selecciona un género"
+            className="reactSelect"
+            options={genderOptions}
+            value={selectedOption}
+            onChange={(selectedOption) => {
+              const isConfirm = window.confirm("¿Desea guardar los cambios?");
+              if (isConfirm) {
+                setHasSaved(true);
+                handleSave(selectedOption);
+              } else {
+                setfieldToUpdate({
+                  value: "",
+                  currentValue: "",
+                  identifier: "",
+                });
+              }
+            }}
+            styles={selectStyle}
+          />
+        </div>
       );
     } else if (itemToUpdate.identifier === "Estado") {
       return (
-        <ReactSelect
-          className="reactSelect"
-          placeholder="Selecciona un estado"
-          options={EntitiesLocal}
-          getOptionValue={(option) => option.id}
-          getOptionLabel={(option) => option.name}
-          value={EntitiesLocal.find(
-            (option) => option.name === itemToUpdate.value
-          )}
-          onChange={async (selectedOption) => {
-            const isConfirm = window.confirm("¿Desea guardar los cambios?");
-            if (!isConfirm) return;
-
-            try {
-              await handleSave(selectedOption);
-              await getCitiesByEntitys(selectedOption.id);
-              setfieldToUpdate({
-                identifier: "Municipio",
-                id: "cityId",
-                value: "",
-                currentValue: "",
-                entityId: selectedOption.id,
-              });
-              toast.success("Estado actualizado. Selecciona un municipio.");
-            } catch (error) {
-              console.error("Error actualizando estado y municipios:", error);
-              toast.error("Error al actualizar.");
+        <div
+          onMouseLeave={() => {
+            if (!hasSaved) {
+              setfieldToUpdate({ value: "", currentValue: "", identifier: "" });
             }
           }}
-          styles={selectStyle}
-        />
+        >
+          <ReactSelect
+            className="reactSelect"
+            placeholder="Selecciona un estado"
+            options={EntitiesLocal}
+            getOptionValue={(option) => option.id}
+            getOptionLabel={(option) => option.name}
+            value={EntitiesLocal.find(
+              (option) => option.name === itemToUpdate.value
+            )}
+            onChange={async (selectedOption) => {
+              const isConfirm = window.confirm("¿Desea guardar los cambios?");
+              if (!isConfirm) {
+                setfieldToUpdate({
+                  value: "",
+                  currentValue: "",
+                  identifier: "",
+                });
+                return;
+              }
+
+              try {
+                setHasSaved(true);
+                await handleSave(selectedOption);
+                await getCitiesByEntitys(selectedOption.id);
+                setfieldToUpdate({
+                  identifier: "Municipio",
+                  id: "cityId",
+                  value: "",
+                  currentValue: "",
+                  entityId: selectedOption.id,
+                });
+                toast.success("Estado actualizado. Selecciona un municipio.");
+              } catch (error) {
+                console.error("Error actualizando estado y municipios:", error);
+                toast.error("Error al actualizar.");
+              }
+            }}
+            styles={selectStyle}
+          />
+        </div>
       );
     }
 
@@ -223,24 +260,37 @@ export default function InputField({
       );
 
       return (
-        <ReactSelect
-          className="reactSelect"
-          placeholder="Selecciona un municipio"
-          options={citiesByEntity.results}
-          getOptionValue={(option) => option.id}
-          getOptionLabel={(option) => option.name}
-          value={selectedCity}
-          onChange={(selectedOption) => {
-            console.log("Opción seleccionada:", selectedOption);
-            const isConfirm = window.confirm("¿Desea guardar los cambios?");
-            if (isConfirm) {
-              handleSave(selectedOption);
-            } else {
+        <div
+          onMouseLeave={() => {
+            if (!hasSaved) {
               setfieldToUpdate({ value: "", currentValue: "", identifier: "" });
             }
           }}
-          styles={selectStyle}
-        />
+        >
+          <ReactSelect
+            className="reactSelect"
+            placeholder="Selecciona un municipio"
+            options={citiesByEntity.results}
+            getOptionValue={(option) => option.id}
+            getOptionLabel={(option) => option.name}
+            value={selectedCity}
+            onChange={(selectedOption) => {
+              console.log("Opción seleccionada:", selectedOption);
+              const isConfirm = window.confirm("¿Desea guardar los cambios?");
+              if (isConfirm) {
+                setHasSaved(true);
+                handleSave(selectedOption);
+              } else {
+                setfieldToUpdate({
+                  value: "",
+                  currentValue: "",
+                  identifier: "",
+                });
+              }
+            }}
+            styles={selectStyle}
+          />
+        </div>
       );
     }
 
@@ -267,25 +317,34 @@ export default function InputField({
     if (!options) return <span>Cargando opciones...</span>;
 
     return (
-      <ReactSelect
-        placeholder="Selecciona una opcion"
-        className="reactSelect"
-        onMenuOpen={() => getCatalogBy(itemToUpdate.id)}
-        options={optionsWithPlaceholder}
-        value={selectedOption}
-        isLoading={commonValues[itemToUpdate?.id]?.isFetching}
-        getOptionValue={(option) => option.id || option.value}
-        getOptionLabel={(option) => option.name || option.label}
-        onChange={(selectedOption) => {
-          const isConfirm = window.confirm("¿Desea guardar los cambios?");
-          if (isConfirm) {
-            handleSave(selectedOption);
-          } else {
+      <div
+        onMouseLeave={() => {
+          if (!hasSaved) {
             setfieldToUpdate({ value: "", currentValue: "", identifier: "" });
           }
         }}
-        styles={selectStyle}
-      />
+      >
+        <ReactSelect
+          placeholder="Selecciona una opción"
+          className="reactSelect"
+          onMenuOpen={() => getCatalogBy(itemToUpdate.id)}
+          options={optionsWithPlaceholder}
+          value={selectedOption}
+          isLoading={commonValues[itemToUpdate?.id]?.isFetching}
+          getOptionValue={(option) => option.id || option.value}
+          getOptionLabel={(option) => option.name || option.label}
+          onChange={(selectedOption) => {
+            const isConfirm = window.confirm("¿Desea guardar los cambios?");
+            if (isConfirm) {
+              setHasSaved(true);
+              handleSave(selectedOption);
+            } else {
+              setfieldToUpdate({ value: "", currentValue: "", identifier: "" });
+            }
+          }}
+          styles={selectStyle}
+        />
+      </div>
     );
   }
 }

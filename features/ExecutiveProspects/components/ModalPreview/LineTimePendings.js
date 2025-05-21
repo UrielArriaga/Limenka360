@@ -20,7 +20,7 @@ import { useSelector } from "react-redux";
 import { Button } from "@material-ui/core";
 import { colors } from "../../../../styles/global.styles";
 import { userSelector } from "../../../../redux/slices/userSlice";
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   paper: {
     padding: "6px 16px",
   },
@@ -81,12 +81,17 @@ const iconsActions = {
 export default function LineTimePendings({ pendingsData, fetching }) {
   const { userData } = useSelector(userSelector);
   const classes = useStyles();
-  const { results: pendings = [], isFetching = false, count = 1 } = pendingsData;
-
-  const formatDate = date => dayjs(date).format("MMMM D, YYYY");
+  const {
+    results: pendings = [],
+    isFetching = false,
+    count = 1,
+  } = pendingsData;
+  console.log("Pendings recibidos:", pendings);
+  const formatDate = (date) => dayjs(date).format("MMMM D, YYYY");
+  console.log("hola", pendingsData);
 
   const renderSkeleton = () => {
-    return Array.from(Array(5).keys()).map(index => (
+    return Array.from(Array(5).keys()).map((index) => (
       <div key={index} className="timeLineItem">
         <div className="line">
           <div className="circle">
@@ -122,11 +127,11 @@ export default function LineTimePendings({ pendingsData, fetching }) {
     ));
   };
 
-  const validExpire = item => {
+  const validExpire = (item) => {
     const now = dayjs();
     const expire = dayjs(item.date_from);
-    console.log(item.isdone);
-    console.log(now.isAfter(expire) && item.isdone);
+    // console.log(item.isdone);
+    //console.log(now.isAfter(expire) && item.isdone);
 
     if (!item.isdone && now.isAfter(expire)) {
       return false;
@@ -158,7 +163,9 @@ export default function LineTimePendings({ pendingsData, fetching }) {
                   <div
                     className="circle"
                     style={{
-                      backgroundColor: validExpire(item) ? colors.primaryColor : "red",
+                      backgroundColor: validExpire(item)
+                        ? colors.primaryColor
+                        : "red",
                       // color: iconsActions[item.action.name]?.color,
                     }}
                   >
@@ -175,7 +182,10 @@ export default function LineTimePendings({ pendingsData, fetching }) {
                     </div>
 
                     <div className="user">
-                      <Tooltip title={`Asignado a ${userData?.name}`} placement="top">
+                      <Tooltip
+                        title={`Asignado a ${userData?.name}`}
+                        placement="top"
+                      >
                         <AccountCircle />
                       </Tooltip>
                     </div>
@@ -186,9 +196,15 @@ export default function LineTimePendings({ pendingsData, fetching }) {
                       <div className="calendar">
                         <div className="bar"></div>
                         <div className="contentnumber">
-                          <p className="date">{dayjs(item.date_from).format("DD")}</p>
-                          <p className="month">{dayjs(item.date_from).format("MMM")}</p>
-                          <p className="dayandhour">{dayjs(item.date_from).format("dddd h:mm:ss A")}</p>
+                          <p className="date">
+                            {dayjs(item.date_from).format("DD")}
+                          </p>
+                          <p className="month">
+                            {dayjs(item.date_from).format("MMM")}
+                          </p>
+                          <p className="dayandhour">
+                            {dayjs(item.date_from).format("dddd h:mm:ss A")}
+                          </p>
                         </div>
                       </div>
                     </div>
@@ -198,7 +214,11 @@ export default function LineTimePendings({ pendingsData, fetching }) {
                         <p className="txtdes">Fecha limite</p>
 
                         <div className="datelimit">
-                          <p>{dayjs(item.date_from).format("DD/MM/YYYY h:mm:ss A")}</p>
+                          <p>
+                            {dayjs(item.date_from).format(
+                              "DD/MM/YYYY h:mm:ss A"
+                            )}
+                          </p>
                         </div>
                       </div>
 
@@ -209,7 +229,9 @@ export default function LineTimePendings({ pendingsData, fetching }) {
                     </div>
                   </div>
                   <div className="actions">
-                    <Button className="btnprimary">Marcar como Completado</Button>
+                    <Button className="btnprimary">
+                      Marcar como Completado
+                    </Button>
                   </div>
                   {/* {JSON.stringify(item?.isdone)}
                 <p className="titleaction">

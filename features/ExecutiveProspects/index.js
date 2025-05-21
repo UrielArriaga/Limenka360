@@ -84,7 +84,8 @@ export default function ExecutiveProspects() {
           </DragDropContext>
         </div>
 
-        <ModalPreview
+        <Moda
+          lPreview
           trackings={trackings}
           pendingsData={pendingsData}
           prospectSelected={prospectSelected}

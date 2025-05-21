@@ -1,7 +1,16 @@
 import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 
-import { Alarm, AssignmentTurnedIn, CalendarToday, Call, Email, Event, Place, WhatsApp } from "@material-ui/icons";
+import {
+  Alarm,
+  AssignmentTurnedIn,
+  CalendarToday,
+  Call,
+  Email,
+  Event,
+  Place,
+  WhatsApp,
+} from "@material-ui/icons";
 import dayjs from "dayjs";
 import { IconButton, Tooltip } from "@material-ui/core";
 
@@ -59,22 +68,22 @@ const useAddPending = () => {
   });
 
   useEffect(() => {
-    getCatalogBy("pendingstypes");
+    getCatalogBy(" ");
   }, []);
 
-  const handleOnClickDate = inputDateRef => {
+  const handleOnClickDate = (inputDateRef) => {
     inputDateRef?.current?.showPicker();
   };
 
   const handleDataForm = (name, value) => {
     console.log(name, value);
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       [name]: value,
     }));
   };
 
-  const handleClickSave = async prospectData => {
+  const handleClickSave = async (prospectData) => {
     console.log(prospectData);
 
     let bodyPost = {
@@ -160,7 +169,7 @@ export default function AddPending({ prospectSelected }) {
       <div className="areaTracking">
         <input
           value={formData.title}
-          onChange={e => handleDataForm("title", e.target.value)}
+          onChange={(e) => handleDataForm("title", e.target.value)}
           onFocus={() => setIsFocused(true)}
           type="text"
           className="txtInput"
@@ -174,20 +183,29 @@ export default function AddPending({ prospectSelected }) {
           cols="30"
           rows="10"
           value={formData.description}
-          onChange={e => handleDataForm("description", e.target.value)}
+          onChange={(e) => handleDataForm("description", e.target.value)}
         ></textarea>
 
         <div className="options">
           <div className="mg">
             <div className="dateselected">
               <CalendarToday className="icon_option" />
-              <div className="chip_date" onClick={() => handleOnClickDate(inputDateRef)}>
+              <div
+                className="chip_date"
+                onClick={() => handleOnClickDate(inputDateRef)}
+              >
                 <p className="txtDate">
-                  {formData.date ? dayjs(formData.date).format("DD/MM/YYYY HH:mm") : dayjs().format("DD/MM/YYYY HH:mm")}
+                  {formData.date
+                    ? dayjs(formData.date).format("DD/MM/YYYY HH:mm")
+                    : dayjs().format("DD/MM/YYYY HH:mm")}
                 </p>
 
                 <div className="days">
-                  <p>{formData.date ? dayjs(formData.date).fromNow(false) : dayjs().fromNow(false)}</p>
+                  <p>
+                    {formData.date
+                      ? dayjs(formData.date).fromNow(false)
+                      : dayjs().fromNow(false)}
+                  </p>
                 </div>
               </div>
               <input
@@ -195,7 +213,7 @@ export default function AddPending({ prospectSelected }) {
                 type="datetime-local"
                 value={formData.date}
                 style={{ width: 0, visibility: "hidden" }}
-                onChange={e => {
+                onChange={(e) => {
                   handleDataForm("date", e.target.value);
                 }}
               />
@@ -228,7 +246,10 @@ export default function AddPending({ prospectSelected }) {
             <div className="row priorities">
               {priorityList.map((priority, index) => (
                 <div
-                  className={`itempriority  ${priority.value === formData?.status && "itempriorityhighligth"}`}
+                  className={`itempriority  ${
+                    priority.value === formData?.status &&
+                    "itempriorityhighligth"
+                  }`}
                   onClick={() => handleDataForm("status", priority.value)}
                 >
                   <Tooltip title={`Prioridad ${priority.label}`}>
@@ -242,10 +263,14 @@ export default function AddPending({ prospectSelected }) {
           <div className="rowaaction ">
             {pendingstypes.results.map((type, index) => (
               <IconButton
-                className={`icon_click ${type.id === formData?.type && "highligth"}`}
+                className={`icon_click ${
+                  type.id === formData?.type && "highligth"
+                }`}
                 onClick={() => handleDataForm("type", type.id)}
               >
-                <Tooltip title={type.name}>{pendingstypesIcon[type.name] || <AssignmentTurnedIn />}</Tooltip>
+                <Tooltip title={type.name}>
+                  {pendingstypesIcon[type.name] || <AssignmentTurnedIn />}
+                </Tooltip>
               </IconButton>
             ))}
             {/* {actionsPendings.map((action, index) => (
@@ -263,7 +288,9 @@ export default function AddPending({ prospectSelected }) {
         <button className="btn-cancel" onClick={() => setIsFocused(false)}>
           Cancelar
         </button>
-        <button onClick={() => handleClickSave(prospectSelected)}>Guardar</button>
+        <button onClick={() => handleClickSave(prospectSelected)}>
+          Guardar
+        </button>
       </div>
     </AddTrackingStyled>
   );
@@ -293,10 +320,19 @@ const AddTrackingStyled = styled.div`
     margin-bottom: 10px;
     /* height: 30px; */
 
-    border: ${props => (props.isFocused ? `1px solid ${colors.primaryColor}` : `1px solid #9e9e9e`)};
-    /* ${props => (props.isFocused ? "border: 1px solid #3aade6;" : "border: 1px solid red")} */
+    border: ${(props) =>
+      props.isFocused
+        ? `1px solid ${colors.primaryColor}`
+        : `1px solid #9e9e9e`};
+    /* ${(props) =>
+      props.isFocused
+        ? "border: 1px solid #3aade6;"
+        : "border: 1px solid red"} */
 
-    /* ${props => (props.isFocused ? "border: 1px solid #3aade6;" : `border: 1px solid #fafafa`)} */
+    /* ${(props) =>
+      props.isFocused
+        ? "border: 1px solid #3aade6;"
+        : `border: 1px solid #fafafa`} */
 
     .txtInput {
       width: 100%;
@@ -319,7 +355,7 @@ const AddTrackingStyled = styled.div`
       }
     }
     textarea {
-      ${props => (props.isFocused ? "display: block" : "display: none;")}
+      ${(props) => (props.isFocused ? "display: block" : "display: none;")}
 
       width: 100%;
       border: none;
@@ -360,7 +396,7 @@ const AddTrackingStyled = styled.div`
     flex-direction: column;
     margin-bottom: 10px;
 
-    ${props => (props.isFocused ? "display: flex;" : "display: none;")}
+    ${(props) => (props.isFocused ? "display: flex;" : "display: none;")}
     .row {
       display: flex;
       align-items: center;
@@ -450,7 +486,7 @@ const AddTrackingStyled = styled.div`
   }
 
   .actions {
-    ${props => (props.isFocused ? "display: flex;" : "display: none;")}
+    ${(props) => (props.isFocused ? "display: flex;" : "display: none;")}
 
     justify-content: flex-end;
 

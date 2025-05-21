@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ProspectsApi from "../services";
 
-export default function usePending() {
+export default function usePending(prospectSelected) {
   const prospectsApi = new ProspectsApi();
 
-  const [pendingsData, setpendingsData] = useState({
+  const [pendingsData, setPendingsData] = useState({
     results: [],
     isFetching: false,
     count: 0,
@@ -12,32 +12,34 @@ export default function usePending() {
     messageError: "",
     isSuccess: false,
   });
+  useEffect(() => {
+    if (prospectSelected) {
+      fetchPendings(prospectSelected.id);
+    }
+  }, [prospectSelected]);
 
   async function fetchPendings(prospectId) {
     try {
-      setpendingsData(prev => {
-        return {
-          ...prev,
-          isFetching: true,
-        };
-      });
+      setPendingsData((prev) => ({ ...prev, isFetching: true }));
       let params = {
-        where: {
+        where: JSON.stringify({
           prospectId: prospectId,
-        },
-        order: "date_from",
+        }),
       };
-      let data = await prospectsApi.getPendings(params).data;
 
-      console.log(results);
-      setpendingsData({
+      let data = (await prospectsApi.getPendings(params)).data;
+
+      console.log("🚀 Pendings obtenidos:", data.results);
+      setPendingsData((prev) => ({
+        ...prev,
+
         results: data.results || [],
         isFetching: false,
         count: data.count || 0,
-      });
+      }));
     } catch (error) {
       console.log(error);
-      setpendingsData(prev => {
+      setPendingsData((prev) => {
         return {
           ...prev,
           isFetching: false,
@@ -47,5 +49,8 @@ export default function usePending() {
       });
     }
   }
-  return {};
+  return {
+    pendingsData,
+    refetch: fetchPendings,
+  };
 }

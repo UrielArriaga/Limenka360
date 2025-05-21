@@ -62,9 +62,8 @@ class ProspectsApi {
   async getPendings(queryParams = {}) {
     let params = {
       limit: 5,
-      include: "pendingstype",
-
       ...queryParams,
+      include: "pendingstype",
     };
 
     return api.get("pendings", { params });
