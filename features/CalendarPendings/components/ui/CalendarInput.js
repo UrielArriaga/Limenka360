@@ -7,16 +7,19 @@ import "dayjs/locale/es";
 import { PickersDay, StaticDatePicker } from "@mui/x-date-pickers";
 import { usePendings } from "../../context/contextPendings";
 import { getPendingDays } from "../../utils/utils";
-import { DEFAULT_COLOR_POINT_CALENDAR_DONE, DEFAULT_COLOR_POINT_CALENDAR_NOTDONE } from "../../config";
+import {
+  DEFAULT_COLOR_POINT_CALENDAR_DONE,
+  DEFAULT_COLOR_POINT_CALENDAR_NOTDONE,
+} from "../../config";
 
 const darkTheme = createTheme({
   palette: {
     background: {
-      paper: "#212529",
+      paper: "#eeeeee", // Fondo medio oscuro
     },
     text: {
-      primary: "#fff",
-      secondary: "#ccc",
+      primary: "#000", // Texto negro
+      secondary: "#222",
     },
   },
   components: {
@@ -24,13 +27,14 @@ const darkTheme = createTheme({
       styleOverrides: {
         root: {
           borderRadius: "50% !important",
-          color: "#fff",
+          color: "#000", // Texto negro en los días
+          backgroundColor: "#2e2e2e",
           "&.Mui-selected": {
-            backgroundColor: "#1976d2",
+            backgroundColor: "#90caf9",
             color: "#fff",
           },
           "&:hover": {
-            backgroundColor: "#1976d2",
+            backgroundColor: "#b3e5fc",
             color: "#fff",
           },
         },
@@ -39,27 +43,50 @@ const darkTheme = createTheme({
     MuiIconButton: {
       styleOverrides: {
         root: {
-          color: "#fff",
+          color: "#000", // Íconos
         },
       },
     },
     MuiSvgIcon: {
       styleOverrides: {
         root: {
-          color: "#fff",
+          color: "#000", // Flechas y otros íconos
         },
       },
     },
     MuiPickersArrowSwitcher: {
       styleOverrides: {
         root: {
-          color: "#fff",
+          color: "#000",
+        },
+      },
+    },
+    MuiPickersStaticWrapper: {
+      styleOverrides: {
+        root: {
+          backgroundColor: "#2e2e2e",
+        },
+      },
+    },
+    MuiDayCalendar: {
+      styleOverrides: {
+        root: {
+          backgroundColor: "#2e2e2e",
+        },
+      },
+    },
+    MuiPickersCalendarHeader: {
+      styleOverrides: {
+        root: {
+          backgroundColor: "#eeeeee",
+        },
+        label: {
+          color: "#000",
         },
       },
     },
   },
 });
-
 const CalendarInput = () => {
   const { date, setDate, events, filters } = usePendings();
   const markedDays = getPendingDays(events || []);
@@ -79,7 +106,7 @@ const CalendarInput = () => {
           {...pickersDayProps}
           sx={{
             borderRadius: "50% !important",
-
+            backgroundColor: "#4288D3",
             color: isOutsideCurrentMonth ? "#777" : "#fff",
             opacity: isOutsideCurrentMonth ? 0.6 : 1,
           }}
@@ -90,7 +117,9 @@ const CalendarInput = () => {
               width: 6,
               height: 6,
               borderRadius: "50%",
-              backgroundColor: pendingIsDone ? DEFAULT_COLOR_POINT_CALENDAR_DONE : DEFAULT_COLOR_POINT_CALENDAR_NOTDONE,
+              backgroundColor: pendingIsDone
+                ? DEFAULT_COLOR_POINT_CALENDAR_DONE
+                : DEFAULT_COLOR_POINT_CALENDAR_NOTDONE,
               position: "absolute",
               bottom: 4,
               left: "50%",
@@ -104,7 +133,7 @@ const CalendarInput = () => {
 
   return (
     <ThemeProvider theme={darkTheme}>
-      <CssBaseline />
+      {/* <CssBaseline /> */}
       <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
         <StaticDatePicker
           displayStaticWrapperAs="desktop"

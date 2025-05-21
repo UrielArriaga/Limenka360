@@ -3,10 +3,15 @@ import { useContext, useEffect, useState } from "react";
 import { createContext } from "react";
 import { getAllPendings, getPendingsTypes } from "../service/pendingsApi";
 import { COLOR_EVENTS } from "../config";
+import { useSelector } from "react-redux";
+import { userSelector } from "../../../redux/slices/userSlice";
 
 const PendingsContext = createContext();
 
 export const PendingsProvider = ({ children }) => {
+  const [calendarView, setCalendarView] = useState("day");
+  const { id_user } = useSelector(userSelector);
+
   const [date, setDate] = useState(dayjs());
   const [events, setEvents] = useState([]);
   const [pendingType, setPendingType] = useState([]);
@@ -45,56 +50,74 @@ export const PendingsProvider = ({ children }) => {
   }, []);
 
   // GET ALL PENDINGS FROM API
-  useEffect(() => {
-    const fetchEvents = async () => {
-      setIsLoading(true);
-      try {
-        const events = await getAllPendings();
 
-        const formattedEvents = events.map((event, i) => {
-          const {
-            id,
-            isdone,
-            subject,
-            description,
-            date_from: dateFrom,
-            date_to: dateTo,
-            pendingstypeId,
-          } = event;
+  const fetchEvents = async () => {
+    setIsLoading(true);
+    try {
+      let value = {};
 
-          return {
-            resourceId: pendingstypeId,
-            id,
-            title: subject,
-            start: new Date(dateFrom),
-            end: dateTo ? new Date(dateTo) : new Date(dateFrom),
-            color: COLOR_EVENTS.find(
-              (color) => color.resourceId === pendingstypeId
-            ),
-            isdone,
-          };
+      let params = {
+        where: {
+          isdone: false,
+          date_from: {
+            $gte: dayjs().startOf("day").format(),
+            $lte: dayjs().endOf("day").format(),
+          },
+          ejecutiveId: id_user,
+        },
+      };
+
+      const events = await getAllPendings(params);
+
+      const formattedEvents = events.map((event, i) => {
+        const {
+          id,
+          isdone,
+          subject,
+          description,
+          date_from: dateFrom,
+          date_to: dateTo,
+          pendingstypeId,
+        } = event;
+
+        return {
+          resourceId: pendingstypeId,
+          id,
+          title: subject,
+          start: new Date(dateFrom),
+          end: dateTo ? new Date(dateTo) : new Date(dateFrom),
+          color: COLOR_EVENTS.find(
+            (color) => color.resourceId === pendingstypeId
+          ),
+          isdone,
+        };
+      });
+
+      // FILTERS PENDINGS
+      const filterEvents = formattedEvents
+        .filter((event) => {
+          return !event.isdone === filters.byPerform;
+        })
+        .filter((event) => {
+          if (filters.byTypeOfPending === "all") return true;
+          return event.resourceId === filters.byTypeOfPending;
         });
 
-        // FILTERS PENDINGS
-        const filterEvents = formattedEvents
-          .filter((event) => {
-            return !event.isdone === filters.byPerform;
-          })
-          .filter((event) => {
-            if (filters.byTypeOfPending === "all") return true;
-            return event.resourceId === filters.byTypeOfPending;
-          });
+      setEvents(filterEvents);
+    } catch (error) {
+      console.error("Error fetching events:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-        setEvents(filterEvents);
-      } catch (error) {
-        console.error("Error fetching events:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchEvents();
+  useEffect(() => {
+    // fetchEvents();
   }, [newProperty, filters]);
+
+  const handleOnChangeView = (view) => {
+    setCalendarView(view);
+  };
 
   return (
     <PendingsContext.Provider
@@ -110,6 +133,9 @@ export const PendingsProvider = ({ children }) => {
         setIsLoading,
         filters,
         setFilters,
+        fetchEvents,
+        calendarView,
+        handleOnChangeView,
       }}
     >
       {children}

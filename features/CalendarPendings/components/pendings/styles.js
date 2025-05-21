@@ -1,13 +1,12 @@
 import styled from "styled-components";
 
 export const ActivitiesSyled = styled.aside`
-  background-color: #1f2225;
-  padding: 30px 30px 100px;
-
+  background-color: rgb(255, 255, 255);
+  padding: 24px 24px 80px;
   display: flex;
   flex-direction: column;
-  gap: 40px;
-  color: #fff;
+  gap: 32px;
+  color: #000;
 `;
 
 export const Header = styled.header`
@@ -26,7 +25,7 @@ export const ButtonsPoint = styled.div`
 
 export const BtnFilter = styled.button`
   border: none;
-  background-color: #343a40;
+  background-color: rgb(39, 106, 174);
   color: #fff;
   padding: 2px 7px;
   border-radius: 8px;

@@ -39,7 +39,7 @@ export default function Notification({ element, theme }) {
   const router = useRouter();
   const dispatch = useDispatch();
 
-  const closeAlert = withTime => {
+  const closeAlert = (withTime) => {
     if (withTime) {
       setTimeout(() => {
         setShowAlert(false);
@@ -51,7 +51,7 @@ export default function Notification({ element, theme }) {
 
     // channel.postMessage("closeall");
   };
-  const getColorBar = element => {
+  const getColorBar = (element) => {
     // if (isEmpty(pendinse)) return;
 
     let color = "#f44336";
@@ -71,14 +71,18 @@ export default function Notification({ element, theme }) {
 
     return color;
   };
-  const returnDesignType = item => {
+  const returnDesignType = (item) => {
     switch (item) {
       case "Visita":
-        return <PersonPinCircle className="contenido__item__header__title__icon" />;
+        return (
+          <PersonPinCircle className="contenido__item__header__title__icon" />
+        );
       case "Cita":
         return <WatchLater className="contenido__item__header__title__icon" />;
       case "Recordatorio":
-        return <NotificationsActive className="contenido__item__header__title__icon" />;
+        return (
+          <NotificationsActive className="contenido__item__header__title__icon" />
+        );
       case "Llamada":
         return <RingVolume className="contenido__item__header__title__icon" />;
       case "Tarea":
@@ -87,18 +91,25 @@ export default function Notification({ element, theme }) {
         return <Check />;
     }
   };
-  const renderButton = element => {
+  const renderButton = (element) => {
     switch (statusUpdate) {
       case 1:
         return (
           <div className="btn_complete_loader">
-            <CircularProgress className="loader" style={{ height: 20, width: 20 }} />
+            <CircularProgress
+              className="loader"
+              style={{ height: 20, width: 20 }}
+            />
           </div>
         );
 
       case 2:
         return (
-          <button className="btn_complete succes" disabled onClick={() => checkCurrentSlope()}>
+          <button
+            className="btn_complete succes"
+            disabled
+            onClick={() => checkCurrentSlope()}
+          >
             <Check style={{ color: "#fff" }} />
             Pendiente actualizado
           </button>
@@ -106,7 +117,10 @@ export default function Notification({ element, theme }) {
 
       case 3:
         return (
-          <button className="btn_complete error" onClick={() => checkCurrentSlope()}>
+          <button
+            className="btn_complete error"
+            onClick={() => checkCurrentSlope()}
+          >
             <Warning />
             No se pudo actualizar
           </button>
@@ -120,7 +134,10 @@ export default function Notification({ element, theme }) {
 
       default:
         return (
-          <button className="btn_complete" onClick={() => checkCurrentSlope(element)}>
+          <button
+            className="btn_complete"
+            onClick={() => checkCurrentSlope(element)}
+          >
             <Check />
             Marcar Como completado
           </button>
@@ -128,23 +145,34 @@ export default function Notification({ element, theme }) {
     }
   };
 
-  const handleClickGoToProspect = element => {
+  const handleClickGoToProspect = (element) => {
     let prospect = element?.prospect;
     if (prospect.isoportunity === true && prospect.isclient === true) {
-      router.push({ pathname: "/ventas/[prospecto]", query: { prospecto: prospect.id } });
+      router.push({
+        pathname: "/ventas/[prospecto]",
+        query: { prospecto: prospect.id },
+      });
     } else if (prospect.isoportunity === true && prospect.isclient === false) {
-      router.push({ pathname: "/oportunidades/[prospecto]", query: { prospecto: prospect.id } });
+      router.push({
+        pathname: "/oportunidades/[prospecto]",
+        query: { prospecto: prospect.id },
+      });
     } else {
-      router.push({ pathname: "/prospectos/[prospecto]", query: { prospecto: prospect.id } });
+      router.push({
+        pathname: "/prospectos/[prospecto]",
+        query: { prospecto: prospect.id },
+      });
     }
   };
 
   //Marcar como terminado
-  const checkCurrentSlope = async element => {
+  const checkCurrentSlope = async (element) => {
     console.log(element);
     setStatusUpdate(1);
     try {
-      let responseUpdate = await api.put(`pendings/${element.id}`, { isdone: true });
+      let responseUpdate = await api.put(`pendings/${element.id}`, {
+        isdone: true,
+      });
 
       console.log(responseUpdate);
       if (responseUpdate.status === 200) {
@@ -163,7 +191,7 @@ export default function Notification({ element, theme }) {
       setStatusUpdate(3);
     }
   };
-  const createAutomaticTracking = async pending => {
+  const createAutomaticTracking = async (pending) => {
     try {
       let data = {};
       data.prospectId = pending.prospectId;
@@ -190,8 +218,16 @@ export default function Notification({ element, theme }) {
     <ContainerNotification>
       <motion.div
         className={theme ? "alert" : "alert_dark"}
-        initial={{ opacity: reverseAnimation ? 1 : 0, scale: 0.5, right: reverseAnimation ? 0 : -200 }}
-        animate={{ opacity: reverseAnimation ? 0 : 1, scale: 1, right: reverseAnimation ? -200 : 0 }}
+        initial={{
+          opacity: reverseAnimation ? 1 : 0,
+          scale: 0.5,
+          right: reverseAnimation ? 0 : -200,
+        }}
+        animate={{
+          opacity: reverseAnimation ? 0 : 1,
+          scale: 1,
+          right: reverseAnimation ? -200 : 0,
+        }}
         transition={{ duration: 0.5 }}
       >
         <div className="alert__close">
@@ -211,7 +247,9 @@ export default function Notification({ element, theme }) {
               Asunto : {element?.subject}
             </p>
           </div>
-          <p className="contentpending__description">Descripcion {element?.description}</p>
+          <p className="contentpending__description">
+            Descripcion {element?.description}
+          </p>
           <div className="contentpending__prospect">
             <div className="name flex">
               <PersonPinCircle />
@@ -233,246 +271,168 @@ export default function Notification({ element, theme }) {
             <input
               type="text"
               placeholder="Comentario para seguimiento"
-              onChange={e => setMessageTracking(e.target.value)}
+              onChange={(e) => setMessageTracking(e.target.value)}
             />
           </div>
 
           <p>Hora: {dayjs(element?.date_from).format("DD/MM/YYYY h:mm")}</p>
           <div className="contentpending__actions">
             {renderButton(element)}
-            <button className="btn_showprospect" onClick={() => handleClickGoToProspect(element)}>
+            <button
+              className="btn_showprospect"
+              onClick={() => handleClickGoToProspect(element)}
+            >
               Ver prospecto
             </button>
           </div>
         </div>
 
-        <div className="bar" style={{ backgroundColor: getColorBar(element) }}></div>
+        <div
+          className="bar"
+          style={{ backgroundColor: getColorBar(element) }}
+        ></div>
       </motion.div>
     </ContainerNotification>
   );
 }
-
 const ContainerNotification = styled(motion.div)`
-  border-radius: 8px;
-  box-shadow: rgba(0, 0, 0, 0.25) -14px 14px 28px, rgba(0, 0, 0, 0.22) -10px 10px 10px;
-  .alert {
-    .bar {
-      height: 5px;
-      background-color: #f44336;
-    }
-    position: absolute;
-    bottom: 0;
-    background-color: rgba(64, 123, 254, 1);
-    position: relative;
-    &__close {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      width: 20px;
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-      cursor: pointer;
-      .icon_close {
-        background-color: #f44336;
-        width: 30px;
-        height: 20px;
-        height: 24px;
-        border-radius: 4px;
-      }
-      svg {
-        color: #fff;
-      }
-    }
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  max-width: 380px;
+  z-index: 999;
 
-    p {
-      color: #000;
-    }
-  }
+  .alert,
   .alert_dark {
-    .bar {
-      height: 5px;
-      background-color: #f44336;
-    }
-    position: absolute;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.82);
     position: relative;
-    &__close {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      width: 20px;
+    border-radius: 16px;
+    background-color: ${({ theme }) =>
+      theme === "dark" ? "#2c2c2e" : "#ffffff"};
+    color: ${({ theme }) => (theme === "dark" ? "#f5f5f5" : "#1f1f1f")};
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+    padding: 1.2rem;
+    overflow: hidden;
+    font-family: "Inter", sans-serif;
+  }
+
+  .bar {
+    height: 4px;
+    width: 100%;
+    background: linear-gradient(90deg, #1976d2, #4caf50);
+  }
+
+  .alert__close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    .icon_close {
       display: flex;
       align-items: center;
-      justify-content: flex-end;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background-color: #ef5350;
       cursor: pointer;
-      .icon_close {
-        background-color: #f44336;
-        width: 30px;
-        height: 20px;
-        height: 24px;
-        border-radius: 4px;
-      }
-      svg {
-        color: #fff;
-      }
     }
 
-    p {
-      color: #000;
+    svg {
+      color: white;
+      font-size: 18px;
     }
   }
 
   .contentpending {
-    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+
     &__top {
       display: flex;
-      align-items: center;
-      margin-bottom: 5px;
-      svg {
-        margin-right: 10px;
-        color: #fff;
+      flex-direction: column;
+      gap: 0.25rem;
+
+      .subject {
+        font-size: 1rem;
+        font-weight: 600;
+        color: inherit;
       }
+    }
+
+    &__description {
+      font-size: 0.95rem;
+      color: #666;
     }
 
     &__prospect {
-      display: flex;
-      align-items: center;
-      margin-bottom: 5px;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0.25rem;
+
       .flex {
         display: flex;
         align-items: center;
+        gap: 0.4rem;
 
         svg {
-          margin-right: 2px;
-          color: ${colors.primaryColor};
-        }
-        p {
-          margin-right: 10px;
-          color: #fff;
+          color: #1976d2;
         }
       }
     }
-    p {
-      color: #fff;
-    }
-    &__description {
-      margin-bottom: 10px;
-    }
+
     &__tracking {
       input {
         width: 100%;
-        padding: 5px 0;
-        border: none;
-        border: 1.5px solid #ccc;
-        border-radius: 4px;
-        transition: all 0.3s ease;
-        font-size: 16px;
-        min-height: 36px;
-        resize: none;
-        padding: 0px 5px;
-        border: 1.5px solid ${colors.primaryColor};
+        padding: 0.6rem;
+        border-radius: 8px;
+        border: 1.5px solid #d1d1d1;
+        background-color: ${({ theme }) =>
+          theme === "dark" ? "#3a3a3a" : "#fafafa"};
+        color: ${({ theme }) => (theme === "dark" ? "#fff" : "#000")};
+        font-size: 0.95rem;
+
         &:focus {
-          outline: 1.5px solid ${colors.primaryColor};
-          border: 1.5px solid ${colors.primaryColor};
+          outline: none;
+          border-color: #1976d2;
         }
       }
     }
 
     &__actions {
-      margin-top: 10px;
       display: flex;
-      .btn_complete {
-        width: 200px;
-        display: flex;
-        align-items: center;
-        border: none;
-        background-color: rgba(16, 60, 130, 1);
-        box-shadow: rgba(17, 12, 46, 0.15) 0px 48px 100px 0px;
-        color: #fff;
-        border-radius: 4px;
-        padding: 2px 10px;
-        height: 30px;
-        transition: all 0.2s ease-in-out;
-        margin-right: 10px;
-        &:hover {
-          cursor: pointer;
-          background-color: rgba(16, 60, 130, 0.6);
-        }
-      }
-      .btn_close {
-        width: 59px;
-        display: flex;
-        align-items: center;
-        border: none;
-        background-color: rgba(16, 60, 130, 1);
-        box-shadow: rgba(17, 12, 46, 0.15) 0px 48px 100px 0px;
-        color: #fff;
-        border-radius: 4px;
-        padding: 2px 10px;
-        height: 30px;
-        transition: all 0.2s ease-in-out;
-        margin-right: 10px;
-        &:hover {
-          cursor: pointer;
-          background-color: rgba(16, 60, 130, 0.6);
-        }
-      }
+      gap: 0.5rem;
+      flex-wrap: wrap;
 
-      .btn_complete_loader {
-        display: flex;
-        align-items: center;
+      button {
         border: none;
-        background-color: #3f51b5;
-        box-shadow: rgba(17, 12, 46, 0.15) 0px 48px 100px 0px;
-        color: #fff;
-        border-radius: 4px;
-        padding: 2px 10px;
-        height: 30px;
-        transition: all 0.2s ease-in-out;
-        margin-right: 10px;
-        width: 200px;
-        justify-content: center;
-        .MuiCircularProgress-root {
-          width: 10px;
-          height: 10px;
-        }
-        .loader {
-          width: 10px;
-          height: 10px;
-          color: white;
-        }
-      }
+        border-radius: 6px;
+        font-size: 0.875rem;
+        padding: 0.5rem 0.8rem;
+        cursor: pointer;
+        color: white;
+        transition: background-color 0.2s ease-in-out;
 
-      .succes {
-        background-color: #4caf50;
-      }
+        &.btn_complete {
+          background-color: #43a047;
+          &:hover {
+            background-color: #388e3c;
+          }
+        }
 
-      .error {
-        background-color: #f44336;
-      }
-      .btn_showprospect {
-        display: flex;
-        align-items: center;
-        border: none;
-        background-color: #103c82;
-        box-shadow: rgba(17, 12, 46, 0.15) 0px 48px 100px 0px;
-        color: #fff;
-        border-radius: 4px;
-        padding: 2px 10px;
-        height: 30px;
-        transition: all 0.2s ease-in-out;
-        margin-right: 10px;
-        &:hover {
-          cursor: pointer;
-          background-color: rgba(16, 60, 130, 0.6);
+        &.btn_close {
+          background-color: #ef5350;
+          &:hover {
+            background-color: #d32f2f;
+          }
+        }
+
+        &.btn_showprospect {
+          background-color: #1976d2;
+          &:hover {
+            background-color: #1565c0;
+          }
         }
       }
-    }
-    .subject {
-      font-weight: bold;
-      color: #fff;
     }
   }
 `;

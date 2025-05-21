@@ -1,61 +1,82 @@
 import { momentLocalizer, Views } from "react-big-calendar";
 import { ActivitiesViewerStyled, CalendarStyled } from "./styles.js";
-
 import moment from "moment";
-import { useEffect, useState } from "react";
-// import { getEvent, getEvents, updateEvent } from "@/app/_services/apiEvents";
-
+import { useState } from "react";
 import dayjs from "dayjs";
 import CustomToolbar from "./CustomToolbar";
-import CreatePending from "../createPending/CreatePending";
-import { getAllPendings, updatePending } from "../../service/pendingsApi.js";
-import { colorsEvents } from "../createPending/styles.js";
-
-import "moment/locale/es"; // Importa español
+import "moment/locale/es";
 import { usePendings } from "../../context/contextPendings.js";
+import { useSelector } from "react-redux";
+import { pendingsSelector } from "../../../../redux/slices/slopesSlice.js";
+import { COLOR_EVENTS } from "../../config.js";
+import { Modal, styled } from "@material-ui/core";
 
 const localizer = momentLocalizer(moment);
 moment.locale("es");
 
-const formats = {
-  // timeGutterFormat: "h:m a", // Mantiene el formato de 24 horas sin AM/PM
-};
+const formats = {};
+function CalendarViewer({ setEventSelected, handleOpen }) {
+  const {
+    date,
+    setDate,
+    events,
+    pendingType,
+    calendarView,
+    handleOnChangeView,
+  } = usePendings();
 
-// export const resources = [
-//   { resourceId: 1, resourceTitle: "Llamada" },
-//   { resourceId: 2, resourceTitle: "Videollamada" },
-//   { resourceId: 3, resourceTitle: "Demos" },
-//   { resourceId: 4, resourceTitle: "Visita" },
-//   { resourceId: 5, resourceTitle: "WhatsApp" },
-//   { resourceId: 6, resourceTitle: "Forecast" },
-// ];
-
-// function CalendarViewer({ date, setDate, events = [], setEvents, pendingType, newProperty, setNewProperty }) {
-function CalendarViewer() {
-  const { date, setDate, events, pendingType } = usePendings();
-
+  const { slopesTodayResults } = useSelector(pendingsSelector);
   const [open, setOpen] = useState(false);
   const [eventCurrent, setEventCurrent] = useState({});
   const [currentEventApi, setCurrentEventApi] = useState(null);
 
+  const formattedEvents = slopesTodayResults.map((event, i) => {
+    const {
+      id,
+      isdone,
+      subject,
+      description,
+      date_from: dateFrom,
+      date_to: dateTo,
+      pendingstypeId,
+    } = event;
+
+    return {
+      resourceId: pendingstypeId,
+      id,
+      title: subject,
+      start: new Date(dateFrom),
+      end: dateTo ? new Date(dateTo) : new Date(dateFrom),
+      color: COLOR_EVENTS.find((color) => color.resourceId === pendingstypeId),
+      isdone,
+    };
+  });
+
   // open modal
   const handleSelectSlot = (event) => {
-    setOpen(true);
-    setEventCurrent(event);
+    setEventSelected(event);
+    handleOpen();
+    // setOpen(true);
+    // setEventCurrent(event);
   };
 
   // set color event, whent it´s showing
   const eventStyleGetter = (event) => ({
     style: {
-      backgroundColor: event.isdone ? "#e9ecef" : event?.color?.bgColor,
-      color: event.isdone ? "#868e96" : event?.color?.color,
-      fontWeight: "bold",
-      borderRadius: "5px",
-      padding: "2px 8px",
-      zIndex: "999",
-      textTransform: "capitalize",
-      fontSize: "0.8rem",
-      borderLeft: `3px solid ${event.isdone ? "#868e96" : event?.color?.color}`,
+      backgroundColor: event.isdone
+        ? "#f1f3f5"
+        : event?.color?.bgColor || "#74c0fc",
+      color: event.isdone ? "#868e96" : event?.color?.color || "#1c1c1c",
+      fontWeight: "500",
+      borderRadius: "6px",
+      padding: "4px 6px",
+      fontSize: "0.75rem",
+      borderLeft: `4px solid ${
+        event.isdone ? "#adb5bd" : event?.color?.color || "#228be6"
+      }`,
+      whiteSpace: "nowrap",
+      overflow: "hidden",
+      textOverflow: "ellipsis",
     },
   });
 
@@ -71,47 +92,21 @@ function CalendarViewer() {
     }
   };
 
-  // Update date event drop
-  // const onEventDrop = async ({ event, start, end, resourceId }) => {
-  //   try {
-  //     const withEndDates = ["62dp9dPnCtgdfTodXAUuzr1N", "62dN6LUisuI0rTZm1p5l5Lcp"];
-
-  //     if (withEndDates.includes(resourceId)) return;
-
-  //     const date_to = withEndDates.includes(resourceId) ? end : null;
-
-  //     await updatePending(event.id, { date_from: start });
-  //     setNewProperty(property => !property);
-  //   } catch (error) {
-  //     console.log("Error updating event:", error);
-  //   }
-  // };
-
-  // Update resizing event date
-  // const onEventResize = async ({ event, start, end }) => {
-  //   try {
-  //     const updatedEvent = { ...event, eventAt: `${start}*${end}` };
-  //     await updateEvent(event.id, updatedEvent);
-  //     setNewProperty(property => !property);
-  //   } catch (error) {
-  //     console.log("Error updating event:", error);
-  //   }
-  // };
-
   return (
     <ActivitiesViewerStyled>
       <CalendarStyled
         localizer={localizer}
-        events={events}
+        events={slopesTodayResults}
         startAccessor="start"
         endAccessor="end"
         views={{ day: true, week: false, month: true }}
-        defaultView={Views.DAY}
+        defaultView={calendarView}
+        onView={(view) => handleOnChangeView(view)}
         style={{ height: "100%", fontFamily: "", width: "1000px" }}
         // onSelectSlot={handleSelectSlot}
-        // onSelectEvent={handleGetEvent}
+        onSelectEvent={handleSelectSlot}
         eventPropGetter={eventStyleGetter}
-        draggableAccessor={() => true}
+        // draggableAccessor={() => true}
         // onEventDrop={onEventDrop}
         resources={pendingType}
         resourceIdAccessor="resourceId"

@@ -3,42 +3,6 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import Calendar from "./Calendar";
 
-const eventos = [
-  {
-    titulo: "Llamada con cliente",
-    tipo: "llamada",
-    inicio: "2025-04-22T08:30:00",
-    fin: "2025-04-22T08:50:00",
-    prioridad: 3,
-    type: 3,
-  },
-  {
-    titulo: "Llamada con cliente",
-    tipo: "llamada",
-    inicio: "2025-04-22T08:50:00",
-    fin: "2025-04-22T09:00:00",
-    prioridad: 3,
-    type: 3,
-  },
-
-  {
-    titulo: "Videollamada demo",
-    tipo: "videollamada",
-    inicio: "2025-04-22T10:00:00",
-    fin: "2025-04-22T11:00:00",
-    prioridad: 2,
-    type: 2,
-  },
-  {
-    titulo: "Llamada a prospecto",
-    tipo: "llamada",
-    inicio: "2025-04-22T12:15:00",
-    fin: "2025-04-22T12:45:00",
-    prioridad: 1,
-    type: 1,
-  },
-];
-
 export default function LimenkaCalendar() {
   const [isOpenCalendar, setIsOpenCalendar] = useState(false);
 
@@ -46,9 +10,7 @@ export default function LimenkaCalendar() {
     <LimenkaCalendarStyled>
       <div
         className="calendarbutton"
-        onClick={() => {
-          setIsOpenCalendar(!isOpenCalendar);
-        }}
+        onClick={() => setIsOpenCalendar(!isOpenCalendar)}
       >
         <CalendarToday className="iconrotate" />
         <p>Calendario</p>
@@ -56,11 +18,8 @@ export default function LimenkaCalendar() {
 
       <Calendar
         open={isOpenCalendar}
-        eventos={eventos}
         onClickEvent={(e) => alert(`Evento: ${e.titulo}`)}
-        toogle={() => {
-          setIsOpenCalendar(!isOpenCalendar);
-        }}
+        toogle={() => setIsOpenCalendar(!isOpenCalendar)}
       />
     </LimenkaCalendarStyled>
   );

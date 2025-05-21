@@ -18,7 +18,7 @@ export default function useReports() {
   const service = new ProspectsService();
   const [viewType, setViewType] = useState("line");
 
-  const [reportType, setReportType] = useState(null);
+  const [reportType, setReportType] = useState("prospectsentities");
 
   const [flagToRefetch, setFlagToRefetch] = useState(false);
 

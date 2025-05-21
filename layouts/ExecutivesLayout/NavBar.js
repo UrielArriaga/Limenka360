@@ -13,16 +13,14 @@ import {
   KeyboardArrowUp,
   CalendarToday,
 } from "@material-ui/icons";
-
 import { useRouter } from "next/router";
 import GoalsSection from "./NavBarGoals";
 import NavBarGoal from "./NavBarGoal";
 import { device } from "../../styles/global.styles";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { clearState, userSelector } from "../../redux/slices/userSlice";
 import ChatBotWidget from "../../componentx/LimiBot";
 import LimenkaCalendar from "../../componentx/LimenkaCalendar";
-import { useDispatch } from "react-redux";
 
 export const NavbarLayout = ({ children }) => {
   const router = useRouter();
@@ -30,18 +28,21 @@ export const NavbarLayout = ({ children }) => {
   const { userData } = useSelector(userSelector);
   const [showGoal, setShowGoal] = useState(false);
   const [showGoalsSubmenu, setShowGoalsSubmenu] = useState(false);
+  const [showToolsSubmenu, setShowToolsSubmenu] = useState(false);
   const { pathname } = router;
   const { version = "v1" } = router.query;
   const goalsRef = useRef(null);
+  const toolsRef = useRef(null);
 
-  // Estado para la meta seleccionada
   const [selectedGoal, setSelectedGoal] = useState(null);
 
-  // Cerrar el submenú al hacer click fuera
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (goalsRef.current && !goalsRef.current.contains(event.target)) {
         setShowGoalsSubmenu(false);
+      }
+      if (toolsRef.current && !toolsRef.current.contains(event.target)) {
+        setShowToolsSubmenu(false);
       }
     };
 
@@ -52,26 +53,10 @@ export const NavbarLayout = ({ children }) => {
   }, []);
 
   const goals = [
-    {
-      id: 1,
-      title: "VISTA 1",
-      version: 1,
-    },
-    {
-      id: 2,
-      title: "VISTA 2",
-      version: 2,
-    },
-    {
-      id: 3,
-      title: "VISTA 3",
-      version: 3,
-    },
-    {
-      id: 3,
-      title: "VISTA 4",
-      version: 4,
-    },
+    { id: 1, title: "VISTA 1", version: 1 },
+    { id: 2, title: "VISTA 2", version: 2 },
+    { id: 3, title: "VISTA 3", version: 3 },
+    { id: 4, title: "VISTA 4", version: 4 },
   ];
 
   const handleGoalSelect = (goal) => {
@@ -82,6 +67,10 @@ export const NavbarLayout = ({ children }) => {
 
   const toggleGoalsSubmenu = () => {
     setShowGoalsSubmenu(!showGoalsSubmenu);
+  };
+
+  const toggleToolsSubmenu = () => {
+    setShowToolsSubmenu(!showToolsSubmenu);
   };
 
   return (
@@ -103,10 +92,7 @@ export const NavbarLayout = ({ children }) => {
           <div
             className="nav-item"
             onClick={() =>
-              router.push({
-                pathname: `/ejecutivo`,
-                query: { version },
-              })
+              router.push({ pathname: `/ejecutivo`, query: { version } })
             }
           >
             <Dashboard />
@@ -151,6 +137,7 @@ export const NavbarLayout = ({ children }) => {
             <People />
             <span>Prospectos</span>
           </div>
+
           <div
             className="nav-item"
             onClick={() =>
@@ -181,9 +168,20 @@ export const NavbarLayout = ({ children }) => {
             <ShoppingCart />
             <span>Pedidos</span>
           </div>
-          <div className="nav-item">
-            <Settings />
-            <span>Herramientas</span>
+
+          <div className="nav-item tools-item" ref={toolsRef}>
+            <div className="tools-main" onClick={toggleToolsSubmenu}>
+              <Settings />
+              <span>Herramientas</span>
+              {showToolsSubmenu ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
+            </div>
+            {showToolsSubmenu && (
+              <ToolsSubmenu>
+                <div className="submenu-item">Calculadora</div>
+                <div className="submenu-item">Importador de datos</div>
+                <div className="submenu-item">Soporte</div>
+              </ToolsSubmenu>
+            )}
           </div>
 
           <div className="nav-item goals-item" ref={goalsRef}>
@@ -218,6 +216,7 @@ export const NavbarLayout = ({ children }) => {
             )}
           </div>
         </div>
+
         <div className="right">
           <div className="user">
             <AccountCircle className="icon" />
@@ -242,7 +241,7 @@ export const NavbarLayout = ({ children }) => {
               textAlign: "center",
             }}
           >
-            Cerrar sesion
+            Cerrar sesión
           </p>
         </div>
       </Navbar>
@@ -256,9 +255,7 @@ export const NavbarLayout = ({ children }) => {
       )}
 
       <MainContent>{children}</MainContent>
-
       <ChatBotWidget />
-
       <LimenkaCalendar />
     </NavbarWrapper>
   );
@@ -327,11 +324,13 @@ const Navbar = styled.div`
         }
       }
 
-      &.goals-item {
+      &.goals-item,
+      &.tools-item {
         flex-direction: column;
         align-items: stretch;
 
-        .goals-main {
+        .goals-main,
+        .tools-main {
           display: flex;
           align-items: center;
           gap: 2px;
@@ -405,6 +404,11 @@ const GoalsSubmenu = styled.div`
       font-weight: 500;
     }
   }
+`;
+
+const ToolsSubmenu = styled(GoalsSubmenu)`
+  right: 0;
+  left: auto;
 `;
 
 const MainContent = styled.main`

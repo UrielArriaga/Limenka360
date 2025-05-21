@@ -54,10 +54,10 @@ class ProspectsService {
       subquery: 1,
       include: "pendingstype",
       where: {
-        status: 1,
+        // status: 1,
         date_to: {
           $gte: "2025-05-01T06:00:00.000Z",
-          $lte: "2025-05-31T06:00:00.000Z",
+          $lte: "2025-05-31T00:00:00-06:00",
         },
       },
       count: 1,

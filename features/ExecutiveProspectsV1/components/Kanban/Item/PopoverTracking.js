@@ -107,26 +107,27 @@ export default function PopoverTracking({
       phaseId: prospect.phaseId || null,
       createdbyId: id_user,
       url: "",
-      pendingdata:
-        showFormPending && pendingDate && pendingType
-          ? {
-              date_from: dayjs(pendingDate).toISOString(),
-              description: pendingNotes,
-              subject: "",
-              place: "",
-              priority: pendingPriority.toString(),
-              pendingstypeId: pendingType
-                ? pendingTypeIdMap[pendingType.value]
-                : null,
-
-              zone: "",
-              remember: true,
-              remember_by: "correo",
-              notify: true,
-              notify_by: "correo",
-            }
-          : {},
     };
+
+    if (showFormPending && pendingDate && pendingType) {
+      trackingData.pendingdata = {
+        date_from: dayjs(pendingDate).toISOString(),
+        description: pendingNotes,
+        subject: "",
+        place: "",
+        priority: pendingPriority.toString(),
+        pendingstypeId: pendingType
+          ? pendingTypeIdMap[pendingType.value]
+          : null,
+        zone: "",
+        remember: true,
+        remember_by: "correo",
+        notify: true,
+        notify_by: "correo",
+      };
+    }
+
+    dayjs().add("24", "hour").toISOString();
 
     try {
       const res = await api.post("trackings/trackingandpending", trackingData);

@@ -79,7 +79,7 @@ const Item = forwardRef(({ task: prospect, index, actions }, externalRef) => {
 
       const newPending = {
         prospectId: "ioynubwNrd07TMyG2zsNk3Rs",
-        date_from: "2025-05-22T21:17:37.567Z",
+        date_from: reminderTime.format(),
         description: "",
         subject: "",
         place: "",

@@ -1,57 +1,118 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { api } from "../../services/api";
 import RequestCommon from "../../services/request_Common";
+export const COLOR_EVENTS = [
+  {
+    bgColor: "#ffe3e3",
+    color: "#c92a2a",
+    resourceId: "62dlUPgKjOpCoDH6wU0sG9rp",
+  },
+  {
+    bgColor: "#f8f0fc",
+    color: "#862e9c",
+    resourceId: "62dN6LUisuI0rTZm1p5l5Lcp",
+  },
+  {
+    bgColor: "#e7f5ff",
+    color: "#1864ab",
+    resourceId: "62dp9dPnCtgdfTodXAUuzr1N",
+  },
+  {
+    bgColor: "#fff4e6",
+    color: "#d9480f",
+    resourceId: "62dQiGAWr0P53bbpmnYtXmd5",
+  },
+  {
+    bgColor: "#f4fce3",
+    color: "#5c940d",
+    resourceId: "62dUf2tKTw0k9q0WrC5uvf8m",
+  },
+];
 
-export const getSlopesByQuery = createAsyncThunk("slopes/getSlopesByQuery", async (payload, thunkAPI) => {
-  if (!payload.params) {
-    return thunkAPI.rejectWithValue("No params value");
+const formatEvents = (events) => {
+  return events.map((event) => {
+    const {
+      id,
+      isdone,
+      subject,
+      description,
+      date_from: dateFrom,
+      date_to: dateTo,
+      pendingstypeId,
+    } = event;
+
+    return {
+      ...event,
+      resourceId: pendingstypeId,
+      id,
+      title: subject,
+      start: new Date(dateFrom),
+      end: dateTo ? new Date(dateTo) : new Date(dateFrom),
+      color: COLOR_EVENTS.find((color) => color.resourceId === pendingstypeId),
+      isdone,
+    };
+  });
+};
+
+export const getSlopesByQuery = createAsyncThunk(
+  "slopes/getSlopesByQuery",
+  async (payload, thunkAPI) => {
+    if (!payload.params) {
+      return thunkAPI.rejectWithValue("No params value");
+    }
+
+    const { params } = payload;
+
+    try {
+      let response = await api.get(`pendings`, { params });
+      let data = response.data;
+      return data;
+    } catch (error) {
+      console.log(error);
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
   }
+);
 
-  const { params } = payload;
+export const getSlopesByQuery2 = createAsyncThunk(
+  "slopes/getSlopesByQuery",
+  async (payload, thunkAPI) => {
+    if (!payload.params) {
+      return thunkAPI.rejectWithValue("No params value");
+    }
 
-  try {
-    let response = await api.get(`pendings`, { params });
-    let data = response.data;
-    return data;
-  } catch (error) {
-    console.log(error);
-    return thunkAPI.rejectWithValue(error.response.data);
+    const { params } = payload;
+
+    try {
+      let response = await api.get(`pendingsshopping`, { params });
+      let data = response.data;
+      return data;
+    } catch (error) {
+      console.log(error);
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
   }
-});
+);
 
-export const getSlopesByQuery2 = createAsyncThunk("slopes/getSlopesByQuery", async (payload, thunkAPI) => {
-  if (!payload.params) {
-    return thunkAPI.rejectWithValue("No params value");
+export const getSlopesToday = createAsyncThunk(
+  "slopes/getSlopesByToday",
+  async (payload, thunkAPI) => {
+    if (!payload.params) {
+      return thunkAPI.rejectWithValue("No params value");
+    }
+
+    const { params } = payload;
+
+    try {
+      let response = await api.get(`pendings`, { params });
+      let data = response.data;
+      return data;
+    } catch (error) {
+      console.log(error);
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
   }
-
-  const { params } = payload;
-
-  try {
-    let response = await api.get(`pendingsshopping`, { params });
-    let data = response.data;
-    return data;
-  } catch (error) {
-    console.log(error);
-    return thunkAPI.rejectWithValue(error.response.data);
-  }
-});
-
-export const getSlopesToday = createAsyncThunk("slopes/getSlopesByToday", async (payload, thunkAPI) => {
-  if (!payload.params) {
-    return thunkAPI.rejectWithValue("No params value");
-  }
-
-  const { params } = payload;
-
-  try {
-    let response = await api.get(`pendings`, { params });
-    let data = response.data;
-    return data;
-  } catch (error) {
-    console.log(error);
-    return thunkAPI.rejectWithValue(error.response.data);
-  }
-});
+);
 
 export const slopesSlice = createSlice({
   name: "slopes",
@@ -115,7 +176,7 @@ export const slopesSlice = createSlice({
     // * TODO
 
     [getSlopesToday.fulfilled]: (state, { payload }) => {
-      state.slopesTodayResults = payload?.results;
+      state.slopesTodayResults = formatEvents(payload?.results);
       state.countSlopesToday = payload?.count;
       state.isSuccesSlopesToday = true;
       state.isFetchingSlopesToday = false;
@@ -136,6 +197,13 @@ export const slopesSlice = createSlice({
   },
 });
 
-export const { refetchSlopes, setSlopeSelected, cleanSlopeSelected, refetchSlopesToday } = slopesSlice.actions;
+export const {
+  refetchSlopes,
+  setSlopeSelected,
+  cleanSlopeSelected,
+  refetchSlopesToday,
+} = slopesSlice.actions;
 
-export const slopesSelector = state => state.slopes;
+export const slopesSelector = (state) => state.slopes;
+
+export const pendingsSelector = (state) => state.slopes;

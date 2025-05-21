@@ -226,7 +226,7 @@ function ListDropdown({ setValue, value, options = [] }) {
   return (
     <DropdownContainer ref={dropdownRef}>
       <DropdownHeader onClick={() => setOpen(!open)}>
-        {selected?.label ? selected?.label : "Selecciona un acceso rapido"}
+        {selected?.label ? selected?.label : "Selecciona un tipo de reporte"}
         <ArrowDropDown />
       </DropdownHeader>
 
@@ -305,8 +305,8 @@ const DropdownHeader = styled.button`
   padding: 10px 14px;
   border: 1px solid #ccc;
   border: none;
-  background: rgb(136, 171, 204);
-
+  background: #4288d3;
+  color: #fff;
   border-radius: 8px;
   font-size: 14px;
   cursor: pointer;

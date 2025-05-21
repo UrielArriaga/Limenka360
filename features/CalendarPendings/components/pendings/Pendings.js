@@ -29,9 +29,38 @@ import { getPending } from "../../service/pendingsApi";
 import Pending from "../pending/Pending";
 import Filters from "./Filters";
 import { usePendings } from "../../context/contextPendings";
+import { useSelector } from "react-redux";
+import { pendingsSelector } from "../../../../redux/slices/slopesSlice";
+import { COLOR_EVENTS } from "../../config";
 
 function Pendings() {
   const { events, date, setIsLoading, filters } = usePendings();
+
+  const { slopesTodayResults } = useSelector(pendingsSelector);
+
+  const formattedEvents = slopesTodayResults.map((event, i) => {
+    const {
+      id,
+      isdone,
+      subject,
+      description,
+      date_from: dateFrom,
+      date_to: dateTo,
+      pendingstypeId,
+    } = event;
+
+    return {
+      resourceId: pendingstypeId,
+      id,
+      title: subject,
+      start: new Date(dateFrom),
+      end: dateTo ? new Date(dateTo) : new Date(dateFrom),
+      color: COLOR_EVENTS.find((color) => color.resourceId === pendingstypeId),
+      isdone,
+    };
+  });
+
+  console.log(formattedEvents);
 
   const [pending, setPending] = useState(null);
 
@@ -44,7 +73,7 @@ function Pendings() {
   const isCurrentDate = currentDate === formatDateCalendar;
 
   // Get events of the current day
-  const curEvents = events.filter((event) => {
+  const curEvents = slopesTodayResults.filter((event) => {
     if (!(event.start instanceof Date) || isNaN(event.start.getTime()))
       return false;
     if (!(event.end instanceof Date) || isNaN(event.end.getTime()))
@@ -97,11 +126,11 @@ function Pendings() {
   return (
     <ActivitiesSyled>
       <Header>
-        <BtnFilter onClick={() => setIsOpenFilters((open) => !open)}>
+        {/* <BtnFilter onClick={() => setIsOpenFilters((open) => !open)}>
           {isOpenFilters ? <CloseIcon /> : <FilterListIcon />}
-        </BtnFilter>
+        </BtnFilter> */}
 
-        <Filters isOpen={isOpenFilters} />
+        {/* <Filters isOpen={isOpenFilters} /> */}
       </Header>
       <div>
         {pending ? (

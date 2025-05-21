@@ -1,24 +1,27 @@
 import { api } from "../../../services/api";
 
-export const getAllPendings = async () => {
+export const getAllPendings = async (customParams = {}) => {
   try {
-    const data = await api.get("pendings", {
-      params: {
-        all: true,
-        count: 1,
-      },
-    });
+    const defaultParams = {
+      // all: true,
+      count: 1,
+    };
 
-    return data.data.results;
+    const params = { ...defaultParams, ...customParams };
+
+    const { data } = await api.get("pendings", { params });
+    return data.results;
   } catch (error) {
-    console.error("Error trying to get pendings 🔥");
-    throw new Error("Error fetching pendings: ", error.message);
+    console.error("Error trying to get pendings 🔥", error);
+    throw new Error(`Error fetching pendings: ${error.message}`);
   }
 };
 
-export const getPending = async id => {
+export const getPending = async (id) => {
   try {
-    const data = await api.get(`pendings/${id}`, { params: { all: true, count: 1 } });
+    const data = await api.get(`pendings/${id}`, {
+      params: { all: true, count: 1 },
+    });
 
     return data.data;
   } catch (error) {
@@ -27,7 +30,7 @@ export const getPending = async id => {
   }
 };
 
-export const createPending = async data => {
+export const createPending = async (data) => {
   try {
     const res = await api.post("pendings/massive", data);
     return res.data;
@@ -58,7 +61,7 @@ export const getPendingsTypes = async () => {
   }
 };
 
-export const getPendingType = async id => {
+export const getPendingType = async (id) => {
   try {
     const data = await api.get(`pendingstypes/${id}`);
 
