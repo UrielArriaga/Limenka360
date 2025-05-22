@@ -44,7 +44,9 @@ const Item = forwardRef(({ task: prospect, index, actions }, externalRef) => {
   const [openCustomPopover, setOpenCustomPopover] = useState(false);
   const [customAnchorEl, setCustomAnchorEl] = useState(null);
   const [anchorIA, setAnchorIA] = React.useState(null);
-
+  const [anchorElModal, setAnchorElModal] = useState(null); // Estado para el anclaje del modal
+  const [showCustomModal, setShowCustomModal] = useState(false);
+  const [anchorWidth, setAnchorWidth] = useState(null);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -56,17 +58,19 @@ const Item = forwardRef(({ task: prospect, index, actions }, externalRef) => {
   const handleOpenMenu = (event) => {
     event.stopPropagation();
     setAnchorEl(event.currentTarget);
+    setShowCustomModal(false);
   };
 
   const handleCloseMenu = () => {
     setAnchorEl(null);
   };
-  const handleOpenCustomPending = (event) => {
-    event.stopPropagation();
-    setCustomAnchorEl(event.currentTarget);
-    setOpenCustomPopover(true);
-  };
 
+  const handleOpenCustomPending = (e) => {
+    setAnchorElModal(e.currentTarget); // Ancla el modal al botón
+    setAnchorWidth(e.currentTarget.offsetWidth);
+    // handleCloseMenu(); // Cierra el menú cuando se selecciona "Personalizado"
+    setShowCustomModal(true); // Muestra el modal
+  };
   const handlePendingOption = async (option) => {
     handleCloseMenu();
 
@@ -341,7 +345,7 @@ const Item = forwardRef(({ task: prospect, index, actions }, externalRef) => {
             </div>
             <CustomMenu
               anchorEl={anchorEl}
-              open={Boolean(anchorEl)}
+              open={Boolean(anchorEl) && !showCustomModal}
               onClose={handleCloseMenu}
               getContentAnchorEl={null}
               anchorOrigin={{
@@ -368,7 +372,9 @@ const Item = forwardRef(({ task: prospect, index, actions }, externalRef) => {
               <CustomMenuItem
                 icon={Schedule}
                 label="Personalizado"
-                onClick={(e) => handleOpenCustomPending(e)}
+                onClick={(e) => {
+                  handleOpenCustomPending(e);
+                }}
               />
             </CustomMenu>
           </div>
@@ -379,13 +385,20 @@ const Item = forwardRef(({ task: prospect, index, actions }, externalRef) => {
             onClose={() => setOpenScheduleModal(false)}
             prospect={prospect}
           />
-          <PopoverPending
-            open={openCustomPopover}
-            anchorEl={customAnchorEl}
-            onClose={() => setOpenCustomPopover(false)}
-            setOpenScheduleModal={setOpenScheduleModal}
-            prospect={prospect}
-          />
+          {showCustomModal && (
+            <PopoverPending
+              open={showCustomModal}
+              anchorEl={anchorEl}
+              onClose={() => {
+                setShowCustomModal(false);
+                setAnchorEl(null);
+              }}
+              setOpenScheduleModal={setShowCustomModal}
+              anchorWidth={anchorEl?.offsetWidth}
+              prospect={prospect}
+            />
+          )}
+
           <Popover
             open={openSendWhatsapp}
             anchorEl={whatsappAnchorEl}

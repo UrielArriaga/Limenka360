@@ -131,7 +131,13 @@ export default function PopoverTracking({
 
     try {
       const res = await api.post("trackings/trackingandpending", trackingData);
-      toast.success("¡Seguimiento y pendiente creados exitosamente!");
+
+      if (showFormPending && pendingDate && pendingType) {
+        toast.success("¡Seguimiento y pendiente creados exitosamente!");
+      } else {
+        toast.success("¡Seguimiento creado exitosamente!");
+      }
+
       console.log("Seguimiento y pendiente creados:", res.data);
       onClose();
       resetForm();

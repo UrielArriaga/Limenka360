@@ -20,6 +20,7 @@ export default function PopoverPending({
   setOpenScheduleModal,
   anchorEl,
   prospect,
+  anchorWidth,
 }) {
   const { getCatalogBy } = useGlobalCommons();
   const common = useSelector(commonSelector);
@@ -149,7 +150,7 @@ export default function PopoverPending({
         horizontal: "left",
       }}
     >
-      <ScheduleModal>
+      <ScheduleModal width={anchorWidth}>
         <div className="title">
           <h3>Agregar pendiente</h3>
         </div>
@@ -249,6 +250,7 @@ export default function PopoverPending({
 const TrackingStyled = styled(Popover)``;
 
 const ScheduleModal = styled.div`
+  width: ${({ width }) => (width ? `${width}px` : "300px")};
   padding: 10px;
   display: flex;
   flex-direction: column;
