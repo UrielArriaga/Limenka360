@@ -11,7 +11,7 @@ export const ExecutiveOrdersStyled = styled.div`
   height: 100%;
   background-position: bottom center;
   width: 100%;
-  background: url("https://crm.salesup.com/img/color-azul.jpg");
+  background: #505C74;
   height: 100vh;
 
   .main {
@@ -21,12 +21,12 @@ export const ExecutiveOrdersStyled = styled.div`
 
   .header {
     padding: 10px;
-    color: #fff;
+    color: #F3F4F6;
   }
 
   .main_order {
     padding: 10px 20px;
-    background-color: rgba(255, 255, 255, 0.8);
+    background-color: #F3F4F6;
     width: calc(100% - 30px);
     margin: auto;
     border-radius: 8px;
@@ -34,7 +34,7 @@ export const ExecutiveOrdersStyled = styled.div`
 
   .main_datalles {
     padding: 10px 20px;
-    background-color: rgba(255, 255, 255, 0.8);
+    background-color: #CCD4E3;
     width: calc(100% - 30px);
     margin: auto;
     border-radius: 8px;
@@ -85,8 +85,8 @@ export const ExecutiveOrdersStyled = styled.div`
     margin-bottom: 20px;
     height: 60%;
     padding: 10px;
-    background-color: #fff;
-    /* background-color: rgba(255, 255, 255, 0.8); */
+    background-color: #F3F4F6;
+    /* background-color: #F3F4F6; */
     border-radius: 8px;
     box-shadow: 0px 6px 15px rgb(64 79 104 / 5%);
     overflow: auto;
@@ -109,7 +109,7 @@ export const ExecutiveOrdersStyled = styled.div`
         svg {
           margin-top: -3px;
           font-size: 18px;
-          color: grey;
+          color: #002F7A;
         }
         .error {
           color: red;
@@ -146,7 +146,7 @@ export const ExecutiveOrdersStyled = styled.div`
     right: 0;
     .btn_generate {
       text-transform: capitalize;
-      background: #103c82;
+      background: #002F7A;
       color: #fff;
       font-size: 13px;
 
@@ -154,8 +154,8 @@ export const ExecutiveOrdersStyled = styled.div`
     }
     .btn_salir {
       text-transform: capitalize;
-      border: 2px solid #103c82;
-      color: #103c82;
+      border: 2px solid #002F7A;
+      color: #002F7A;
       border-radius: 2px solid;
       font-size: 13px;
       border-radius: 10px;
@@ -231,7 +231,7 @@ export const SectionStyle = styled.div`
       padding: 5px;
 
       background: #dce1f6;
-      color: #103c82;
+      color: #002F7A;
       border-radius: 50%;
     }
     p {
@@ -308,7 +308,7 @@ export const SectionStyle = styled.div`
     flex-direction: row-reverse;
     .bt_next {
       text-transform: capitalize;
-      background: #103c82;
+      background: #002F7A;
       color: #fff;
       font-size: 13px;
       margin-left: 5px;

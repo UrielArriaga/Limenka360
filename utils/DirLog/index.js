@@ -5,31 +5,31 @@ export const getColorStatusOrder = status => {
   switch (status) {
     case ORDERSTATUSADMINALMACEN.aprobado:
       return {
-        bgColor: "#097a09",
+        bgColor: "#00A100",
         color: "#fff",
       };
 
     case ORDERSTATUSADMINALMACEN.pendiente:
       return {
-        bgColor: "#e5ca0a",
-        color: "#fff",
+        bgColor: "#FCDB00",
+        color: "#111",
       };
 
     case ORDERSTATUSADMINALMACEN.edicion:
       return {
-        bgColor: "#407aff",
+        bgColor: "#456EFF",
         color: "#fff",
       };
 
     case ORDERSTATUSADMINALMACEN.rechazado:
       return {
-        bgColor: "#bf1818",
+        bgColor: "#B300FF",
         color: "#fff",
       };
 
     case ORDERSTATUSADMINALMACEN.cancelado:
       return {
-          bgColor: "#bf1919",
+          bgColor: "#D11215",
           color: "#fff",
       };
 

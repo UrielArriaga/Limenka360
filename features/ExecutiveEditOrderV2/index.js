@@ -1,6 +1,6 @@
 import { Button } from "@material-ui/core";
 import React from "react";
-import MainLayout from "../../components/MainLayout";
+//import MainLayout from "../../components/MainLayout";
 import { ExecutiveOrdersStyled } from "../ExecutiveOrders/styles";
 import AddressShoppingEdit from "./components/AddressShoppingEdit";
 import InfoOrders from "./components/InfoOrder";
@@ -23,11 +23,22 @@ import useTourAddProducts from "./hooks/useTourAddProducts";
 
 export default function ExecutiveEditOrderV2() {
   const { oportunity, orderData, isFetchingOrder } = useOrder();
-  const { formControls, viewControl } = useExecutiveEditOrder(oportunity, orderData);
+  const { formControls, viewControl } = useExecutiveEditOrder(
+    oportunity,
+    orderData
+  );
   const { filesData, filesControl } = useFiles(oportunity, orderData);
-  const { productsData, fetchProducts, productsControl } = useProducts(oportunity, orderData);
+  const { productsData, fetchProducts, productsControl } = useProducts(
+    oportunity,
+    orderData
+  );
 
-  const { handleSaveChangesOrder } = useUpdateOrder(formControls, productsData, filesData, orderData);
+  const { handleSaveChangesOrder } = useUpdateOrder(
+    formControls,
+    productsData,
+    filesData,
+    orderData
+  );
 
   const { tourControl } = useTourAddProducts(viewControl.view);
 
@@ -37,69 +48,81 @@ export default function ExecutiveEditOrderV2() {
     billingEdit: <BillingEdit formControls={formControls} />,
     filesEdit: <FilesEdit filesData={filesData} filesControl={filesControl} />,
     productsEdit: (
-      <ProductsEdit productsData={productsData} productsControl={productsControl} tourControl={tourControl} />
+      <ProductsEdit
+        productsData={productsData}
+        productsControl={productsControl}
+        tourControl={tourControl}
+      />
     ),
-    resume: <ResumeOrder productsData={productsData} formControls={formControls} filesData={filesData} />,
+    resume: (
+      <ResumeOrder
+        productsData={productsData}
+        formControls={formControls}
+        filesData={filesData}
+      />
+    ),
   };
 
   return (
-    <MainLayout>
-      <ExecutiveOrdersStyled>
-        <div className="header">
-          <h1>Editar Pedido</h1>
-        </div>
+    <ExecutiveOrdersStyled>
+      <div className="header">
+        <h1>Editar pedido</h1>
+      </div>
 
-        {isFetchingOrder ? (
-          <div>Cargando...</div>
-        ) : (
-          <>
-            <div className="main_datalles">
-              <InfoOrders
-                selectedTypeSale={"sregisterss"}
-                oportunity={oportunity}
-                typesale={formControls.getValues("order.typesale")}
-              />
+      {isFetchingOrder ? (
+        <div>Cargando...</div>
+      ) : (
+        <>
+          <div className="main_datalles">
+            <InfoOrders
+              selectedTypeSale={"sregisterss"}
+              oportunity={oportunity}
+              typesale={formControls.getValues("order.typesale")}
+            />
+          </div>
+
+          <div className="main_orders">
+            <div className="tabs">
+              {tabsorder.map((item, index) => (
+                <Button
+                  startIcon={item.icon}
+                  key={index}
+                  className="tab_option"
+                  onClick={() => viewControl.setView(item.view)}
+                >
+                  {item.name}
+                </Button>
+              ))}
             </div>
 
-            <div className="main_orders">
-              <div className="tabs">
-                {tabsorder.map((item, index) => (
+            <div className="data">
+              {views[viewControl.view] || null}
+
+              {viewControl.view === "resume" && (
+                <div className="actions">
                   <Button
-                    startIcon={item.icon}
-                    key={index}
-                    className="tab_option"
-                    onClick={() => viewControl.setView(item.view)}
+                    variant="contained"
+                    className="btn_generate"
+                    onClick={handleSaveChangesOrder}
                   >
-                    {item.name}
+                    Guardar Cambios
                   </Button>
-                ))}
-              </div>
-
-              <div className="data">
-                {views[viewControl.view] || null}
-
-                {viewControl.view === "resume" && (
-                  <div className="actions">
-                    <Button variant="contained" className="btn_generate" onClick={handleSaveChangesOrder}>
-                      Guardar Cambios
-                    </Button>
-                  </div>
-                )}
-              </div>
+                </div>
+              )}
             </div>
-          </>
-        )}
-        <AddProduct
-          open={productsControl.openDrawerProducts}
-          toggleDrawer={productsControl.toggleDrawerProducts}
-          productsControl={productsControl}
-        />
-        <AddConfirm
-          open={productsControl.openConfirm}
-          toggleDrawer={productsControl.onCloseConfirmModal}
-          productsControl={productsControl}
-        />
-      </ExecutiveOrdersStyled>
-    </MainLayout>
+          </div>
+        </>
+      )}
+      <AddProduct
+        open={productsControl.openDrawerProducts}
+        toggleDrawer={productsControl.toggleDrawerProducts}
+        productsControl={productsControl}
+      />
+      <AddConfirm
+        open={productsControl.openConfirm}
+        toggleDrawer={productsControl.onCloseConfirmModal}
+        productsControl={productsControl}
+      />
+    </ExecutiveOrdersStyled>
   );
 }

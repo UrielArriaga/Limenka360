@@ -18,6 +18,7 @@ import { typeSockets } from "../../../constants";
 
 export default function useUpdateOrder(formControls, productsData, filesData, orderData) {
   const router = useRouter();
+  const { version = "v1" } = router.query;
 
   const { pushNotification } = useNotifications();
 
@@ -194,7 +195,7 @@ export default function useUpdateOrder(formControls, productsData, filesData, or
 
         saveAs(pdfBlob, `${orderData.folio}.pdf`);
 
-        router.push("/pedidos");
+        router.push(`/ejecutivo/pedidos/${version}`);
 
         pushNotification(typeSockets.new_order_edit.value, {
           orderId: orderData.id,

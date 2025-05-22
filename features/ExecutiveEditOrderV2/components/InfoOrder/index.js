@@ -29,7 +29,7 @@ export default function InfoOrders({ oportunity, orderData, selectedTypeSale, ty
   return (
     <InfoOrdersStyled container>
       <div className="sectionheader">
-        <h1 className="title">Datos de la Venta {orderData?.folio}. </h1>
+        <h1 className="title">Datos de la venta {orderData?.folio}</h1>
 
         {/* <AttachMoney className="icon_primary" /> */}
       </div>
@@ -37,7 +37,7 @@ export default function InfoOrders({ oportunity, orderData, selectedTypeSale, ty
       <Grid container className="info">
         <Grid item xs={12} md={3} className="typesale">
           <div className="items">
-            <p className="label">Tipo de Venta</p>
+            <p className="label">Tipo de venta</p>
             <div className="ctr">
               <p className="paragraph">{typesale?.name || "N/A"}</p>
               <IconButton className="iconButton" onClick={handleOnClickShowInfo}>
@@ -83,21 +83,21 @@ export default function InfoOrders({ oportunity, orderData, selectedTypeSale, ty
 
         <Grid item xs={12} md={3}>
           <div className="items">
-            <p className="label">Monto Total</p>
+            <p className="label">Monto total</p>
             <p className="paragraph">{formatNumber(oportunity?.amount)}</p>
           </div>
         </Grid>
 
         <Grid item xs={12} md={3}>
           <div className="items">
-            <p className="label">Comision Total</p>
+            <p className="label">Comisión total</p>
             <p className="paragraph">{formatNumber(oportunity?.comission)}</p>
           </div>
         </Grid>
 
         <Grid item xs={12} md={3}>
           <div className="items" style={{ position: "relative" }}>
-            <p className="label">Envio</p>
+            <p className="label">Envío</p>
             <p className="paragraph">{formatNumber(oportunity?.totalextracosts)}</p>
           </div>
         </Grid>
