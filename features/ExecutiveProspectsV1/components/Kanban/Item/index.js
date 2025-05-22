@@ -110,7 +110,7 @@ const Item = forwardRef(({ task: prospect, index, actions }, externalRef) => {
       const taskTime = now.add(3, "day");
 
       const newPending = {
-        prospectId: "ioynubwNrd07TMyG2zsNk3Rs",
+        prospectId: prospect.id,
         date_from: taskTime.format(),
         description: "",
         subject: "",
@@ -120,7 +120,7 @@ const Item = forwardRef(({ task: prospect, index, actions }, externalRef) => {
         status: 1,
         zone: "",
         remember: true,
-        ejecutiveId: "YNQHRt32OCbt0shXa0yOa51t",
+        ejecutiveId: id_user,
         remember_by: "correo",
         notify: true,
         notify_by: "correo",
