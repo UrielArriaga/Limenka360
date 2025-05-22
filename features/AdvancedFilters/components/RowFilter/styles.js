@@ -94,3 +94,16 @@ export const BtnCalendary = forwardRef(({ onClick }, ref) => {
     </StyledButton>
   );
 });
+
+const Group = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2px 10px;
+  border: solid 1px #ced4da;
+`;
+
+export const GroupVirtual = ({ isVirtual, children }) => {
+  return isVirtual ? <Group>{children}</Group> : <>{children}</>;
+};

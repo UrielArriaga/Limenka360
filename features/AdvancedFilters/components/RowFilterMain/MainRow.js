@@ -13,6 +13,7 @@ import { formatProduct } from '../common/ProductOption';
 import RangeDates from '../common/RangeDates';
 import {
   BtnCalendary,
+  GroupVirtual,
   IconButtonStyled,
   Label,
   SpecialFilter,
@@ -52,6 +53,9 @@ function RowFilterMain({ filter, onDelete, setMainFilterType }) {
     dates,
     isLoading,
     isLoadingVirtual,
+    optionsLogicVirtual,
+    optionLogicVirtualSelected,
+    setOptionLogicVirtualSelected,
   } = useRowFilter(filter);
 
   const {
@@ -104,7 +108,17 @@ function RowFilterMain({ filter, onDelete, setMainFilterType }) {
       typeFilter: filterType,
       logicOperator: logicOperator,
       valueSelected: filterValue,
+      valueOutput: filterTypeComplete?.valueOutput || filterType,
+      ...(isVirtual
+        ? { valueOutputVirtual: filterTypeComplete?.virtualConfig?.valueOutput }
+        : {}),
+      ...(isVirtual
+        ? { typeVirtual: filterTypeComplete?.virtualConfig?.value }
+        : {}),
       ...(isVirtual ? { virtualSelected } : {}),
+      ...(isVirtual
+        ? { logicOperatorVirtual: optionLogicVirtualSelected }
+        : {}),
       ...(isSpecialOption ? { extraValueSelected: dates } : {}),
     };
 
@@ -114,7 +128,14 @@ function RowFilterMain({ filter, onDelete, setMainFilterType }) {
   // hydrate filters if all fields are fulled
   useEffect(() => {
     triggerHydrationFilters();
-  }, [filterType, logicOperator, filterValue, virtualSelected, dates]);
+  }, [
+    filterType,
+    logicOperator,
+    filterValue,
+    virtualSelected,
+    dates,
+    optionLogicVirtualSelected,
+  ]);
 
   // Set filterType Global for subfilter it must be of same filterType
   useEffect(() => {
@@ -148,7 +169,7 @@ function RowFilterMain({ filter, onDelete, setMainFilterType }) {
   }, [shouldShowRange, selectedRangeManually]);
 
   return (
-    <RowContainer virtual={isVirtual}>
+    <RowContainer>
       <Label size="14px">Filtrar por:</Label>
 
       <FilterSelect
@@ -161,72 +182,89 @@ function RowFilterMain({ filter, onDelete, setMainFilterType }) {
         size="small"
       />
 
-      <FilterSelect
-        options={optionsLogicOperator}
-        value={logicOperator}
-        onChange={(e) => setLogicOperator(e.target.value)}
-        label="Operador logico"
-        isDisabled={optionsLogicOperator.length === 0}
-        size="small"
-      />
+      <GroupVirtual isVirtual={isVirtual}>
+        <FilterSelect
+          options={optionsLogicOperator}
+          value={logicOperator}
+          onChange={(e) => setLogicOperator(e.target.value)}
+          label="Operador logico"
+          isDisabled={optionsLogicOperator.length === 0}
+          size="small"
+        />
 
-      <SpecialFilter>
-        {shouldShowRange && (
-          <BtnCalendary
-            ref={buttonRef}
-            onClick={(e) => {
-              e.stopPropagation();
-              setOpenModalCalendary((isOpen) => !isOpen);
+        <SpecialFilter>
+          {shouldShowRange && (
+            <BtnCalendary
+              ref={buttonRef}
+              onClick={(e) => {
+                e.stopPropagation();
+                setOpenModalCalendary((isOpen) => !isOpen);
+              }}
+            />
+          )}
+
+          <FilterSelect
+            options={optionsFilterValue}
+            value={filterValue}
+            onChange={(e) => {
+              setFilterValue(e.target.value);
+              if (e.target.value === 'range') setSelectedRangeManually(true);
             }}
+            label="valor"
+            isDisabled={optionsFilterValue.length === 0}
+            size="small"
+            {...(filterTypeComplete?.isSearchable
+              ? { formatOptionLabel: formatProduct }
+              : {})}
+            {...(filterTypeComplete?.isSearchable
+              ? { filterOption: customFilterSelect }
+              : {})}
+            isLoading={isLoading}
+            SpecialDates={
+              shouldShowRange ? <IndicatorDate date={dates} /> : null
+            }
+          />
+
+          {shouldShowRange && (
+            <ModalCalendar
+              open={openModalCalendary}
+              setOpen={setOpenModalCalendary}
+              ignoreRef={buttonRef}
+            >
+              <RangeDates
+                onChange={handleDateChange}
+                defaultFrom={filter?.extraValueSelected?.from || ''}
+                defaultTo={filter?.extraValueSelected?.to || ''}
+              />
+            </ModalCalendar>
+          )}
+        </SpecialFilter>
+      </GroupVirtual>
+
+      <GroupVirtual isVirtual={isVirtual}>
+        {isVirtual && (
+          <FilterSelect
+            options={optionsLogicVirtual}
+            value={optionLogicVirtualSelected}
+            onChange={(e) => setOptionLogicVirtualSelected(e.target.value)}
+            label="Operador logico"
+            isDisabled={optionsLogicVirtual?.length === 0 || !filterValue}
+            size="small"
           />
         )}
 
-        <FilterSelect
-          options={optionsFilterValue}
-          value={filterValue}
-          onChange={(e) => {
-            setFilterValue(e.target.value);
-            if (e.target.value === 'range') setSelectedRangeManually(true);
-          }}
-          label="valor"
-          isDisabled={optionsFilterValue.length === 0}
-          size="small"
-          {...(filterTypeComplete?.isSearchable
-            ? { formatOptionLabel: formatProduct }
-            : {})}
-          {...(filterTypeComplete?.isSearchable
-            ? { filterOption: customFilterSelect }
-            : {})}
-          isLoading={isLoading}
-          SpecialDates={shouldShowRange ? <IndicatorDate date={dates} /> : null}
-        />
-
-        {shouldShowRange && (
-          <ModalCalendar
-            open={openModalCalendary}
-            setOpen={setOpenModalCalendary}
-            ignoreRef={buttonRef}
-          >
-            <RangeDates
-              onChange={handleDateChange}
-              defaultFrom={filter?.extraValueSelected?.from || ''}
-              defaultTo={filter?.extraValueSelected?.to || ''}
-            />
-          </ModalCalendar>
+        {isVirtual && (
+          <FilterSelect
+            options={optionsVirtual}
+            value={virtualSelected}
+            onChange={(e) => setVirtualSelected(e.target.value)}
+            label={filterTypeComplete.virtualConfig.label}
+            isDisabled={optionsVirtual?.length === 0 && !filterValue}
+            size="small"
+            isLoading={isLoadingVirtual}
+          />
         )}
-      </SpecialFilter>
-
-      {isVirtual && (
-        <FilterSelect
-          options={optionsVirtual}
-          value={virtualSelected}
-          onChange={(e) => setVirtualSelected(e.target.value)}
-          label={filterTypeComplete.virtualConfig.label}
-          isDisabled={optionsVirtual?.length === 0}
-          size="small"
-          isLoading={isLoadingVirtual}
-        />
-      )}
+      </GroupVirtual>
       <IconButtonStyled onClick={handleDelete}>
         <DeleteIcon />
       </IconButtonStyled>

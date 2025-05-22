@@ -66,6 +66,18 @@ function useRowFilter(filter) {
   const [virtualSelected, setVirtualSelected] = useState(
     filter?.virtualSelected
   );
+  const [optionsLogicVirtual, setOptionsLogicVirtual] = useState(
+    filterTypeComplete?.virtualConfig?.operators
+  );
+  const [optionLogicVirtualSelected, setOptionLogicVirtualSelected] = useState(
+    filter?.logicOperatorVirtual
+  );
+
+  useEffect(() => {
+    setOptionsLogicVirtual(filterTypeComplete?.virtualConfig?.operators);
+  }, [filterTypeComplete]);
+
+  // console.log(filterTypeComplete?.virtualConfig?.operators);
   const [isLoadingVirtual, setIsLoadingVirtual] = useState(false);
 
   // Get cities virtual options
@@ -128,6 +140,9 @@ function useRowFilter(filter) {
     setExtraValueSelected,
     isLoading,
     isLoadingVirtual,
+    optionsLogicVirtual,
+    optionLogicVirtualSelected,
+    setOptionLogicVirtualSelected,
   };
 }
 

@@ -9,7 +9,6 @@ const filterInit = filtersState;
 function AppFilters() {
   const [open, setOpen] = useState(false);
   const [filters, setFilters] = useState([]);
-  console.log(filters);
 
   return (
     <div>
@@ -17,6 +16,7 @@ function AppFilters() {
         Open filters
       </Button>
       <AdvancedFilters
+        idFilter="prospects-filters"
         isOpen={open}
         setIsOpen={setOpen}
         TitleFilters="Filtros avanzados"
