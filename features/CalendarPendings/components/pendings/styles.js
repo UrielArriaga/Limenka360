@@ -7,6 +7,46 @@ export const ActivitiesSyled = styled.aside`
   flex-direction: column;
   gap: 32px;
   color: #000;
+
+  .filters {
+    /* margin-top: 1rem; */
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 1rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+
+    .filter-group {
+      margin-bottom: 1rem;
+
+      label {
+        display: block;
+        margin-bottom: 4px;
+        font-weight: 500;
+      }
+
+      select,
+      input[type="time"] {
+        width: 100%;
+        padding: 6px;
+        border-radius: 4px;
+        border: 1px solid #ccc;
+        margin-top: 4px;
+      }
+
+      .checkboxes {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+
+        label {
+          font-weight: normal;
+          display: flex;
+          align-items: center;
+          gap: 6px;
+        }
+      }
+    }
+  }
 `;
 
 export const Header = styled.header`

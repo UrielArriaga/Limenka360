@@ -13,6 +13,8 @@ import dayjs from "dayjs";
 import { motion } from "framer-motion";
 import { userSelector } from "../../../../../redux/slices/userSlice";
 import { api } from "../../../../../services/api";
+import { useDispatch } from "react-redux";
+import { addPendingToday } from "../../../../../redux/slices/slopesSlice";
 
 export default function PopoverPending({
   open,
@@ -22,6 +24,8 @@ export default function PopoverPending({
   prospect,
   anchorWidth,
 }) {
+  const dispatch = useDispatch();
+
   const { getCatalogBy } = useGlobalCommons();
   const common = useSelector(commonSelector);
   const { id_user } = useSelector(userSelector);
@@ -103,6 +107,11 @@ export default function PopoverPending({
       toast.error("Completa todos los campos del pendiente.");
       return;
     }
+    console.log(pendingType);
+
+    console.log(pendingTypeIdMap[pendingType.value]);
+
+    // return;
 
     const newPending = {
       prospectId: prospect.id,
@@ -125,6 +134,26 @@ export default function PopoverPending({
       const res = await api.post("pendings", newPending);
       toast.success("¡Pendiente creado exitosamente!");
       console.log("Pendiente creado:", res.data);
+
+      let datavalue = {
+        ...res.data,
+        prospect: {
+          ...prospect,
+          fullName: `${prospect.name} ${prospect.lastName}`,
+          phone: prospect.phone,
+          email: prospect.email,
+        },
+        pendingstype: {
+          id: pendingTypeIdMap[res.pendingstypeId],
+          name: pendingType.label,
+        },
+      };
+
+      console.log(datavalue);
+
+      // return;
+
+      dispatch(addPendingToday(datavalue));
       onClose();
       resetForm();
     } catch (err) {

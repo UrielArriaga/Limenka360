@@ -29,6 +29,29 @@ export const COLOR_EVENTS = [
   },
 ];
 
+const formatEvent = (event) => {
+  const {
+    id,
+    isdone,
+    subject,
+    description,
+    date_from: dateFrom,
+    date_to: dateTo,
+    pendingstypeId,
+  } = event;
+
+  return {
+    ...event,
+    resourceId: pendingstypeId,
+    id,
+    title: subject,
+    start: new Date(dateFrom),
+    end: dateTo ? new Date(dateTo) : new Date(dateFrom),
+    color: COLOR_EVENTS.find((color) => color.resourceId === pendingstypeId),
+    isdone,
+  };
+};
+
 const formatEvents = (events) => {
   return events.map((event) => {
     const {
@@ -151,6 +174,23 @@ export const slopesSlice = createSlice({
     cleanSlopeSelected: (state, action) => {
       state.slopeSelected = {};
     },
+
+    removePendingToday: (state, action) => {
+      const id = action.payload;
+      const index = state.slopesTodayResults.findIndex(
+        (item) => item.id === id
+      );
+      if (index !== -1) {
+        state.slopesTodayResults.splice(index, 1);
+        state.countSlopesToday = state.slopesTodayResults.length;
+      }
+    },
+
+    addPendingToday: (state, action) => {
+      const newPending = action.payload;
+      state.slopesTodayResults.push(formatEvent(newPending));
+      state.countSlopesToday = state.slopesTodayResults.length;
+    },
   },
   extraReducers: {
     // * ORIGINS
@@ -202,6 +242,8 @@ export const {
   setSlopeSelected,
   cleanSlopeSelected,
   refetchSlopesToday,
+  removePendingToday,
+  addPendingToday,
 } = slopesSlice.actions;
 
 export const slopesSelector = (state) => state.slopes;

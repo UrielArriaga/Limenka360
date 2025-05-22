@@ -94,6 +94,13 @@ function CalendarViewer({ setEventSelected, handleOpen }) {
 
   return (
     <ActivitiesViewerStyled>
+      <button
+        onClick={() => {
+          console.log(slopesTodayResults);
+        }}
+      >
+        click me
+      </button>
       <CalendarStyled
         localizer={localizer}
         events={slopesTodayResults}

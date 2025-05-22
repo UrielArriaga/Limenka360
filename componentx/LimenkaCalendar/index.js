@@ -2,9 +2,13 @@ import { CalendarToday } from "@material-ui/icons";
 import React, { useState } from "react";
 import styled from "styled-components";
 import Calendar from "./Calendar";
+import { useSelector } from "react-redux";
+import { pendingsSelector } from "../../redux/slices/slopesSlice";
 
 export default function LimenkaCalendar() {
   const [isOpenCalendar, setIsOpenCalendar] = useState(false);
+
+  const { countSlopesToday } = useSelector(pendingsSelector);
 
   return (
     <LimenkaCalendarStyled>
@@ -14,6 +18,7 @@ export default function LimenkaCalendar() {
       >
         <CalendarToday className="iconrotate" />
         <p>Calendario</p>
+        <div className="badge">{countSlopesToday}</div>
       </div>
 
       <Calendar
@@ -31,6 +36,17 @@ const LimenkaCalendarStyled = styled.div`
   left: 0;
   transform: translateY(-50%);
   z-index: 1000;
+
+  .badge {
+    background-color: rgb(152, 195, 210);
+    color: white;
+    font-weight: bold;
+    padding: 4px 6px;
+    border-radius: 50%;
+    margin-top: 10px;
+    transform: rotate(90deg);
+    font-size: 12px;
+  }
 
   .calendarbutton {
     background-color: #39b8df;

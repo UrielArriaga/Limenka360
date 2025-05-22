@@ -125,19 +125,47 @@ function Pendings() {
 
   return (
     <ActivitiesSyled>
-      <Header>
-        {/* <BtnFilter onClick={() => setIsOpenFilters((open) => !open)}>
-          {isOpenFilters ? <CloseIcon /> : <FilterListIcon />}
-        </BtnFilter> */}
-
-        {/* <Filters isOpen={isOpenFilters} /> */}
-      </Header>
-      <div>
+      {/* <div>
         {pending ? (
           <Pending onClose={() => setPending(null)} pending={pending} />
         ) : (
           <CalendarInput />
         )}
+      </div> */}
+      <div className="filters">
+        <Header>
+          <FilterListIcon />
+          <span>Filtros</span>
+        </Header>
+        <div className="filter-group">
+          <label>Tipo de actividad</label>
+          <div className="checkboxes">
+            <label>
+              <input type="checkbox" />
+              Prospectos
+            </label>
+            <label>
+              <input type="checkbox" />
+              Oportunidades
+            </label>
+            <label>
+              <input type="checkbox" />
+              Clientes
+            </label>
+          </div>
+        </div>
+
+        <div className="filter-group">
+          <label>Horario</label>
+          <input type="time" /> a <input type="time" />
+        </div>
+        <BtnFilter
+          onClick={() => {
+            /* lógica de aplicar filtros */
+          }}
+        >
+          Aplicar Filtros
+        </BtnFilter>
       </div>
       <Schedule>
         <ScheduleTitle>
