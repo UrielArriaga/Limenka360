@@ -1,15 +1,7 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 function useLocalStorage(key, initialValue) {
-  const [storedValue, setStoredValue] = useState(() => {
-    try {
-      const item = localStorage.getItem(key);
-      return item ? JSON.parse(item) : initialValue;
-    } catch (error) {
-      console.warn(`Error reading localStorage key "${key}":`, error);
-      return initialValue;
-    }
-  });
+  const [storedValue, setStoredValue] = useState(initialValue);
 
   const setValue = (value) => {
     try {
@@ -31,6 +23,15 @@ function useLocalStorage(key, initialValue) {
       console.warn(`Error removing localStorage key "${key}":`, error);
     }
   };
+
+  useEffect(() => {
+    try {
+      const item = localStorage.getItem(key);
+      setStoredValue(item ? JSON.parse(item) : initialValue);
+    } catch (error) {
+      console.warn(`Error reading localStorage key "${key}":`, error);
+    }
+  }, [key]);
 
   return [storedValue, setValue, removeValue];
 }

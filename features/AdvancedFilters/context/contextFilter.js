@@ -24,8 +24,8 @@ export const ProviderFilter = ({ children }) => {
           subfilter?.logicOperator &&
           subfilter?.typeFilter &&
           subfilter?.valueSelected &&
-          (!('virtualSelected' in subfilter) ||
-            Boolean(subfilter?.virtualSelected)) &&
+          // (!('virtualSelected' in subfilter) ||
+          //   Boolean(subfilter?.virtualSelected)) &&
           (!('extraValueSelected' in subfilter) ||
             Boolean(
               subfilter?.extraValueSelected?.from &&
@@ -38,8 +38,8 @@ export const ProviderFilter = ({ children }) => {
       filter?.logicOperator &&
       filter?.typeFilter &&
       filter?.valueSelected &&
-      (!('virtualSelected' in filter) || Boolean(filter?.virtualSelected)) &&
-      AllSubfiltersWereFilled &&
+      // (!('virtualSelected' in filter) || Boolean(filter?.virtualSelected)) &&
+      // AllSubfiltersWereFilled &&
       (!('extraValueSelected' in filter) ||
         Boolean(
           filter?.extraValueSelected?.from && filter?.extraValueSelected?.to
@@ -47,13 +47,15 @@ export const ProviderFilter = ({ children }) => {
     );
   });
 
+  // Get data from localStorage and load data
   useEffect(() => {
     if (storedFilters && storedFilters.length > 0) {
       setFilters(storedFilters);
       setConfirmFilters(true);
     }
-  }, []);
+  }, [storedFilters]);
 
+  // Save data into LocalStorage
   useEffect(() => {
     if (confirmFilters) {
       setStoredFilters(filters);
@@ -151,10 +153,16 @@ export const ProviderFilter = ({ children }) => {
           mixFilters: [
             ...filter?.subfilters,
             {
-              id: filter?.id,
-              typeFilter: filter?.typeFilter,
-              logicOperator: filter?.logicOperator,
-              valueSelected: filter?.valueSelected,
+              id: filter.id,
+              typeFilter: filter.typeFilter,
+              logicOperator: filter.logicOperator,
+              valueSelected: filter.valueSelected,
+              valueOutput: filter.valueOutput,
+              valueOutputVirtual: filter.valueOutputVirtual,
+              typeVirtual: filter.typeVirtual,
+              virtualSelected: filter.virtualSelected,
+              extraValueSelected: filter.extraValueSelected,
+              logicOperatorVirtual: filter.extraValueSelected,
             },
           ],
         }))
@@ -167,6 +175,7 @@ export const ProviderFilter = ({ children }) => {
         if (filter.id === idFilter) {
           return {
             ...filter,
+            mixFilters: filter.mixFilters.filter((sf) => sf.id !== idSubfilter),
             subfilters: filter.subfilters.filter((sf) => sf.id !== idSubfilter),
           };
         }
@@ -204,6 +213,7 @@ export const ProviderFilter = ({ children }) => {
         handleDeleteAllFilters,
         hydrateFilters,
         triggerHydrationFilters,
+        setIdFilter,
         setIdFilter,
       }}
     >

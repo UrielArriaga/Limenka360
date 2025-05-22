@@ -54,6 +54,7 @@ function AdvancedFiltersApp({
   isOpen,
   setIsOpen,
   onSave = (filter) => {},
+  onWhere = (params) => {},
 }) {
   const {
     handleAddFilter,
@@ -70,17 +71,10 @@ function AdvancedFiltersApp({
 
   useEffect(() => {
     if (!confirmFilters) return;
-    if (allFiltersWereFilled) onSave(filters);
-
-    console.log(buildWhereFromFilters(filters));
-
-    //   console.log()
-    //  filters.map((filter) => {}
-
-    //   return {
-    //     filter.filterVa
-    //   }
-    // }));
+    if (allFiltersWereFilled) {
+      onSave(filters);
+      onWhere(buildWhereFromFilters(filters));
+    }
   }, [filters]);
 
   const handleClose = () => {
@@ -185,6 +179,7 @@ const AdvancedFilters = ({
   isOpen,
   setIsOpen,
   onSave = (filter) => {},
+  onWhere = (params) => {},
 }) => {
   return (
     <ProviderFilter>
@@ -195,6 +190,7 @@ const AdvancedFilters = ({
         TitleFilters={TitleFilters}
         filtersTypes={filtersTypes}
         onSave={onSave}
+        onWhere={onWhere}
       />
     </ProviderFilter>
   );

@@ -11,9 +11,21 @@ export const customFilterSelect = (option, searchText) => {
   );
 };
 
+import {
+  startOfToday,
+  endOfToday,
+  startOfWeek,
+  endOfWeek,
+  startOfMonth,
+  endOfMonth,
+} from 'date-fns';
+
+const DATE_FIELDS = ['createdAt', 'lastTrackingcreatedAt', 'updatedAt'];
+
 export const buildWhereFromFilters = (filtersArray) => {
   const logicOperatorMap = {
     igual: 'eq',
+    diferente: 'ne',
     mayor_que: 'gte',
     menor_que: 'lte',
     entre: 'between',
@@ -23,55 +35,110 @@ export const buildWhereFromFilters = (filtersArray) => {
   const where = {};
   const orClauses = [];
 
-  filtersArray.forEach((filter) => {
-    const key = filter.typeFilter;
+  const handleSingleFilter = (filter) => {
+    const key = filter.valueOutput || filter.typeFilter;
     const op = logicOperatorMap[filter.logicOperator] || 'eq';
-
-    // // 1. SUBFILTERS → se agrupan con OR
-    // if (Array.isArray(filter.subfilters) && filter.subfilters.length > 0) {
-    //   const orGroup = filter.subfilters
-    //     .map((sub) => {
-    //       const subOp = logicOperatorMap[sub.logicOperator] || 'eq';
-    //       const val = sub.valueSelected;
-    //       if (val !== '' && val !== null && val !== undefined) {
-    //         return { [sub.typeFilter]: { [subOp]: val } };
-    //       }
-    //       return null;
-    //     })
-    //     .filter(Boolean);
-
-    //   if (orGroup.length > 0) {
-    //     orClauses.push(...orGroup);
-    //   }
-
-    //   return;
-    // }
-
-    // // // 2. MIXFILTERS → se agrupan con AND
-    // if (Array.isArray(filter.mixFilters) && filter.mixFilters.length > 0) {
-    //   filter.mixFilters.forEach((mix) => {
-    //     const mixKey = mix.typeFilter;
-    //     const mixOp = logicOperatorMap[mix.logicOperator] || 'eq';
-    //     const mixVal = mix.valueSelected;
-
-    //     if (mixVal !== '' && mixVal !== null && mixVal !== undefined) {
-    //       if (!where[mixKey]) where[mixKey] = {};
-    //       where[mixKey][mixOp] = mixVal;
-    //     }
-    //   });
-
-    //   return;
-    // }
-
-    // // 3. NORMAL FILTER → valor simple
     const val = filter.valueSelected;
-    if (val !== '' && val !== null && val !== undefined) {
-      if (!where[key]) where[key] = {};
-      where[key][op] = val;
+    const extra = filter.extraValueSelected;
+
+    if (!val && val !== 0) return;
+
+    if (DATE_FIELDS.includes(key)) {
+      const now = new Date();
+      let from, to;
+
+      switch (val) {
+        case 'Hoy':
+          from = startOfToday();
+          to = endOfToday();
+          break;
+        case 'Semana':
+          from = startOfWeek(now, { weekStartsOn: 1 });
+          to = endOfWeek(now, { weekStartsOn: 1 });
+          break;
+        case 'Mes':
+          from = startOfMonth(now);
+          to = endOfMonth(now);
+          break;
+        case 'range':
+          if (extra?.from && extra?.to) {
+            from = new Date(extra.from);
+            to = new Date(extra.to);
+          }
+          break;
+      }
+
+      if (!from || !to) return;
+
+      if (op === 'eq' || val === 'range') {
+        return {
+          [key]: {
+            between: [from.toISOString(), to.toISOString()],
+          },
+        };
+      } else if (op === 'gte') {
+        return {
+          [key]: { gte: from.toISOString() },
+        };
+      } else if (op === 'lte') {
+        return {
+          [key]: { lte: to.toISOString() },
+        };
+      }
+    }
+
+    if (op === 'eq' || op === 'like') {
+      return { [key]: val };
+    }
+
+    return {
+      [key]: { [op]: val },
+    };
+  };
+
+  const applyVirtualFilter = (filter) => {
+    const key = filter.valueOutputVirtual;
+    const val = filter.virtualSelected;
+    const op = logicOperatorMap[filter.logicOperatorVirtual] || 'eq';
+
+    if (!key || val == null) return null;
+
+    if (op === 'eq' || op === 'like') {
+      return { [key]: val };
+    }
+
+    return { [key]: { [op]: val } };
+  };
+
+  filtersArray.forEach((filter) => {
+    if (filter.mixFilters && filter.mixFilters.length > 1) {
+      filter.mixFilters.forEach((subFilter) => {
+        const clause = handleSingleFilter(subFilter);
+        if (clause) {
+          orClauses.push(clause);
+        }
+
+        const virtualClause = applyVirtualFilter(subFilter);
+        if (virtualClause) {
+          orClauses.push(virtualClause);
+        }
+      });
+    } else if (filter.mixFilters && filter.mixFilters.length === 1) {
+      const subFilter = filter.mixFilters[0];
+      const clause = handleSingleFilter(subFilter);
+      if (clause) Object.assign(where, clause);
+
+      const virtualClause = applyVirtualFilter(subFilter);
+      if (virtualClause) Object.assign(where, virtualClause);
+    } else {
+      const clause = handleSingleFilter(filter);
+      if (clause) Object.assign(where, clause);
+
+      const virtualClause = applyVirtualFilter(filter);
+      if (virtualClause) Object.assign(where, virtualClause);
     }
   });
 
-  // // Agregar cláusula OR si existe
   if (orClauses.length > 0) {
     where.or = orClauses;
   }

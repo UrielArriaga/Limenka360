@@ -15,7 +15,7 @@ import styled from 'styled-components';
 import SelectOrder from './SelectOrder';
 import ButtonFilter from '../../../AdvancedFilters/components/common/ButtonFilter';
 import FilterAdvanced from './../../../AdvancedFilters/AdvancedFilters';
-import { filtersprospects } from '../../constants';
+import { filterClient, filtersprospects } from '../../constants';
 
 const viewTypes = [
   { key: 'table', icon: <ViewList titleAccess="Kanban" /> },
@@ -46,9 +46,10 @@ export default function FilterProspects({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const [filters, setFilters] = useState();
+  const [filters, setFilters] = useState([]);
+  const [query, setQuery] = useState(null);
 
-  // console.log(filters);
+  console.log(query);
 
   return (
     <FilterProspectsStyled ref={dropdownRef}>
@@ -67,6 +68,7 @@ export default function FilterProspects({
           numFilters={filters?.length}
           onClick={() => setIsOpenFilterAdvanced(true)}
         />
+
         <div className="refetch">
           <RefetchButton onClick={handleRefetch} title="Refrescar datos">
             <Cached />
@@ -97,6 +99,7 @@ export default function FilterProspects({
         setIsOpen={setIsOpenFilterAdvanced}
         filtersTypes={filtersprospects}
         onSave={setFilters}
+        onWhere={setQuery}
       />
     </FilterProspectsStyled>
   );
