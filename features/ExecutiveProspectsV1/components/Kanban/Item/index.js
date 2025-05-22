@@ -1,7 +1,7 @@
 import { AddAlert, AttachMoney, Schedule, WhatsApp } from "@material-ui/icons";
 import React, { forwardRef, useEffect, useState } from "react";
 import InsertEmoticonIcon from "@material-ui/icons/InsertEmoticon";
-
+import PopoverPending from "./PopoverPending";
 import Select from "react-select";
 import { Popover, Tooltip } from "@material-ui/core";
 import styled from "styled-components";
@@ -29,15 +29,6 @@ import LimiBotService from "../../../../../services/limibotService";
 import { userSelector } from "../../../../../redux/slices/userSlice";
 const Item = forwardRef(({ task: prospect, index, actions }, externalRef) => {
   const { getCatalogBy } = useGlobalCommons();
-  const pendingTypeIdMap = {
-    recordatorio: "62dlUPgKjOpCoDH6wU0sG9rp",
-    visita: "62dN6LUisuI0rTZm1p5l5Lcp",
-    cita: "62dp9dPnCtgdfTodXAUuzr1N",
-    llamada: "62dQiGAWr0P53bbpmnYtXmd5",
-    tarea: "62dUf2tKTw0k9q0WrC5uvf8m",
-    automatizacion: "62dUf2tKTw0k9q0WrC5uv3e3",
-    whatsapp: "62dUf2tKTw0k9q0WrC5uv45e",
-  };
 
   const serviceLimi = new LimiBotService();
   const common = useSelector(commonSelector);
@@ -50,7 +41,8 @@ const Item = forwardRef(({ task: prospect, index, actions }, externalRef) => {
   const { id_user } = useSelector(userSelector);
   const [scheduleAnchorEl, setScheduleAnchorEl] = useState(null);
   const [whatsappAnchorEl, setWhatsappAnchorEl] = useState(null);
-
+  const [openCustomPopover, setOpenCustomPopover] = useState(false);
+  const [customAnchorEl, setCustomAnchorEl] = useState(null);
   const [anchorIA, setAnchorIA] = React.useState(null);
 
   const handleClick = (event) => {
@@ -69,6 +61,11 @@ const Item = forwardRef(({ task: prospect, index, actions }, externalRef) => {
   const handleCloseMenu = () => {
     setAnchorEl(null);
   };
+  const handleOpenCustomPending = (event) => {
+    event.stopPropagation();
+    setCustomAnchorEl(event.currentTarget);
+    setOpenCustomPopover(true);
+  };
 
   const handlePendingOption = async (option) => {
     handleCloseMenu();
@@ -78,7 +75,7 @@ const Item = forwardRef(({ task: prospect, index, actions }, externalRef) => {
       const reminderTime = now.add(1, "day");
 
       const newPending = {
-        prospectId: "ioynubwNrd07TMyG2zsNk3Rs",
+        prospectId: prospect.id,
         date_from: reminderTime.format(),
         description: "",
         subject: "",
@@ -88,7 +85,7 @@ const Item = forwardRef(({ task: prospect, index, actions }, externalRef) => {
         status: 1,
         zone: "",
         remember: true,
-        ejecutiveId: "YNQHRt32OCbt0shXa0yOa51t",
+        ejecutiveId: id_user,
         remember_by: "correo",
         notify: true,
         notify_by: "correo",
@@ -100,6 +97,37 @@ const Item = forwardRef(({ task: prospect, index, actions }, externalRef) => {
       } catch (error) {
         console.error(
           " Error al crear pendiente:",
+          error.response?.data || error.message
+        );
+      }
+    }
+    if (option === "2d") {
+      const now = dayjs();
+      const taskTime = now.add(3, "day");
+
+      const newPending = {
+        prospectId: "ioynubwNrd07TMyG2zsNk3Rs",
+        date_from: taskTime.format(),
+        description: "",
+        subject: "",
+        place: "",
+        priority: 2,
+        pendingstypeId: "62dUf2tKTw0k9q0WrC5uvf8m",
+        status: 1,
+        zone: "",
+        remember: true,
+        ejecutiveId: "YNQHRt32OCbt0shXa0yOa51t",
+        remember_by: "correo",
+        notify: true,
+        notify_by: "correo",
+      };
+
+      try {
+        const { data } = await api.post("pendings", newPending);
+        console.log("Pendiente de tarea creado para 3 días después:", data);
+      } catch (error) {
+        console.error(
+          "Error al crear pendiente de tarea:",
           error.response?.data || error.message
         );
       }
@@ -330,6 +358,7 @@ const Item = forwardRef(({ task: prospect, index, actions }, externalRef) => {
                 label="Recordar cotización (en 24 horas)"
                 onClick={() => handlePendingOption("recordatorio-24h")}
               />
+
               <CustomMenuItem
                 icon={Schedule}
                 label="Seguimiento de negociación en (3 dias)"
@@ -338,8 +367,8 @@ const Item = forwardRef(({ task: prospect, index, actions }, externalRef) => {
 
               <CustomMenuItem
                 icon={Schedule}
-                label="Perzonalizado"
-                onClick={() => handlePendingOption("2d")}
+                label="Personalizado"
+                onClick={(e) => handleOpenCustomPending(e)}
               />
             </CustomMenu>
           </div>
@@ -350,7 +379,13 @@ const Item = forwardRef(({ task: prospect, index, actions }, externalRef) => {
             onClose={() => setOpenScheduleModal(false)}
             prospect={prospect}
           />
-
+          <PopoverPending
+            open={openCustomPopover}
+            anchorEl={customAnchorEl}
+            onClose={() => setOpenCustomPopover(false)}
+            setOpenScheduleModal={setOpenScheduleModal}
+            prospect={prospect}
+          />
           <Popover
             open={openSendWhatsapp}
             anchorEl={whatsappAnchorEl}

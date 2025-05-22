@@ -14,7 +14,7 @@ import { motion } from "framer-motion";
 import { userSelector } from "../../../../../redux/slices/userSlice";
 import { api } from "../../../../../services/api";
 
-export default function PopoverTracking({
+export default function PopoverPending({
   open,
   onClose,
   setOpenScheduleModal,
@@ -29,6 +29,7 @@ export default function PopoverTracking({
   const [reason, setReason] = useState("");
   const [phase, setPhase] = useState(null);
   const [pendingPriority, setPendingPriority] = useState(1);
+  const [showCustomPending, setShowCustomPending] = useState(false);
 
   const [showFormPending, setShowFormPending] = useState(false);
   const [pendingType, setPendingType] = useState(null);
@@ -97,49 +98,40 @@ export default function PopoverTracking({
   };
 
   const handleSave = async () => {
-    const trackingData = {
-      prospectId: prospect.id,
-      status: "1",
-      //oportunityId: prospect.oportunityId || "",
-      actionId: selectedAction?.id,
-      reason,
-      observations: description,
-      phaseId: prospect.phaseId || null,
-      createdbyId: id_user,
-      url: "",
-    };
-
-    if (showFormPending && pendingDate && pendingType) {
-      trackingData.pendingdata = {
-        date_from: dayjs(pendingDate).toISOString(),
-        description: pendingNotes,
-        subject: "",
-        place: "",
-        priority: pendingPriority.toString(),
-        pendingstypeId: pendingType
-          ? pendingTypeIdMap[pendingType.value]
-          : null,
-        zone: "",
-        remember: true,
-        remember_by: "correo",
-        notify: true,
-        notify_by: "correo",
-      };
+    if (!pendingDate || !pendingType) {
+      toast.error("Completa todos los campos del pendiente.");
+      return;
     }
 
-    dayjs().add("24", "hour").toISOString();
+    const newPending = {
+      prospectId: prospect.id,
+      date_from: dayjs(pendingDate).toISOString(),
+      description: pendingNotes,
+      subject: "",
+      place: "",
+      priority: pendingPriority.toString(),
+      pendingstypeId: pendingType ? pendingTypeIdMap[pendingType.value] : null,
+      status: 1,
+      ejecutiveId: id_user,
+      zone: "",
+      remember: true,
+      remember_by: "correo",
+      notify: true,
+      notify_by: "correo",
+    };
 
     try {
-      const res = await api.post("trackings/trackingandpending", trackingData);
-      toast.success("¡Seguimiento y pendiente creados exitosamente!");
-      console.log("Seguimiento y pendiente creados:", res.data);
+      const res = await api.post("pendings", newPending);
+      toast.success("¡Pendiente creado exitosamente!");
+      console.log("Pendiente creado:", res.data);
       onClose();
       resetForm();
     } catch (err) {
       console.error(
-        "Error al crear seguimiento y pendiente:",
+        "Error al crear pendiente:",
         err.response?.data || err.message
       );
+      toast.error("Ocurrió un error al crear el pendiente.");
     }
   };
 
@@ -159,120 +151,81 @@ export default function PopoverTracking({
     >
       <ScheduleModal>
         <div className="title">
-          <h3>Agregar seguimiento</h3>
+          <h3>Agregar pendiente</h3>
         </div>
 
-        <div className="inputs">
+        <AddPendingStyled
+          variants={{
+            hidden: { opacity: 0, height: 0 },
+            visible: { opacity: 1, height: "auto" },
+          }}
+          initial="hidden"
+          animate="visible"
+          className="addpending"
+        >
           <div className="input-field">
-            <label>Acción</label>
+            <label>Prioridad</label>
             <Select
-              onMenuOpen={() => getCatalogBy("actions")}
-              placeholder="Selecciona una opción"
-              value={selectedAction}
-              onChange={setSelectedAction}
-              options={common.actions?.results}
+              options={prioritys}
               getOptionLabel={(option) => option.name}
-              getOptionValue={(option) => option.id}
-              menuPosition="fixed"
+              getOptionValue={(option) => option.priority}
+              value={prioritys.find((p) => p.priority === pendingPriority)}
+              onChange={(selected) => setPendingPriority(selected.priority)}
+              placeholder="Selecciona prioridad"
             />
+          </div>
+
+          <div className="quick-actions">
+            {pendingTypes.map((type) => (
+              <button
+                key={type.value}
+                className={`quick-action-btn ${
+                  pendingType?.value === type.value ? "active" : ""
+                }`}
+                onClick={() => setPendingType(type)}
+                type="button"
+              >
+                {type.icon}
+                <span>{type.label}</span>
+              </button>
+            ))}
           </div>
 
           <div className="input-field">
-            <label>Descripción</label>
-            <textarea
-              rows={4}
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              placeholder="Descripción del seguimiento"
-            />
-          </div>
-        </div>
-
-        <div className="input-check">
-          <label>
-            <input
-              className="checkbox"
-              type="checkbox"
-              checked={showFormPending}
-              onChange={(e) => setShowFormPending(e.target.checked)}
-            />
-            Agregar pendiente
-          </label>
-        </div>
-
-        {showFormPending && (
-          <AddPendingStyled
-            variants={{
-              hidden: { opacity: 0, height: 0 },
-              visible: { opacity: 1, height: "auto" },
-            }}
-            initial="hidden"
-            animate="visible"
-            className="addpending"
-          >
-            {/* Nueva sección para la prioridad */}
-            <div className="input-field">
-              <label>Prioridad</label>
-              <Select
-                options={prioritys}
-                getOptionLabel={(option) => option.name}
-                getOptionValue={(option) => option.priority}
-                value={prioritys.find((p) => p.priority === pendingPriority)}
-                onChange={(selected) => setPendingPriority(selected.priority)}
-                placeholder="Selecciona prioridad"
-              />
-            </div>
-
-            <div className="quick-actions">
-              {pendingTypes.map((type) => (
+            <label>Fecha del pendiente</label>
+            <div className="quick-dates">
+              {quickDates.map((date) => (
                 <button
-                  key={type.value}
-                  className={`quick-action-btn ${
-                    pendingType?.value === type.value ? "active" : ""
-                  }`}
-                  onClick={() => setPendingType(type)}
+                  key={date.value}
+                  className="quick-date-btn"
+                  onClick={() => handleQuickDate(date.value)}
                   type="button"
                 >
-                  {type.icon}
-                  <span>{type.label}</span>
+                  {date.icon}
+                  <span>{date.label}</span>
                 </button>
               ))}
             </div>
-            <div className="input-field">
-              <label>Fecha del pendiente</label>
-              <div className="quick-dates">
-                {quickDates.map((date) => (
-                  <button
-                    key={date.value}
-                    className="quick-date-btn"
-                    onClick={() => handleQuickDate(date.value)}
-                    type="button"
-                  >
-                    {date.icon}
-                    <span>{date.label}</span>
-                  </button>
-                ))}
-              </div>
-              <div className="date-input">
-                <Event className="date-icon" />
-                <input
-                  type="datetime-local"
-                  value={pendingDate}
-                  onChange={(e) => setPendingDate(e.target.value)}
-                />
-              </div>
-            </div>
-            <div className="input-field">
-              <label>Notas del pendiente</label>
-              <textarea
-                rows={3}
-                value={pendingNotes}
-                onChange={(e) => setPendingNotes(e.target.value)}
-                placeholder="Escribe aquí las notas importantes del pendiente..."
+            <div className="date-input">
+              <Event className="date-icon" />
+              <input
+                type="datetime-local"
+                value={pendingDate}
+                onChange={(e) => setPendingDate(e.target.value)}
               />
             </div>
-          </AddPendingStyled>
-        )}
+          </div>
+
+          <div className="input-field">
+            <label>Notas del pendiente</label>
+            <textarea
+              rows={3}
+              value={pendingNotes}
+              onChange={(e) => setPendingNotes(e.target.value)}
+              placeholder="Escribe aquí las notas importantes del pendiente..."
+            />
+          </div>
+        </AddPendingStyled>
 
         <div className="actions">
           <button
