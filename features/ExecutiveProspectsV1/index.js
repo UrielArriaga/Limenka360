@@ -145,6 +145,54 @@ export default function ExecutivesProspectsV1() {
     view: <div style={{ padding: "2rem" }}>tambien</div>,
   };
 
+  function normalizeProspectFilters(rawFilters) {
+    const query = {};
+    const orConditions = [];
+
+    rawFilters.forEach((filter) => {
+      const {
+        mixFilters,
+        logicOperator,
+        valueSelected,
+        valueOutput,
+        typeFilter,
+      } = filter;
+
+      // Si tiene varios (como mix de categorías), se usa OR
+      if (mixFilters?.length > 1) {
+        const group = mixFilters.map((sub) => {
+          const key = sub.valueOutput || sub.typeFilter;
+          return sub.logicOperator === "igual"
+            ? { [key]: sub.valueSelected }
+            : { [key]: { $ne: sub.valueSelected } };
+        });
+        orConditions.push(...group);
+      } else {
+        const key = valueOutput || typeFilter;
+
+        if (logicOperator === "igual") {
+          query[key] = valueSelected;
+        } else if (logicOperator === "diferente") {
+          query[key] = { $ne: valueSelected };
+        } else if (
+          typeFilter.includes("createdAt") ||
+          typeFilter.includes("updatedAt")
+        ) {
+          // puedes manejar fechas relativas aquí si quieres
+          query[key] = {
+            between: ["2025-05-01T00:00:00-06:00", "2025-05-31T23:59:59-06:00"],
+          };
+        }
+      }
+    });
+
+    if (orConditions.length) {
+      query["$or"] = orConditions;
+    }
+
+    return query;
+  }
+
   return (
     <ExecutiveProspectsStyled>
       {viewType !== "report" && (
@@ -157,6 +205,16 @@ export default function ExecutivesProspectsV1() {
           filters={filters}
         />
       )}
+      <button
+        onClick={() => {
+          console.log(filters);
+
+          const normalizedFilters = normalizeProspectFilters(filters);
+          console.log(normalizedFilters);
+        }}
+      >
+        Click me
+      </button>
 
       <Suspense
         fallback={<div style={{ padding: "1rem" }}>Cargando vista...</div>}

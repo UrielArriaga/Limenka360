@@ -117,7 +117,7 @@ export default function PopoverPending({
       prospectId: prospect.id,
       date_from: dayjs(pendingDate).toISOString(),
       description: pendingNotes,
-      subject: "",
+      subject: pendingType.value,
       place: "",
       priority: pendingPriority.toString(),
       pendingstypeId: pendingType ? pendingTypeIdMap[pendingType.value] : null,
