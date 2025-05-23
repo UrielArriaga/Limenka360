@@ -5,6 +5,20 @@ export const StyledModal = styled(Modal)`
   display: flex;
   align-items: center;
   justify-content: center;
+  .tab-buttons button {
+    padding: 8px 12px;
+    margin-right: 8px;
+    border: none;
+    background: #eee;
+    cursor: pointer;
+  }
+  .tab-buttons .active {
+    background: #007bff;
+    color: white;
+  }
+  .tab-content {
+    margin-top: 1rem;
+  }
 
   .container {
     background: #fff;
