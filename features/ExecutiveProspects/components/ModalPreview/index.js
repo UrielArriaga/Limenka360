@@ -172,7 +172,7 @@ export default function ModalPreview({
                 )}
                 {showAction === null && (
                   <>
-                    <AddPending />
+                    <AddPending prospectSelected={prospectSelected} />
                     <LineTimePendings pendingsData={pendingsData} />
                   </>
                 )}
@@ -187,7 +187,7 @@ export default function ModalPreview({
                 )}
                 {showAction === null && (
                   <>
-                    <AddTracking />
+                    <AddTracking prospectSelected={prospectSelected} />
                     <LineTime
                       trackings={trackings}
                       fetching={trackingData.isFetching}

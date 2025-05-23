@@ -1,33 +1,52 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-
-import { AssignmentTurnedIn, CalendarToday, Call, Email, WhatsApp } from "@material-ui/icons";
+import { api } from "../../../../services/api";
+import { toast } from "react-toastify";
+import { Catalogo } from "../../../../constants";
+import { useSelector } from "react-redux";
+import { userSelector } from "../../../../redux/slices/userSlice";
 import dayjs from "dayjs";
 import { IconButton, Tooltip } from "@material-ui/core";
 import { colors } from "../../../../styles/global.styles";
 
-const actionsTrackins = [
-  {
-    icon: <WhatsApp />,
-    action: "WhatsApp",
-  },
-  {
-    icon: <Email />,
-    action: "WhatsApp",
-  },
-  {
-    icon: <Call />,
-    action: "WhatsApp",
-  },
-  {
-    icon: <AssignmentTurnedIn />,
-    action: "WhatsApp",
-  },
-];
-
-export default function AddTracking() {
+export default function AddTracking({ prospectSelected }) {
   const [isFocused, setIsFocused] = useState(false);
-  const [actionSelected, setActionSelected] = useState(null);
+  const [selectedAction, setSelectedAction] = useState(null);
+  const { id_user } = useSelector(userSelector);
+  const [loading, setLoading] = useState(false);
+  const [observations, setDescription] = useState("");
+  const allowedActions = ["Cita", "Llamada", "Email", "Whatsapp"];
+
+  const handleSave = async () => {
+    const trackingData = {
+      prospectId: prospectSelected.id,
+      status: "1",
+      actionId: selectedAction.id,
+      reason: "",
+      observations: observations.trim(),
+      phaseId: prospectSelected.phaseId || null,
+      createdbyId: id_user,
+      url: "",
+    };
+
+    setLoading(true);
+    try {
+      const res = await api.post("trackings", trackingData);
+      if (res.status !== 200 && res.status !== 201) {
+        throw new Error("Error al guardar seguimiento");
+      }
+
+      toast("Seguimiento guardado correctamente.");
+      setDescription("");
+      setSelectedAction(null);
+      setIsFocused(false);
+    } catch (error) {
+      console.error(error);
+      alert("Hubo un problema guardando el seguimiento.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <AddTrackingStyled isFocused={isFocused}>
@@ -36,31 +55,35 @@ export default function AddTracking() {
       <div className="areaTracking">
         <textarea
           className="txtArea"
-          placeholder="Escriba la descripcion de la actividad"
-          name=""
-          id=""
-          cols="30"
-          rows="10"
+          placeholder="Escriba la descripción de la actividad"
+          value={observations}
+          onChange={(e) => setDescription(e.target.value)}
           onFocus={() => setIsFocused(true)}
-          //   onBlur={() => setIsFocused(false)}
         ></textarea>
-
         <div className="options">
           <div className="rowaaction ">
-            {actionsTrackins.map((action, index) => (
-              <IconButton
-                className={`icon_click ${action.action === actionSelected && "highligth"}`}
-                onClick={() => setActionSelected(action.action)}
-              >
-                <Tooltip title="WhatsApp">{action.icon}</Tooltip>
-              </IconButton>
-            ))}
+            {Catalogo.filter((action) =>
+              allowedActions.includes(action.name)
+            ).map(
+              (action) =>
+                action.icon && (
+                  <IconButton
+                    key={action.id}
+                    className={`icon_click ${
+                      selectedAction?.id === action.id ? "highlight" : ""
+                    }`}
+                    onClick={() => setSelectedAction(action)}
+                  >
+                    <Tooltip title={action.name}>{action.icon}</Tooltip>
+                  </IconButton>
+                )
+            )}
           </div>
         </div>
       </div>
       <div className="actions">
         <button onClick={() => setIsFocused(false)}>Cancelar</button>
-        <button>Guardar</button>
+        <button onClick={handleSave}>Guardar</button>
       </div>
     </AddTrackingStyled>
   );
@@ -90,10 +113,19 @@ const AddTrackingStyled = styled.div`
     margin-bottom: 10px;
     /* height: 30px; */
 
-    border: ${props => (props.isFocused ? `1px solid ${colors.primaryColor}` : `1px solid #9e9e9e`)};
-    /* ${props => (props.isFocused ? "border: 1px solid #3aade6;" : "border: 1px solid red")} */
+    border: ${(props) =>
+      props.isFocused
+        ? `1px solid ${colors.primaryColor}`
+        : `1px solid #9e9e9e`};
+    /* ${(props) =>
+      props.isFocused
+        ? "border: 1px solid #3aade6;"
+        : "border: 1px solid red"} */
 
-    /* ${props => (props.isFocused ? "border: 1px solid #3aade6;" : `border: 1px solid #fafafa`)} */
+    /* ${(props) =>
+      props.isFocused
+        ? "border: 1px solid #3aade6;"
+        : `border: 1px solid #fafafa`} */
 
     textarea {
       width: 100%;
@@ -127,7 +159,7 @@ const AddTrackingStyled = styled.div`
     flex-direction: column;
     margin-bottom: 10px;
 
-    ${props => (props.isFocused ? "display: flex;" : "display: none;")}
+    ${(props) => (props.isFocused ? "display: flex;" : "display: none;")}
     .row {
       display: flex;
       align-items: center;
@@ -164,7 +196,7 @@ const AddTrackingStyled = styled.div`
   }
 
   .actions {
-    ${props => (props.isFocused ? "display: flex;" : "display: none;")}
+    ${(props) => (props.isFocused ? "display: flex;" : "display: none;")}
 
     justify-content: flex-end;
 

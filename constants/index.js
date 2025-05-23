@@ -17,7 +17,141 @@
 //     },
 //   ],
 // };
-
+import {
+  Alarm,
+  AssignmentTurnedIn,
+  CalendarToday,
+  Call,
+  Email as EmailIcon,
+  Event,
+  Place,
+  WhatsApp,
+} from "@material-ui/icons";
+//catalogo para seguimientos
+export const Catalogo = [
+  {
+    id: "62dfWiKfmbarQj5gLuRw60GY",
+    name: "Cita",
+    icon: <CalendarToday />,
+    createdAt: "2022-08-24T16:16:29.092Z",
+    updatedAt: "2022-08-24T16:16:29.092Z",
+  },
+  {
+    id: "62dbU8uvA9hkoY4lWlBP714P",
+    name: "Email",
+    icon: <EmailIcon />,
+    createdAt: "2022-08-24T16:16:33.791Z",
+    updatedAt: "2022-08-24T16:16:33.791Z",
+  },
+  {
+    id: "62dbU8uvA9hkoY4lWlBP714M",
+    name: "Llamada",
+    icon: <Call />,
+    createdAt: "2022-08-24T16:16:33.791Z",
+    updatedAt: "2022-08-24T16:16:33.791Z",
+  },
+  {
+    id: "62dPbnNsTpSyCpqGHQjQoY4w",
+    name: "Pendiente",
+    icon: <AssignmentTurnedIn />,
+    createdAt: "2022-08-24T16:16:42.664Z",
+    updatedAt: "2022-08-24T16:16:42.664Z",
+  },
+  {
+    id: "62dEUlcqck7L1f8JvFtRSeoX",
+    name: "Recordatorio",
+    icon: <Alarm />,
+    createdAt: "2022-08-24T16:16:21.187Z",
+    updatedAt: "2022-08-24T16:16:21.187Z",
+  },
+  {
+    id: "62dHzqoSCj0ktjoy1sUAEzba",
+    name: "Seguimiento",
+    icon: <Event />,
+    createdAt: "2022-09-14T15:11:59.556Z",
+    updatedAt: "2022-09-14T15:11:59.556Z",
+  },
+  {
+    id: "62hHzqoSCj0452fT1sUAEzba",
+    name: "Seguimiento Automatico",
+    icon: <Event />,
+    createdAt: "2022-09-14T15:11:59.556Z",
+    updatedAt: "2022-09-14T15:11:59.556Z",
+  },
+  {
+    id: "Yofh1IVXauu7kNJfsRcNXL9J",
+    name: "Tarea",
+    icon: <AssignmentTurnedIn />,
+    createdAt: "2022-10-26T19:15:11.982Z",
+    updatedAt: "2022-10-26T19:15:11.982Z",
+  },
+  {
+    id: "62dFVS7MPmD9sEQKe39E5dJg",
+    name: "Visita",
+    icon: <Place />,
+    createdAt: "2022-08-24T16:16:37.023Z",
+    updatedAt: "2022-08-24T16:16:37.023Z",
+  },
+  {
+    id: "62dbU8uvA9hkoY4lWlBP714n",
+    name: "Whatsapp",
+    icon: <WhatsApp />,
+    createdAt: "2022-08-24T16:16:33.791Z",
+    updatedAt: "2022-08-24T16:16:33.791Z",
+  },
+];
+//catalogo para pendientes
+export const CatalogoPendings = [
+  {
+    id: "62dp9dPnCtgdfTodXAUuzr1N",
+    name: "Cita",
+    icon: <CalendarToday />,
+    createdAt: "2022-09-06T14:59:54.303Z",
+    updatedAt: "2022-09-06T14:59:54.303Z",
+  },
+  {
+    id: "62dlUPgKjOpCoDH6wU0sG9rp",
+    name: "Recordatorio",
+    icon: <Alarm />,
+    createdAt: "2022-09-06T15:00:07.411Z",
+    updatedAt: "2022-09-06T15:00:07.411Z",
+  },
+  {
+    id: "62dN6LUisuI0rTZm1p5l5Lcp",
+    name: "Visita",
+    icon: <Place />,
+    createdAt: "2022-09-06T15:00:19.601Z",
+    updatedAt: "2022-09-06T15:00:19.601Z",
+  },
+  {
+    id: "62dQiGAWr0P53bbpmnYtXmd5",
+    name: "Llamada",
+    icon: <Call />,
+    createdAt: "2022-09-06T14:59:58.639Z",
+    updatedAt: "2022-09-06T14:59:58.639Z",
+  },
+  {
+    id: "62dUf2tKTw0k9q0WrC5uvf8m",
+    name: "Tarea",
+    icon: <AssignmentTurnedIn />,
+    createdAt: "2022-09-06T15:00:13.694Z",
+    updatedAt: "2022-09-06T15:00:13.694Z",
+  },
+  {
+    id: "62dUf2tKTw0k9q0WrC5uv3e3",
+    name: "Automatizatcion",
+    icon: <Event />,
+    createdAt: "2022-09-06T15:00:13.694Z",
+    updatedAt: "2022-09-06T15:00:13.694Z",
+  },
+  {
+    id: "62dUf2tKTw0k9q0WrC5uv45e",
+    name: "Whatsapp",
+    icon: <WhatsApp />,
+    createdAt: "2025-05-19T22:40:51.936Z",
+    updatedAt: "2025-05-19T22:40:58.151Z",
+  },
+];
 export const headsProspectDR = [
   "id",
   "nombre",

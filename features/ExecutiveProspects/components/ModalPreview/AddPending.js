@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
-
+import { CatalogoPendings } from "../../../../constants";
 import {
   Alarm,
   AssignmentTurnedIn,
@@ -22,14 +22,15 @@ import useGlobalCommons from "../../../../hooks/useGlobalCommons";
 import { commonSelector } from "../../../../redux/slices/commonSlice";
 import { userSelector } from "../../../../redux/slices/userSlice";
 
-const pendingstypesIcon = {
-  Tarea: <AssignmentTurnedIn />,
-  Llamada: <Call />,
-  Recordatorio: <Alarm />,
-  Cita: <Event />,
-  Visita: <Place />,
-};
-
+const allowedActions = [
+  "Cita",
+  "Llamada",
+  "Visita",
+  "Whatsapp",
+  "Automatizatcion",
+  "Tarea",
+  "Recordatorio",
+];
 const priorityList = [
   {
     name: "P1",
@@ -51,14 +52,14 @@ const priorityList = [
   },
 ];
 
-const useAddPending = () => {
+const useAddPending = (prospectSelected) => {
   const { getCatalogBy } = useGlobalCommons();
   const { pendingstypes } = useSelector(commonSelector);
   const { id_user } = useSelector(userSelector);
   const [isFocused, setIsFocused] = useState(false);
   const [actionSelected, setActionSelected] = useState(null);
   const [dateSelected, setDateSelected] = useState(dayjs().format(""));
-
+  const [selectedType, setSelectedType] = useState(null);
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -70,7 +71,7 @@ const useAddPending = () => {
   useEffect(() => {
     getCatalogBy(" ");
   }, []);
-
+  console.log("pruebaaa", prospectSelected);
   const handleOnClickDate = (inputDateRef) => {
     inputDateRef?.current?.showPicker();
   };
@@ -83,17 +84,18 @@ const useAddPending = () => {
     }));
   };
 
-  const handleClickSave = async (prospectData) => {
-    console.log(prospectData);
-
+  const handleClickSave = async () => {
+    console.log(prospectSelected);
+    //  const pendingstypeId = pendingTypeIdMap[formData.type];
     let bodyPost = {
-      prospectId: prospectData?.id,
+      prospectId: prospectSelected?.id,
       status: formData.status,
       createdbyId: id_user,
-      priority: formData.status,
+      priority: formData.priority,
       subject: formData.title,
       place: "",
-      pendingstypeId: formData.type,
+      status: 1,
+      pendingstypeId: selectedType?.id || null,
       zone: "GMT-06:00",
       description: formData.description,
       remember: true,
@@ -107,6 +109,7 @@ const useAddPending = () => {
     try {
       let resp = await api.post("/pendings", bodyPost);
       console.log(resp);
+      setSelectedType(null);
     } catch (error) {
       console.log(error);
     }
@@ -114,6 +117,7 @@ const useAddPending = () => {
     console.log("Save");
 
     console.log(formData);
+    console.log("pruebaaa", prospectSelected);
   };
 
   return {
@@ -123,6 +127,8 @@ const useAddPending = () => {
     setActionSelected,
     dateSelected,
     setDateSelected,
+    selectedType,
+    setSelectedType,
     pendingstypes,
     // inputDateRef,
     handleOnClickDate,
@@ -140,12 +146,14 @@ export default function AddPending({ prospectSelected }) {
     setActionSelected,
     dateSelected,
     pendingstypes,
+    selectedType,
+    setSelectedType,
     setDateSelected,
     handleOnClickDate,
     handleDataForm,
     handleClickSave,
     formData,
-  } = useAddPending();
+  } = useAddPending(prospectSelected);
 
   const inputDateRef = useRef(null);
   // const handleOnClickDate = () => {
@@ -259,35 +267,23 @@ export default function AddPending({ prospectSelected }) {
               ))}
             </div>
           </div>
-
-          <div className="rowaaction ">
-            {pendingstypes.results.map((type, index) => (
+          <div className="rowaaction">
+            {CatalogoPendings.map((item) => (
               <IconButton
+                key={item.id}
                 className={`icon_click ${
-                  type.id === formData?.type && "highligth"
+                  selectedType?.id === item.id ? "highlight" : ""
                 }`}
-                onClick={() => handleDataForm("type", type.id)}
+                onClick={() => setSelectedType(item)}
               >
-                <Tooltip title={type.name}>
-                  {pendingstypesIcon[type.name] || <AssignmentTurnedIn />}
-                </Tooltip>
+                <Tooltip title={item.name}>{item.icon}</Tooltip>
               </IconButton>
             ))}
-            {/* {actionsPendings.map((action, index) => (
-              <IconButton
-                className={`icon_click ${action.action === actionSelected && "highligth"}`}
-                onClick={() => setActionSelected(action.action)}
-              >
-                <Tooltip title={action.action}>{action.icon}</Tooltip>
-              </IconButton>
-            ))} */}
           </div>
         </div>
       </div>
       <div className="actions">
-        <button className="btn-cancel" onClick={() => setIsFocused(false)}>
-          Cancelar
-        </button>
+        <button onClick={() => setIsFocused(false)}>Cancelar</button>
         <button onClick={() => handleClickSave(prospectSelected)}>
           Guardar
         </button>
@@ -301,7 +297,49 @@ const AddTrackingStyled = styled.div`
   box-shadow: rgba(17, 12, 46, 0.15) 0px 48px 100px 0px;
   padding: 10px;
   border-radius: 8px;
+  .rowaaction {
+    margin: 2rem 0 2rem 0;
+    width: 500px; /* Más ancho para que el select sea más largo */
+  }
 
+  .rowaaction .custom-select {
+    width: 100%;
+    background-color: #f1f4f6;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 0.9rem;
+    // color: #282455;
+    padding: 6px 12px;
+    justify-content: flex-start;
+    /* Quitar padding extra para que el select no sea muy alto */
+    height: 36px;
+
+    display: flex;
+    align-items: center;
+  }
+  /* Opcional: personalizar las opciones del menú */
+  .MuiMenu-paper {
+    border-radius: 8px;
+    box-shadow: rgba(17, 12, 46, 0.15) 0px 12px 24px 0px;
+  }
+
+  /* Ajusta íconos y texto en MenuItem */
+  .MuiMenuItem-root {
+    display: flex;
+    align-items: center; /* centra verticalmente ícono y texto */
+    gap: 8px; /* espacio horizontal entre ícono y texto */
+    white-space: nowrap; /* evitar salto de línea */
+  }
+  .MuiListItemIcon-root {
+    min-width: 30px; /* ancho ícono consistente */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .MuiListItemText-root {
+    margin: 0;
+  }
   .titleSection {
     font-size: 0.9rem;
     font-weight: 600;
