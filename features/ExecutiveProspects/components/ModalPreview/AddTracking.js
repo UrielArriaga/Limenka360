@@ -102,6 +102,22 @@ const AddTrackingStyled = styled.div`
 
     margin-bottom: 10px;
   }
+  .icon_click {
+    color: #6a737f;
+    transition: background-color 0.3s, color 0.3s, box-shadow 0.3s;
+    border-radius: 6px;
+  }
+
+  .icon_click:hover {
+    background-color: #e0e0e0;
+  }
+
+  .icon_click.highlight {
+    background-color: #7fb3d5;
+    color: white;
+    box-shadow: 0 4px 8px rgba(127, 179, 213, 0.6);
+    border-radius: 12px;
+  }
 
   .areaTracking {
     width: 100%;

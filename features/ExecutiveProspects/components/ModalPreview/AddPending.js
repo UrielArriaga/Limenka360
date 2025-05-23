@@ -60,6 +60,8 @@ const useAddPending = (prospectSelected) => {
   const [actionSelected, setActionSelected] = useState(null);
   const [dateSelected, setDateSelected] = useState(dayjs().format(""));
   const [selectedType, setSelectedType] = useState(null);
+  const [quickDateSelected, setQuickDateSelected] = useState(null);
+
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -149,6 +151,7 @@ const useAddPending = (prospectSelected) => {
     }
 
     handleDataForm("date", newDate.format("YYYY-MM-DDTHH:mm"));
+    setQuickDateSelected(type);
   };
 
   return {
@@ -158,6 +161,8 @@ const useAddPending = (prospectSelected) => {
     setActionSelected,
     dateSelected,
     handleQuickDate,
+    quickDateSelected,
+
     setDateSelected,
     selectedType,
     setSelectedType,
@@ -174,6 +179,8 @@ export default function AddPending({ prospectSelected }) {
   const {
     isFocused,
     setIsFocused,
+    quickDateSelected,
+
     actionSelected,
     setActionSelected,
     dateSelected,
@@ -189,7 +196,7 @@ export default function AddPending({ prospectSelected }) {
   } = useAddPending(prospectSelected);
   const quickDates = [
     { value: "1h", label: "En 1 hora", icon: <Alarm fontSize="small" /> },
-    { value: "1d", label: "Mañana", icon: <Event fontSize="small" /> },
+    { value: "1d", label: "1 día", icon: <Event fontSize="small" /> },
     {
       value: "3d",
       label: "3 días",
@@ -245,7 +252,9 @@ export default function AddPending({ prospectSelected }) {
             {quickDates.map((date) => (
               <button
                 key={date.value}
-                className="quick-date-btn"
+                className={`quick-date-btn ${
+                  quickDateSelected === date.value ? "active" : ""
+                }`}
                 onClick={() => handleQuickDate(date.value)}
                 type="button"
               >
@@ -375,14 +384,30 @@ const AddTrackingStyled = styled.div`
     cursor: pointer;
     transition: background-color 0.2s;
   }
-
-  .quick-date-btn:hover {
-    background-color: #e0e0e0;
+  .quick-date-btn.active {
+    background-color: #7fb3d5;
+    color: white;
   }
 
   .rowaaction {
     margin: 2rem 0 2rem 0;
-    width: 500px; /* Más ancho para que el select sea más largo */
+    width: 500px;
+  }
+  .icon_click {
+    color: #6a737f;
+    transition: background-color 0.3s, color 0.3s, box-shadow 0.3s;
+    border-radius: 6px;
+  }
+
+  .icon_click:hover {
+    background-color: #e0e0e0;
+  }
+
+  .icon_click.highlight {
+    background-color: #7fb3d5;
+    color: white;
+    box-shadow: 0 4px 8px rgba(127, 179, 213, 0.6);
+    border-radius: 12px;
   }
 
   .rowaaction .custom-select {
@@ -394,27 +419,25 @@ const AddTrackingStyled = styled.div`
     // color: #282455;
     padding: 6px 12px;
     justify-content: flex-start;
-    /* Quitar padding extra para que el select no sea muy alto */
     height: 36px;
 
     display: flex;
     align-items: center;
   }
-  /* Opcional: personalizar las opciones del menú */
+
   .MuiMenu-paper {
     border-radius: 8px;
     box-shadow: rgba(17, 12, 46, 0.15) 0px 12px 24px 0px;
   }
 
-  /* Ajusta íconos y texto en MenuItem */
   .MuiMenuItem-root {
     display: flex;
-    align-items: center; /* centra verticalmente ícono y texto */
-    gap: 8px; /* espacio horizontal entre ícono y texto */
-    white-space: nowrap; /* evitar salto de línea */
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
   }
   .MuiListItemIcon-root {
-    min-width: 30px; /* ancho ícono consistente */
+    min-width: 30px;
     display: flex;
     align-items: center;
     justify-content: center;
