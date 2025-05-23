@@ -119,6 +119,37 @@ const useAddPending = (prospectSelected) => {
     console.log(formData);
     console.log("pruebaaa", prospectSelected);
   };
+  const skipWeekends = (date) => {
+    let newDate = dayjs(date);
+    while (newDate.day() === 0 || newDate.day() === 6) {
+      newDate = newDate.add(1, "day");
+    }
+    return newDate;
+  };
+
+  const handleQuickDate = (type) => {
+    const now = dayjs();
+    let newDate;
+
+    switch (type) {
+      case "1h":
+        newDate = now.add(1, "hour");
+        break;
+      case "1d":
+        newDate = skipWeekends(now.add(1, "day"));
+        break;
+      case "3d":
+        newDate = skipWeekends(now.add(3, "day"));
+        break;
+      case "5d":
+        newDate = skipWeekends(now.add(5, "day"));
+        break;
+      default:
+        newDate = now;
+    }
+
+    handleDataForm("date", newDate.format("YYYY-MM-DDTHH:mm"));
+  };
 
   return {
     isFocused,
@@ -126,6 +157,7 @@ const useAddPending = (prospectSelected) => {
     actionSelected,
     setActionSelected,
     dateSelected,
+    handleQuickDate,
     setDateSelected,
     selectedType,
     setSelectedType,
@@ -146,6 +178,7 @@ export default function AddPending({ prospectSelected }) {
     setActionSelected,
     dateSelected,
     pendingstypes,
+    handleQuickDate,
     selectedType,
     setSelectedType,
     setDateSelected,
@@ -154,6 +187,16 @@ export default function AddPending({ prospectSelected }) {
     handleClickSave,
     formData,
   } = useAddPending(prospectSelected);
+  const quickDates = [
+    { value: "1h", label: "En 1 hora", icon: <Alarm fontSize="small" /> },
+    { value: "1d", label: "Mañana", icon: <Event fontSize="small" /> },
+    {
+      value: "3d",
+      label: "3 días",
+      icon: <AssignmentTurnedIn fontSize="small" />,
+    },
+    { value: "5d", label: "5 días", icon: <CalendarToday fontSize="small" /> },
+  ];
 
   const inputDateRef = useRef(null);
   // const handleOnClickDate = () => {
@@ -195,6 +238,23 @@ export default function AddPending({ prospectSelected }) {
         ></textarea>
 
         <div className="options">
+          <label style={{ marginTop: "8px", fontWeight: 500 }}>
+            Fecha del pendiente
+          </label>
+          <div className="quick-dates">
+            {quickDates.map((date) => (
+              <button
+                key={date.value}
+                className="quick-date-btn"
+                onClick={() => handleQuickDate(date.value)}
+                type="button"
+              >
+                {date.icon}
+                <span>{date.label}</span>
+              </button>
+            ))}
+          </div>
+
           <div className="mg">
             <div className="dateselected">
               <CalendarToday className="icon_option" />
@@ -297,6 +357,29 @@ const AddTrackingStyled = styled.div`
   box-shadow: rgba(17, 12, 46, 0.15) 0px 48px 100px 0px;
   padding: 10px;
   border-radius: 8px;
+  .quick-dates {
+    display: flex;
+    gap: 0.5rem;
+    margin: 0.5rem 0;
+    flex-wrap: wrap;
+  }
+
+  .quick-date-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.4rem 0.6rem;
+    border: none;
+    background-color: #f1f1f1;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+
+  .quick-date-btn:hover {
+    background-color: #e0e0e0;
+  }
+
   .rowaaction {
     margin: 2rem 0 2rem 0;
     width: 500px; /* Más ancho para que el select sea más largo */
