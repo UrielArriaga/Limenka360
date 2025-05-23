@@ -16,6 +16,7 @@ export default function ExecutiveOrdersV1() {
   const [openLimiBotChat, setOpenLimiBotChat] = useState(false);
   const [orderBy, setOrderBy] = useState(null);
   const [orderDirection, setOrderDirection] = useState("asc");
+  const [searchTerm, setSearchTerm] = useState("");
   const {
     ordersData,
     modalActions,
@@ -29,6 +30,7 @@ export default function ExecutiveOrdersV1() {
     viewType,
     orderBy,
     orderDirection,
+    searchTerm,
   });
   // ---> BUSQUEDA
   const [query, setQuery] = useState("");
@@ -57,14 +59,13 @@ export default function ExecutiveOrdersV1() {
     }
   }, [query, ordersData.results, page, paginationData.limit]);
 
-  const paginatedResults = filteredResults.slice(
+  /*const paginatedResults = filteredResults.slice(
     (page - 1) * paginationData.limit,
     page * paginationData.limit
-  );
+  );*/
 
   const handleSearch = (value) => {
-    const search = value.toLowerCase();
-    setQuery(search);
+    setSearchTerm(value);
     setPage(1);
   };
 
@@ -86,12 +87,6 @@ export default function ExecutiveOrdersV1() {
 
   return (
     <ExecutiveProspectsStyled>
-      <FilterProspects
-        viewType={viewType}
-        setViewType={setViewType}
-        onSearch={handleSearch}
-        onOrder={handleOrder}
-      />
       <HeaderContainer>
         <h1>Pedidos ({ordersData.count})</h1>
         <IconButton className="refresh-button" onClick={() => refetchData()}>
@@ -99,8 +94,14 @@ export default function ExecutiveOrdersV1() {
             <Refresh />
           </Badge>
         </IconButton>
+        <FilterProspects
+          viewType={viewType}
+          setViewType={setViewType}
+          onSearch={handleSearch}
+          onOrder={handleOrder}
+        />
+        <OrderStatusCards />
       </HeaderContainer>
-      <OrderStatusCards />
       {viewType === "calendar" && (
         <CalendarLimenK
           actions={{
@@ -117,9 +118,9 @@ export default function ExecutiveOrdersV1() {
             modalActions.handleToggleModal("preview");
           }}
           heads={heads}
-          data={query ? paginatedResults : ordersData.results}
+          data={ordersData.results}
           customColumns={customColumns}
-          rowsLoader={ordersData.count >= 20 ? 20 : ordersData.count}
+          rowsLoader={paginationData.limit}
           count={count}
           isLoading={ordersData.isFetching}
           paginationData={{

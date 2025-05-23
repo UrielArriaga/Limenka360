@@ -10,6 +10,7 @@ export default function useOrders({
   viewType = "table",
   orderBy,
   orderDirection,
+  searchTerm,
 }) {
   const request = new ApiServiceExOr();
   const { id_user } = useSelector(userSelector);
@@ -20,7 +21,7 @@ export default function useOrders({
   const [events, setEvents] = useState([]);
   const [count, setCount] = useState(0);
   const { page, limit, handlePage } = usePagination({
-    defaultLimit: 30,
+    defaultLimit: 15,
     defaultPage: 1,
   });
 
@@ -43,6 +44,10 @@ export default function useOrders({
     isFetching: false,
   });
 
+  const hasValue = (value) => {
+    return value !== null && value !== undefined && value !== "";
+  };
+
   const fetchOrdersTable = async () => {
     try {
       setOrdersData((prev) => ({
@@ -50,12 +55,24 @@ export default function useOrders({
         isFetching: true,
       }));
       let query = { bill: {}, discarted: false, createdbyId: id_user };
+
+      if (hasValue(searchTerm)) {
+        query.oportunity = {
+          prospect: {
+            fullname: {
+              regexp: searchTerm.toLocaleLowerCase(),
+            },
+          },
+        };
+      }
+
       let orderParam = "";
       if (orderBy) {
         orderParam = `${orderDirection === "desc" ? "-" : ""}${orderBy}`;
       } else {
         orderParam = "-createdAt";
       }
+
       const reponse = await request.getOrders(limit, page, query, orderParam);
       setOrdersData((prev) => ({
         ...prev,
@@ -98,7 +115,7 @@ export default function useOrders({
     if (viewType === "table") {
       fetchOrdersTable();
     }
-  }, [viewType, page, orderBy, orderDirection]);
+  }, [viewType, page, orderBy, orderDirection, searchTerm]);
 
   const refetchData = () => {
     fetchOrdersTable();
@@ -116,11 +133,6 @@ export default function useOrders({
       orderby: null,
     },
     {
-      headText: "Total",
-      headNormalize: "total",
-      orderby: null,
-    },
-    {
       headText: "Estatus",
       headNormalize: "estado",
       orderby: null,
@@ -133,26 +145,6 @@ export default function useOrders({
     {
       headText: "Estado envío",
       headNormalize: "estadoEnv",
-      orderby: null,
-    },
-    {
-      headText: "Municipio envío",
-      headNormalize: "municipioEnv",
-      orderby: null,
-    },
-    {
-      headText: "Cuenta pago",
-      headNormalize: "cuentaPago",
-      orderby: null,
-    },
-    {
-      headText: "Método pago",
-      headNormalize: "metodoPago",
-      orderby: null,
-    },
-    {
-      headText: "Formato pago",
-      headNormalize: "formatoPago",
       orderby: null,
     },
     {
@@ -238,25 +230,6 @@ export default function useOrders({
         );
       },
     },
-    municipioEnv: {
-      columname: "Municipio envío",
-      component: (item) => {
-        return (
-          <div className="TableName">
-            <p
-              className="name"
-              style={{
-                color: "#000089",
-                fontSize: "13px",
-              }}
-              onClick={() => {}}
-            >
-              {item.municipioEnv}
-            </p>
-          </div>
-        );
-      },
-    },
     fechaCreacion: {
       columname: "Fecha creación",
       component: (item) => {
@@ -265,7 +238,7 @@ export default function useOrders({
             <p
               className="name"
               style={{
-                color: "#5C007C",
+                color: "#000089",
                 fontSize: "13px",
               }}
               onClick={() => {}}

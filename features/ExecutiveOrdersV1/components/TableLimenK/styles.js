@@ -157,7 +157,7 @@ export const Table = styled.table`
   }
 
   td {
-    padding: 12px 16px;
+    padding: 12px 5px;
     color: #2a2a2a;
     border-bottom: 1px solid #eee;
     text-align: center;

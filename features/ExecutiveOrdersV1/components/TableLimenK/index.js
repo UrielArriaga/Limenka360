@@ -114,7 +114,7 @@ export default function TableLimenK({
                         );
                   }}
                 >
-                  <div style={{ display: "flex" }}>
+                  <div style={{ display: "flex",  justifyContent: "center", alignItems: "center", width: "100%" }}>
                     {head.headText}
                     {orderBy &&
                       (orderBy === head.orderby ||

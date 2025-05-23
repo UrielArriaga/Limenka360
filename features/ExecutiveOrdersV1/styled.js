@@ -8,12 +8,14 @@ export const HeaderContainer = styled.div`
   align-items: center;
   gap: 2px;
   margin-bottom: 5px;
+  margin-top: -10px;
 
   h1 {
     font-size: 1.4rem;
     color: #333;
     font-weight: 600;
     margin: 0;
+    line-height: 1.2;
   }
 
   .refresh-button {
