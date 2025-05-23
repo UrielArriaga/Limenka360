@@ -21,9 +21,8 @@ class ProspectsService {
     });
   }
 
-  async getProspects({}) {
+  async getProspects(limit, page = 1) {
     let params = {
-      limit: 12,
       order: "-createdAt",
       subquery: 1,
       include: "category,clienttype,phase",
@@ -36,6 +35,8 @@ class ProspectsService {
         ejecutiveId: "YNQHRt32OCbt0shXa0yOa51t",
       },
       count: 1,
+      limit: limit,
+      skip: page,
       keys: "fullname,createdAt,email,phone,product,lastTrackingcreatedAt,nextpendingat,lastTracking",
       includekeys: {
         clienttype: ["name"],

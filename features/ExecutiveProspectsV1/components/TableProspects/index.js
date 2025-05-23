@@ -222,7 +222,7 @@ export default function TableProspects({
       </Table>
 
       <div className="pagination">
-        {paginationData && paginationData.total > 20 && (
+        {paginationData && paginationData.total > 2 && (
           <Pagination
             variant="outlined"
             count={Math.ceil(paginationData.total / paginationData.limit)}

@@ -35,6 +35,7 @@ export default function ExecutivesProspectsV1() {
     inputStates,
     filters,
     setFilters,
+    paginationData,
   } = useMain(viewType);
 
   const [openLimiBotChat, setOpenLimiBotChat] = useState(false);
@@ -50,6 +51,10 @@ export default function ExecutivesProspectsV1() {
       <TableProspects
         data={dataSet.results}
         heads={tableData.heads}
+        paginationData={{
+          ...paginationData,
+          total: dataSet.count,
+        }}
         mainColumn={"fullname"}
         onRowMainColumnClick={actionsItem.handleOnClickProspects}
         customColumns={{

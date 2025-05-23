@@ -45,6 +45,7 @@ export default function ModalPreview({
   // trackings,
   // pendingsData,
 }) {
+  console.log("fjfk", prospectSelected);
   const [showAction, setShowAction] = useState(null);
   const [tabValue, setTabValue] = useState(0);
 
@@ -63,9 +64,9 @@ export default function ModalPreview({
     error: errorProducts,
     count: countProducts,
     paginationData: paginationDataProducts,
-  } = useOpportunityProducts(prospectSelected?.id);
+  } = useOpportunityProducts(prospectSelected?.lastTracking?.oportunityId);
 
-  const { opportunities } = useQuotePDF(prospectSelected?.id);
+  const { opportunities } = useQuotePDF(prospectSelected?.lastTracking?.oportunityId);
 
   const {
     files,
@@ -89,7 +90,7 @@ export default function ModalPreview({
     searchColorStyle,
     limitFiles,
     filesLenght,
-  } = useFiles(prospectSelected);
+  } = useFiles(prospectSelected?.lastTracking?.oportunityId);
 
   const {
     reasons,

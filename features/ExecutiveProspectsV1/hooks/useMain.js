@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import ProspectsService from "../service";
+import usePagination from "../../../hooks/usePagination";
 
 const initialKanbanState = {
   columns: {},
@@ -40,6 +41,7 @@ export default function useMain(viewType) {
 
   const [prospectSelected, setProspectSelected] = useState(null);
 
+  const { page, limit, handlePage } = usePagination({ defaultLimit: 2, defaultPage: 1 });
   console.log(viewType);
   const viewFetchers = {
     kanban: async () => {
@@ -59,7 +61,7 @@ export default function useMain(viewType) {
     table: async () => {
       setDataSet((prev) => ({ ...prev, isFetching: true }));
       try {
-        const response = await service.getProspects({});
+        const response = await service.getProspects(limit, page);
         setDataSet({
           results: service.mapToNormalizeProspects(response.data?.results),
           count: response.data?.count,
@@ -103,7 +105,7 @@ export default function useMain(viewType) {
     };
 
     fetchData();
-  }, [flagToRefetch, viewType]);
+  }, [flagToRefetch, viewType, page]);
 
   const handleInfiniteScroll = async (phaseId) => {
     const column = data.columns[phaseId];
@@ -312,5 +314,10 @@ export default function useMain(viewType) {
     },
     filters,
     setFilters,
+    paginationData: {
+      handlePage,
+      page,
+      limit,
+    },
   };
 }

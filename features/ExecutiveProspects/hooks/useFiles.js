@@ -25,6 +25,7 @@ const admitTypeFiles = [
 ];
 
 export default function useFiles(data) {
+  console.log("dataaaaaaa",data);
   const { showAlertError, showAlertSucces, showAlertWarning } = useAlertToast();
   const { groupId, company, id_user } = useSelector(userSelector);
   const { filetypes } = useSelector(commonSelector);
@@ -41,10 +42,10 @@ export default function useFiles(data) {
   const filesLenght = files.count ? files.count : files.length;
 
   useEffect(() => {
-    if (data?.id) {
+    if (data) {
       getFiles();
     }
-  }, [pageFiles, refetch, data?.id]);
+  }, [pageFiles, refetch, data]);
 
   const returnStyleTypeFile = (type) => {
     switch (type) {
@@ -96,7 +97,7 @@ export default function useFiles(data) {
     setIsLoader(true);
     try {
       const query = {
-        oportunityId: data.id,
+        oportunityId: data,
       };
       const params = {
         where: JSON.stringify(query),
@@ -161,7 +162,7 @@ export default function useFiles(data) {
       newData.append("file", dataFile.file);
       newData.append("name", dataFile.name);
       const response = await api.post(
-        `files/uploadtofolder/${company}-G${groupId}-E${id_user}-P${data.id}/${dataFile.name}`,
+        `files/uploadtofolder/${company}-G${groupId}-E${id_user}-P${data}/${dataFile.name}`,
         newData
       );
       const fileBody = response.data;
@@ -180,7 +181,7 @@ export default function useFiles(data) {
         url: fileData.name,
         name: fileData.name_file,
         filestypeId: fileData.typeFileId,
-        oportunityId: data.id,
+        oportunityId: data,
       };
       const response = await api.post(`documents`, bodyfile);
       setRefetch(!refetch);

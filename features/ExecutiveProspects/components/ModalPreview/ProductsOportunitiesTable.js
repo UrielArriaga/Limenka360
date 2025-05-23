@@ -19,7 +19,7 @@ export default function ProductsOportunitiesTable({
   return (
     <TableContainer>
       <div className="header">
-        <h2>Productos en Cotización</h2>
+        <h2>Productos en cotización</h2>
         <div className="summary">
           <span>
             {countProducts} {countProducts === 1 ? "producto" : "productos"}
